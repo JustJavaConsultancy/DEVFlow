@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review SRS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Document styling */
+        .document-container {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: 60vh;
+            overflow-y: auto;
+        }
+
+        .document-section {
+            margin-bottom: 2rem;
+        }
+
+        .document-section h3 {
+            color: #780aff;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Action buttons */
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <!-- Page Title -->
+  <div class="mb-8 mt-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
+      <i class="fas fa-file-alt mr-3 text-blue-600"></i>
+      Review SRS Document
+    </h1>
+    <p class="text-gray-600 mt-2">E-Commerce Platform Project - v2.3</p>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
+    <div class="flex items-center">
+      <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
+      <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
+    </div>
+
+    <div class="flex space-x-3 mt-3 md:mt-0">
+      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+        <i class="fas fa-edit mr-2"></i>
+        Edit
+      </button>
+      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+        <i class="fas fa-download mr-2"></i>
+        Download
+      </button>
+    </div>
+  </div>
+
+  <!-- Document Content -->
+  <div class="document-container mb-6">
+    <h2 class="text-2xl font-bold text-blue-800 mb-2">Software Requirements Specification</h2>
+    <p class="text-gray-600 mb-6">For E-Commerce Platform Version 2.0</p>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">1. Introduction</h3>
+      <p>This document describes the requirements for the E-Commerce Platform project. The system will allow users to browse products, add them to a cart, and complete purchases securely.</p>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">2. Functional Requirements</h3>
+
+      <h4 class="font-medium mt-4">2.1 User Management</h4>
+      <p>The system shall allow users to:</p>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Create a new account</li>
+        <li>Log in to an existing account</li>
+        <li>Reset password</li>
+        <li>View and edit profile information</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">2.2 Product Catalog</h4>
+      <p>The system shall provide:</p>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Product browsing with filtering options</li>
+        <li>Product search functionality</li>
+        <li>Product detail pages with images and specifications</li>
+        <li>Product reviews and ratings</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">2.3 Shopping Cart</h4>
+      <p>The system shall allow users to:</p>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Add products to a shopping cart</li>
+        <li>View and edit cart contents</li>
+        <li>Save cart for later</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">2.4 Checkout Process</h4>
+      <p>The system shall provide:</p>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Multiple payment options (credit card, PayPal)</li>
+        <li>Address validation</li>
+        <li>Order confirmation</li>
+        <li>Order tracking functionality</li>
+      </ul>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">3. Non-Functional Requirements</h3>
+
+      <h4 class="font-medium mt-4">3.1 Performance</h4>
+      <p>The system shall support:</p>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Page load times under 2 seconds</li>
+        <li>Up to 10,000 concurrent users</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">3.2 Security</h4>
+      <p>The system shall:</p>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Encrypt all sensitive data</li>
+        <li>Comply with PCI DSS standards for payment processing</li>
+        <li>Implement protection against common web vulnerabilities</li>
+      </ul>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">4. Future Enhancements</h3>
+      <ul class="list-disc pl-5 mt-2">
+        <li>Mobile application development</li>
+        <li>AI-based product recommendations</li>
+        <li>Integration with social media platforms</li>
+        <li>Multi-language support</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Complete Button -->
+  <div class="flex justify-center mt-6">
+    <button class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+      <i class="fas fa-check-circle mr-2"></i>
+      Complete Review
+    </button>
+  </div>
+</div>
+</body>
+</html>

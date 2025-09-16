@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFlow - Project Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* UAT specific styles */
+.uat-criteria {
+    transition: all 0.3s ease;
+    border-left: 4px solid #780aff;
+}
+
+.uat-criteria.passed {
+    border-left-color: #38a169;
+}
+
+.uat-criteria.failed {
+    border-left-color: #e53e3e;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #edf2f7;
+    color: #4a5568;
+}
+
+.status-passed {
+    background-color: #c6f6d5;
+    color: #2d774b;
+}
+
+.status-failed {
+    background-color: #fed7d7;
+    color: #c53030;
+}
+
+.progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #edf2f7;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background-color: #780aff;
+    transition: width 0.5s ease;
+}
+
+.action-btn {
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Page Title -->
+    <div class="mb-8 mt-6">
+        <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
+            <i class="fas fa-clipboard-check mr-3 text-blue-600"></i>
+            User Acceptance Testing
+        </h1>
+        <p class="text-gray-600 mt-2">E-Commerce Platform Project - Checkout Module</p>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="gradient-bg rounded-xl p-4 md:p-6 text-white mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <i class="fas fa-clipboard-list text-2xl md:text-3xl mb-2 text-blue-200"></i>
+                <h3 class="text-xl md:text-2xl font-bold mb-1">UAT-1032</h3>
+                <p class="text-blue-200 text-sm md:text-base">Checkout Process Testing</p>
+            </div>
+            <div>
+                <span class="status-badge status-pending">In Progress</span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="flex justify-between text-sm text-blue-200 mb-1">
+                <span>Test Progress</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-between text-sm text-blue-200">
+            <div>
+                <i class="fas fa-check-circle mr-1"></i>
+                <span id="passed-count">0</span> Passed
+            </div>
+            <div>
+                <i class="fas fa-times-circle mr-1"></i>
+                <span id="failed-count">0</span> Failed
+            </div>
+            <div>
+                <i class="fas fa-clock mr-1"></i>
+                <span id="pending-count">12</span> Pending
+            </div>
+        </div>
+    </div>
+
+    <!-- UAT Criteria List -->
+    <div class="space-y-4 mb-8">
+        <!-- Criterion 1 -->
+        <div class="uat-criteria bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+            <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500">TC-001</span>
+                <span class="status-badge status-pending">Pending</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-blue-800 mb-2">User can add products to shopping cart</h3>
+            <p class="text-gray-600 text-sm mb-4">Verify that users can successfully add products to their shopping cart from product listing and detail pages.</p>
+
+            <div class="mb-4">
+                <h4 class="font-medium text-sm text-blue-700 mb-1">Test Steps:</h4>
+                <ol class="text-xs text-gray-600 list-decimal pl-5 space-y-1">
+                    <li>Navigate to a product listing page</li>
+                    <li>Click "Add to Cart" on several products</li>
+                    <li>Verify cart icon updates with correct item count</li>
+                    <li>Navigate to cart page and verify items are present</li>
+                </ol>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center action-btn fail-btn">
+                    <i class="fas fa-times mr-2"></i>
+                    Fail
+                </button>
+                <button class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center action-btn pass-btn">
+                    <i class="fas fa-check mr-2"></i>
+                    Pass
+                </button>
+            </div>
+        </div>
+
+        <!-- Criterion 2 -->
+        <div class="uat-criteria bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+            <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500">TC-002</span>
+                <span class="status-badge status-pending">Pending</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-blue-800 mb-2">Shopping cart persists between sessions</h3>
+            <p class="text-gray-600 text-sm mb-4">Verify that cart items are preserved when user logs out and back in.</p>
+
+            <div class="mb-4">
+                <h4 class="font-medium text-sm text-blue-700 mb-1">Test Steps:</h4>
+                <ol class="text-xs text-gray-600 list-decimal pl-5 space-y-1">
+                    <li>Add items to cart while logged in</li>
+                    <li>Log out of the application</li>
+                    <li>Log back into the application</li>
+                    <li>Verify cart items are still present</li>
+                </ol>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center action-btn fail-btn">
+                    <i class="fas fa-times mr-2"></i>
+                    Fail
+                </button>
+                <button class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center action-btn pass-btn">
+                    <i class="fas fa-check mr-2"></i>
+                    Pass
+                </button>
+            </div>
+        </div>
+
+        <!-- Criterion 3 -->
+        <div class="uat-criteria bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+            <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500">TC-003</span>
+                <span class="status-badge status-pending">Pending</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-blue-800 mb-2">User can modify cart quantities</h3>
+            <p class="text-gray-600 text-sm mb-4">Verify that users can increase, decrease, or remove items from their cart.</p>
+
+            <div class="mb-4">
+                <h4 class="font-medium text-sm text-blue-700 mb-1">Test Steps:</h4>
+                <ol class="text-xs text-gray-600 list-decimal pl-5 space-y-1">
+                    <li>Navigate to cart page with items</li>
+                    <li>Increase quantity of an item</li>
+                    <li>Decrease quantity of an item</li>
+                    <li>Remove an item completely</li>
+                    <li>Verify totals update correctly after each change</li>
+                </ol>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center action-btn fail-btn">
+                    <i class="fas fa-times mr-2"></i>
+                    Fail
+                </button>
+                <button class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center action-btn pass-btn">
+                    <i class="fas fa-check mr-2"></i>
+                    Pass
+                </button>
+            </div>
+        </div>
+
+        <!-- Criterion 4 -->
+        <div class="uat-criteria bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+            <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500">TC-004</span>
+                <span class="status-badge status-pending">Pending</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-blue-800 mb-2">Checkout process collects required information</h3>
+            <p class="text-gray-600 text-sm mb-4">Verify that the checkout process collects all necessary customer information.</p>
+
+            <div class="mb-4">
+                <h4 class="font-medium text-sm text-blue-700 mb-1">Test Steps:</h4>
+                <ol class="text-xs text-gray-600 list-decimal pl-5 space-y-1">
+                    <li>Proceed to checkout from cart page</li>
+                    <li>Verify shipping address form is presented</li>
+                    <li>Verify payment method selection is available</li>
+                    <li>Verify order summary is displayed</li>
+                </ol>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center action-btn fail-btn">
+                    <i class="fas fa-times mr-2"></i>
+                    Fail
+                </button>
+                <button class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center action-btn pass-btn">
+                    <i class="fas fa-check mr-2"></i>
+                    Pass
+                </button>
+            </div>
+        </div>
+
+        <!-- Criterion 5 -->
+        <div class="uat-criteria bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+            <div class="flex justify-between items-start mb-3">
+                <span class="text-xs text-gray-500">TC-005</span>
+                <span class="status-badge status-pending">Pending</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-blue-800 mb-2">Payment processing works correctly</h3>
+            <p class="text-gray-600 text-sm mb-4">Verify that payment processing integrates correctly with payment gateways.</p>
+
+            <div class="mb-4">
+                <h4 class="font-medium text-sm text-blue-700 mb-1">Test Steps:</h4>
+                <ol class="text-xs text-gray-600 list-decimal pl-5 space-y-1">
+                    <li>Complete checkout process with test credit card</li>
+                    <li>Verify payment is processed successfully</li>
+                    <li>Verify confirmation page is displayed</li>
+                    <li>Verify confirmation email is sent</li>
+                </ol>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg flex items-center action-btn fail-btn">
+                    <i class="fas fa-times mr-2"></i>
+                    Fail
+                </button>
+                <button class="px-4 py-2 bg-green-100 text-green-700 rounded-lg flex items-center action-btn pass-btn">
+                    <i class="fas fa-check mr-2"></i>
+                    Pass
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Button -->
+    <div class="flex justify-center mt-6">
+        <button id="complete-uat" class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+            <i class="fas fa-check-circle mr-2"></i>
+            Complete UAT
+        </button>
+    </div>
+    <script>
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // UAT functionality
+            const totalTests = document.querySelectorAll('.uat-criteria').length;
+            let passedTests = 0;
+            let failedTests = 0;
+
+            // Update progress
+            function updateProgress() {
+                const completedTests = passedTests + failedTests;
+                const progressPercent = Math.round((completedTests / totalTests) * 100);
+
+                document.getElementById('progress-percent').textContent = `${progressPercent}%`;
+                document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+                document.getElementById('passed-count').textContent = passedTests;
+                document.getElementById('failed-count').textContent = failedTests;
+                document.getElementById('pending-count').textContent = totalTests - completedTests;
+
+                // Enable complete button if all tests are done
+                if (completedTests === totalTests) {
+                    document.getElementById('complete-uat').classList.remove('gradient-bg');
+                    document.getElementById('complete-uat').classList.add('bg-green-600');
+                }
+            }
+
+            // Set up pass/fail buttons
+            const passButtons = document.querySelectorAll('.pass-btn');
+            const failButtons = document.querySelectorAll('.fail-btn');
+
+            passButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const criteriaCard = this.closest('.uat-criteria');
+                    const statusBadge = criteriaCard.querySelector('.status-badge');
+                    const testButtons = criteriaCard.querySelectorAll('.pass-btn, .fail-btn');
+
+                    // Update UI
+                    criteriaCard.classList.remove('uat-criteria', 'failed');
+                    criteriaCard.classList.add('passed');
+                    statusBadge.classList.remove('status-pending', 'status-failed');
+                    statusBadge.classList.add('status-passed');
+                    statusBadge.textContent = 'Passed';
+
+                    // Disable buttons
+                    testButtons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50');
+                    });
+
+                    // Update counts
+                    passedTests++;
+                    updateProgress();
+                });
+            });
+
+            failButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const criteriaCard = this.closest('.uat-criteria');
+                    const statusBadge = criteriaCard.querySelector('.status-badge');
+                    const testButtons = criteriaCard.querySelectorAll('.pass-btn, .fail-btn');
+
+                    // Update UI
+                    criteriaCard.classList.remove('uat-criteria', 'passed');
+                    criteriaCard.classList.add('failed');
+                    statusBadge.classList.remove('status-pending', 'status-passed');
+                    statusBadge.classList.add('status-failed');
+                    statusBadge.textContent = 'Failed';
+
+                    // Disable buttons
+                    testButtons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-50');
+                    });
+
+                    // Update counts
+                    failedTests++;
+                    updateProgress();
+                });
+            });
+
+        });
+    </script>
+</div>
+</body>
+</html>

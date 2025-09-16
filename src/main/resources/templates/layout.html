@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFlow - Project Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gradient-bg: repeating-linear-gradient(90deg, #780aff, #760cfe 3%, #255bec);
+        }
+
+        body {
+            background: var(--gradient-bg);
+            min-height: 100vh;
+        }
+
+        .gradient-bg {
+            background: var(--gradient-bg);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(37, 91, 236, 0.3);
+        }
+
+        .progress-transition {
+            transition: width 1.5s ease-in-out;
+        }
+        .input-focus:focus {
+            border-color: #780aff;
+            box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                background: var(--gradient-bg); /* Added gradient background */
+                z-index: 40; /* Ensure it's above content */
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            /* Override glass effect on mobile for better visibility */
+            .sidebar .glass-effect {
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: none;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+<!-- Mobile Menu Button -->
+<div class="gradient-bg rounded-xl fixed top-4 left-4 z-50 md:hidden">
+    <button id="mobileMenuBtn" class="glass-effect text-white p-2 rounded-lg">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div id="sidebar" class="glass-effect w-64 min-h-screen p-5 fixed sidebar">
+        <div class="flex items-center mb-10">
+            <i class="fas fa-code-branch text-white text-2xl mr-3"></i>
+            <h1 class="text-white text-xl font-bold">DevFlow</h1>
+        </div>
+
+        <div class="space-y-2">
+            <a th:href="@{/}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/'} ? ' bg-white bg-opacity-20'">
+                <i class="fas fa-home text-white mr-3"></i>
+                <span class="text-white">Dashboard</span>
+            </a>
+            <a th:href="@{/projects}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/projects'} ? ' bg-white bg-opacity-20'">
+                <i class="fas fa-project-diagram text-blue-200 mr-3"></i>
+                <span class="text-blue-100">Projects</span>
+            </a>
+            <a class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer">
+                <i class="fas fa-users text-blue-200 mr-3"></i>
+                <span class="text-blue-100">Clients</span>
+            </a>
+            <a class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer">
+                <i class="fas fa-cog text-blue-200 mr-3"></i>
+                <span class="text-blue-100">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-0 md:ml-64 flex-1 main-content">
+        <div class="bg-white min-h-screen p-4 md:p-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div class="glass-effect flex items-center rounded-full px-4 py-2 w-64 md:w-96">
+                    <i class="fas fa-search text-blue-200 mr-2"></i>
+                    <input type="text" placeholder="Search projects..." class="bg-transparent text-white placeholder-blue-200 outline-none w-full">
+                </div>
+
+                <div class="flex items-center">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
+                         alt="User" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3">
+                    <span class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
+                </div>
+            </div>
+            <div layout:fragment="content"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple animation for progress bars
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking on a link
+        const sidebarLinks = document.querySelectorAll('.sidebar a, .sidebar div');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

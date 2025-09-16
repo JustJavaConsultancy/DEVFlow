@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevFlow - Project Management Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Document styling */
+.document-container {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    height: 60vh;
+    overflow-y: auto;
+}
+
+.document-section {
+    margin-bottom: 2rem;
+}
+
+.document-section h3 {
+    color: #780aff;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.architecture-diagram {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    text-align: center;
+}
+
+.component-box {
+    display: inline-block;
+    background: white;
+    border: 1px solid #780aff;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem;
+    font-weight: 500;
+}
+
+.action-btn {
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <!-- Page Title -->
+  <div class="mb-8 mt-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
+      <i class="fas fa-sitemap mr-3 text-blue-600"></i>
+      Review Solution Architecture
+    </h1>
+    <p class="text-gray-600 mt-2">E-Commerce Platform Project - v2.3</p>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
+    <div class="flex items-center">
+      <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
+      <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
+    </div>
+
+    <div class="flex space-x-3 mt-3 md:mt-0">
+      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+        <i class="fas fa-edit mr-2"></i>
+        Edit
+      </button>
+      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+        <i class="fas fa-download mr-2"></i>
+        Download
+      </button>
+    </div>
+  </div>
+
+  <!-- Document Content -->
+  <div class="document-container mb-6">
+    <h2 class="text-2xl font-bold text-blue-800 mb-2">Solution Architecture Document</h2>
+    <p class="text-gray-600 mb-6">For E-Commerce Platform Version 2.0</p>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">1. Overview</h3>
+      <p>This document outlines the proposed solution architecture for the E-Commerce Platform. The architecture follows a microservices approach to ensure scalability, maintainability, and flexibility.</p>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">2. Architectural Patterns</h3>
+
+      <h4 class="font-medium mt-4">2.1 Microservices Architecture</h4>
+      <p>The system will be decomposed into multiple independently deployable services:</p>
+      <ul class="list-disc pl-5 mt-2 mb-4">
+        <li>User Service - handles authentication and user profiles</li>
+        <li>Product Service - manages product catalog and inventory</li>
+        <li>Order Service - processes orders and payments</li>
+        <li>Notification Service - handles emails and notifications</li>
+        <li>Search Service - provides product search functionality</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">2.2 API Gateway</h4>
+      <p>All client requests will be routed through an API Gateway which will handle request routing, composition, and protocol translation.</p>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">3. Technology Stack</h3>
+
+      <h4 class="font-medium mt-4">3.1 Backend Technologies</h4>
+      <ul class="list-disc pl-5 mt-2 mb-4">
+        <li>Node.js with Express.js for API services</li>
+        <li>Spring Boot for high-throughput services</li>
+        <li>Redis for caching and session management</li>
+        <li>MongoDB for product and user data</li>
+        <li>PostgreSQL for transactional data</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">3.2 Frontend Technologies</h4>
+      <ul class="list-disc pl-5 mt-2 mb-4">
+        <li>React.js for the main storefront application</li>
+        <li>Next.js for server-side rendering and SEO</li>
+        <li>Tailwind CSS for styling and responsive design</li>
+        <li>Redux for state management</li>
+      </ul>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">4. System Architecture</h3>
+
+      <div class="architecture-diagram">
+        <h4 class="font-medium mb-4">High-Level Architecture Diagram</h4>
+        <div class="component-box">Client Browser</div>
+        <div class="text-blue-500 my-2">↓ ↑</div>
+        <div class="component-box">CDN</div>
+        <div class="text-blue-500 my-2">↓ ↑</div>
+        <div class="component-box">API Gateway</div>
+        <div class="text-blue-500 my-2">↓ ↑</div>
+        <div class="flex flex-wrap justify-center">
+          <div class="component-box">User Service</div>
+          <div class="component-box">Product Service</div>
+          <div class="component-box">Order Service</div>
+          <div class="component-box">Search Service</div>
+        </div>
+        <div class="text-blue-500 my-2">↓ ↑</div>
+        <div class="flex flex-wrap justify-center">
+          <div class="component-box">MySQL</div>
+          <div class="component-box">MongoDB</div>
+          <div class="component-box">Redis</div>
+        </div>
+      </div>
+
+      <p>The architecture employs a reverse proxy setup with load balancing to distribute traffic across multiple instances of each microservice.</p>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">5. Deployment Architecture</h3>
+
+      <h4 class="font-medium mt-4">5.1 Cloud Infrastructure</h4>
+      <p>The application will be deployed on AWS using the following services:</p>
+      <ul class="list-disc pl-5 mt-2 mb-4">
+        <li>ECS Fargate for container orchestration</li>
+        <li>RDS for managed PostgreSQL databases</li>
+        <li>ElastiCache for Redis caching</li>
+        <li>S3 for static asset storage</li>
+        <li>CloudFront for CDN capabilities</li>
+      </ul>
+
+      <h4 class="font-medium mt-4">5.2 CI/CD Pipeline</h4>
+      <p>We will implement a CI/CD pipeline using GitHub Actions for automated testing and deployment to staging and production environments.</p>
+    </div>
+
+    <div class="document-section">
+      <h3 class="text-lg font-semibold">6. Security Considerations</h3>
+
+      <ul class="list-disc pl-5 mt-2 mb-4">
+        <li>All communications will be encrypted using TLS 1.3</li>
+        <li>JWT tokens for authentication and authorization</li>
+        <li>Role-based access control for admin functionalities</li>
+        <li>Regular security audits and penetration testing</li>
+        <li>DDoS protection using AWS Shield</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Complete Button -->
+  <div class="flex justify-center mt-6">
+    <button class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+      <i class="fas fa-check-circle mr-2"></i>
+      Complete Review
+    </button>
+  </div>
+</div>
+</body>
+</html>
