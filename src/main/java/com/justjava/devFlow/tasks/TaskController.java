@@ -29,4 +29,8 @@ public class TaskController {
     public String getCodeReview(){
         return "tasks/codeReview";
     }
+    @GetMapping("/requirement")
+    public String getRequirement(){
+        return "tasks/requirement";
+    }
 }
