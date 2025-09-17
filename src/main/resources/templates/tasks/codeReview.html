@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevFlow - Project Management Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Code styling */
+        .code-container {
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 1.5rem 0;
+        }
+
+        .code-line {
+            display: block;
+            padding: 0.1rem 0;
+            color: #e2e8f0;
+        }
+
+        .line-number {
+            display: inline-block;
+            width: 3rem;
+            color: #718096;
+            text-align: right;
+            padding-right: 1rem;
+            user-select: none;
+        }
+
+        .code-keyword {
+            color: #ff79c6;
+        }
+
+        .code-function {
+            color: #50fa7b;
+        }
+
+        .code-variable {
+            color: #f1fa8c;
+        }
+
+        .code-string {
+            color: #f1fa8c;
+        }
+
+        .code-comment {
+            color: #6272a4;
+        }
+
+        .code-highlight {
+            background-color: rgba(255, 230, 0, 0.15);
+            border-left: 3px solid #ffd700;
+            padding-left: 0.5rem;
+        }
+
+        .review-form {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-toggle {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .section-content.expanded {
+            max-height: 2000px;
+        }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <!-- Page Title -->
+  <div class="mb-8 mt-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
+      <i class="fas fa-code mr-3 text-blue-600"></i>
+      Code Review
+    </h1>
+    <p class="text-gray-600 mt-2">E-Commerce Platform Project - Checkout Service</p>
+  </div>
+
+  <!-- Stats Card -->
+  <div class="gradient-bg rounded-xl p-4 md:p-6 text-white mb-8 flex items-center justify-between">
+    <div>
+      <i class="fas fa-code-branch text-2xl md:text-3xl mb-2 text-blue-200"></i>
+      <h3 class="text-xl md:text-2xl font-bold mb-1">US-001</h3>
+      <p class="text-blue-200 text-sm md:text-base">Implementation Artifacts for User Story US-001</p>
+    </div>
+  </div>
+
+  <!-- User Story Section -->
+  <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+    <div class="section-toggle flex justify-between items-center cursor-pointer" data-target="user-story">
+      <h3 class="font-bold text-lg text-blue-800">
+        <i class="fas fa-book mr-2 text-blue-600"></i>
+        User Story Details
+      </h3>
+      <i class="fas fa-chevron-down text-blue-600 transition-transform"></i>
+    </div>
+
+    <div id="user-story" class="section-content mt-4">
+      <p class="text-gray-700 mb-4">
+        As a customer, I want to be able to apply discount codes during checkout so that I can save money on my purchases.
+      </p>
+
+      <h4 class="font-semibold text-blue-700 mb-2">Acceptance Criteria:</h4>
+      <ul class="list-disc pl-5 text-gray-700 space-y-2">
+        <li>Discount codes can be applied before payment processing</li>
+        <li>Discount codes have an expiration date and usage limits</li>
+        <li>Only one discount code can be applied per order</li>
+        <li>Discounts can be percentage-based or fixed amount</li>
+        <li>Applied discount is clearly displayed in the order summary</li>
+        <li>Invalid or expired discount codes show appropriate error messages</li>
+        <li>Discount application is reflected in the final order total</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Thymeleaf + HTMX Form Section -->
+  <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+    <div class="section-toggle flex justify-between items-center cursor-pointer" data-target="thymeleaf-form">
+      <h3 class="font-bold text-lg text-blue-800">
+        <i class="fas fa-code mr-2 text-blue-600"></i>
+        Thymeleaf + HTMX Form Implementation
+      </h3>
+      <i class="fas fa-chevron-down text-blue-600 transition-transform"></i>
+    </div>
+
+    <div id="thymeleaf-form" class="section-content mt-4">
+      <div class="code-container">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> &lt;!-- checkout.html --&gt;</span>
+          <span class="code-line"><span class="line-number">2</span> &lt;form id="checkout-form" th:action="@{/checkout}" method="post"&gt;</span>
+          <span class="code-line"><span class="line-number">3</span>   &lt;!-- Other form fields --&gt;</span>
+          <span class="code-line"><span class="line-number">4</span>   </span>
+          <span class="code-line"><span class="line-number">5</span>   &lt;div class="discount-section mb-4"&gt;</span>
+          <span class="code-line"><span class="line-number">6</span>     &lt;label for="discountCode" class="block text-sm font-medium"&gt;Discount Code&lt;/label&gt;</span>
+          <span class="code-line"><span class="line-number">7</span>     &lt;div class="flex mt-1"&gt;</span>
+          <span class="code-line"><span class="line-number">8</span>       &lt;input type="text" id="discountCode" name="discountCode" </span>
+          <span class="code-line"><span class="line-number">9</span>              class="flex-1 border-gray-300 rounded-md shadow-sm"</span>
+          <span class="code-line"><span class="line-number">10</span>             placeholder="Enter discount code"</span>
+          <span class="code-line"><span class="line-number">11</span>             hx-post="/apply-discount"</span>
+          <span class="code-line"><span class="line-number">12</span>             hx-trigger="keyup changed delay:500ms"</span>
+          <span class="code-line"><span class="line-number">13</span>             hx-target="#discount-response"</span>
+          <span class="code-line"><span class="line-number">14</span>             hx-indicator="#discount-indicator"&gt;</span>
+          <span class="code-line"><span class="line-number">15</span>       &lt;button type="button" class="ml-2 btn-primary"</span>
+          <span class="code-line"><span class="line-number">16</span>               hx-post="/apply-discount"</span>
+          <span class="code-line"><span class="line-number">17</span>               hx-trigger="click"</span>
+          <span class="code-line"><span class="line-number">18</span>               hx-include="#discountCode"</span>
+          <span class="code-line"><span class="line-number">19</span>               hx-target="#discount-response"&gt;</span>
+          <span class="code-line"><span class="line-number">20</span>         Apply</span>
+          <span class="code-line"><span class="line-number">21</span>       &lt;/button&gt;</span>
+          <span class="code-line"><span class="line-number">22</span>     &lt;/div&gt;</span>
+          <span class="code-line"><span class="line-number">23</span>     &lt;div id="discount-indicator" class="htmx-indicator"&gt;</span>
+          <span class="code-line"><span class="line-number">24</span>       &lt;i class="fas fa-spinner fa-spin"&gt;&lt;/i&gt; Validating...</span>
+          <span class="code-line"><span class="line-number">25</span>     &lt;/div&gt;</span>
+          <span class="code-line"><span class="line-number">26</span>     &lt;div id="discount-response"&gt;&lt;/div&gt;</span>
+          <span class="code-line"><span class="line-number">27</span>   &lt;/div&gt;</span>
+          <span class="code-line"><span class="line-number">28</span> </span>
+          <span class="code-line"><span class="line-number">29</span>   &lt;!-- Order summary that updates with HTMX --&gt;</span>
+          <span class="code-line"><span class="line-number">30</span>   &lt;div id="order-summary" hx-get="/order-summary" hx-trigger="load, discountApplied from:body"&gt;</span>
+          <span class="code-line"><span class="line-number">31</span>     &lt;!-- Will be populated by HTMX --&gt;</span>
+          <span class="code-line"><span class="line-number">32</span>   &lt;/div&gt;</span>
+          <span class="code-line"><span class="line-number">33</span> </span>
+          <span class="code-line"><span class="line-number">34</span>   &lt;button type="submit" class="btn-primary"&gt;Complete Purchase&lt;/button&gt;</span>
+          <span class="code-line"><span class="line-number">35</span> &lt;/form&gt;</span>
+        </code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backend Implementation Section -->
+  <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+    <div class="section-toggle flex justify-between items-center cursor-pointer" data-target="backend-implementation">
+      <h3 class="font-bold text-lg text-blue-800">
+        <i class="fas fa-server mr-2 text-blue-600"></i>
+        Backend Implementation (DDD + SOLID, Spring Boot)
+      </h3>
+      <i class="fas fa-chevron-down text-blue-600 transition-transform"></i>
+    </div>
+
+    <div id="backend-implementation" class="section-content mt-4">
+      <h4 class="font-semibold text-blue-700 mb-2">Domain Layer:</h4>
+      <div class="code-container mb-4">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> <span class="code-comment">// DiscountCode.java</span></span>
+          <span class="code-line"><span class="line-number">2</span> <span class="code-keyword">public class</span> <span class="code-variable">DiscountCode</span> {</span>
+          <span class="code-line"><span class="line-number">3</span>   <span class="code-keyword">private</span> <span class="code-variable">DiscountCodeId</span> <span class="code-variable">id</span>;</span>
+          <span class="code-line"><span class="line-number">4</span>   <span class="code-keyword">private</span> <span class="code-variable">String</span> <span class="code-variable">code</span>;</span>
+          <span class="code-line"><span class="line-number">5</span>   <span class="code-keyword">private</span> <span class="code-variable">DiscountType</span> <span class="code-variable">type</span>;</span>
+          <span class="code-line"><span class="line-number">6</span>   <span class="code-keyword">private</span> <span class="code-variable">BigDecimal</span> <span class="code-variable">value</span>;</span>
+          <span class="code-line"><span class="line-number">7</span>   <span class="code-keyword">private</span> <span class="code-variable">LocalDateTime</span> <span class="code-variable">validFrom</span>;</span>
+          <span class="code-line"><span class="line-number">8</span>   <span class="code-keyword">private</span> <span class="code-variable">LocalDateTime</span> <span class="code-variable">validTo</span>;</span>
+          <span class="code-line"><span class="line-number">9</span>   <span class="code-keyword">private</span> <span class="code-variable">Integer</span> <span class="code-variable">usageLimit</span>;</span>
+          <span class="code-line"><span class="line-number">10</span>  <span class="code-keyword">private</span> <span class="code-variable">Integer</span> <span class="code-variable">timesUsed</span> = 0;</span>
+          <span class="code-line"><span class="line-number">11</span>  <span class="code-keyword">private</span> <span class="code-variable">Boolean</span> <span class="code-variable">active</span>;</span>
+          <span class="code-line"><span class="line-number">12</span></span>
+          <span class="code-line"><span class="line-number">13</span>  <span class="code-keyword">public</span> <span class="code-function">boolean</span> <span class="code-function">isValid</span>() {</span>
+          <span class="code-line"><span class="line-number">14</span>    <span class="code-keyword">return</span> <span class="code-variable">active</span> && <span class="code-variable">LocalDateTime</span>.<span class="code-function">now</span>().<span class="code-function">isBefore</span>(<span class="code-variable">validTo</span>) </span>
+          <span class="code-line"><span class="line-number">15</span>        && <span class="code-variable">LocalDateTime</span>.<span class="code-function">now</span>().<span class="code-function">isAfter</span>(<span class="code-variable">validFrom</span>)</span>
+          <span class="code-line"><span class="line-number">16</span>        && (<span class="code-variable">usageLimit</span> == <span class="code-keyword">null</span> || <span class="code-variable">timesUsed</span> &lt; <span class="code-variable">usageLimit</span>);</span>
+          <span class="code-line"><span class="line-number">17</span>  }</span>
+          <span class="code-line"><span class="line-number">18</span> }</span>
+        </code>
+      </div>
+
+      <h4 class="font-semibold text-blue-700 mb-2">Application Layer:</h4>
+      <div class="code-container mb-4">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> <span class="code-comment">// ApplyDiscountCommand.java</span></span>
+          <span class="code-line"><span class="line-number">2</span> <span class="code-keyword">public record</span> <span class="code-variable">ApplyDiscountCommand</span>(<span class="code-variable">String</span> <span class="code-variable">orderId</span>, <span class="code-variable">String</span> <span class="code-variable">discountCode</span>) {}</span>
+          <span class="code-line"><span class="line-number">3</span> </span>
+          <span class="code-line"><span class="line-number">4</span> <span class="code-comment">// ApplyDiscountHandler.java</span></span>
+          <span class="code-line"><span class="line-number">5</span> <span class="code-keyword">@Service</span></span>
+          <span class="code-line"><span class="line-number">6</span> <span class="code-keyword">@Transactional</span></span>
+          <span class="code-line"><span class="line-number">7</span> <span class="code-keyword">public class</span> <span class="code-variable">ApplyDiscountHandler</span> {</span>
+          <span class="code-line"><span class="line-number">8</span>   <span class="code-keyword">private final</span> <span class="code-variable">OrderRepository</span> <span class="code-variable">orderRepository</span>;</span>
+          <span class="code-line"><span class="line-number">9</span>   <span class="code-keyword">private final</span> <span class="code-variable">DiscountCodeRepository</span> <span class="code-variable">discountCodeRepository</span>;</span>
+          <span class="code-line"><span class="line-number">10</span> </span>
+          <span class="code-line"><span class="line-number">11</span>  <span class="code-keyword">public</span> <span class="code-variable">Order</span> <span class="code-function">handle</span>(<span class="code-variable">ApplyDiscountCommand</span> <span class="code-variable">command</span>) {</span>
+          <span class="code-line"><span class="line-number">12</span>    <span class="code-variable">Order</span> <span class="code-variable">order</span> = <span class="code-variable">orderRepository</span>.<span class="code-function">findById</span>(<span class="code-variable">command</span>.<span class="code-variable">orderId</span>())</span>
+          <span class="code-line"><span class="line-number">13</span>        .<span class="code-function">orElseThrow</span>(() -> <span class="code-keyword">new</span> <span class="code-variable">OrderNotFoundException</span>(<span class="code-variable">command</span>.<span class="code-variable">orderId</span>()));</span>
+          <span class="code-line"><span class="line-number">14</span>    </span>
+          <span class="code-line"><span class="line-number">15</span>    <span class="code-variable">DiscountCode</span> <span class="code-variable">discountCode</span> = <span class="code-variable">discountCodeRepository</span>.<span class="code-function">findByCode</span>(<span class="code-variable">command</span>.<span class="code-variable">discountCode</span>())</span>
+          <span class="code-line"><span class="line-number">16</span>        .<span class="code-function">orElseThrow</span>(() -> <span class="code-keyword">new</span> <span class="code-variable">InvalidDiscountCodeException</span>(<span class="code-string">"Discount code not found"</span>));</span>
+          <span class="code-line"><span class="line-number">17</span>    </span>
+          <span class="code-line"><span class="line-number">18</span>    <span class="code-keyword">if</span> (!<span class="code-variable">discountCode</span>.<span class="code-function">isValid</span>()) {</span>
+          <span class="code-line"><span class="line-number">19</span>      <span class="code-keyword">throw new</span> <span class="code-variable">InvalidDiscountCodeException</span>(<span class="code-string">"Discount code is not valid"</span>);</span>
+          <span class="code-line"><span class="line-number">20</span>    }</span>
+          <span class="code-line"><span class="line-number">21</span>    </span>
+          <span class="code-line"><span class="line-number">22</span>    <span class="code-variable">order</span>.<span class="code-function">applyDiscount</span>(<span class="code-variable">discountCode</span>);</span>
+          <span class="code-line"><span class="line-number">23</span>    <span class="code-keyword">return</span> <span class="code-variable">orderRepository</span>.<span class="code-function">save</span>(<span class="code-variable">order</span>);</span>
+          <span class="code-line"><span class="line-number">24</span>  }</span>
+          <span class="code-line"><span class="line-number">25</span> }</span>
+        </code>
+      </div>
+
+      <h4 class="font-semibold text-blue-700 mb-2">Infrastructure Layer:</h4>
+      <div class="code-container mb-4">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> <span class="code-comment">// JpaDiscountCodeRepository.java</span></span>
+          <span class="code-line"><span class="line-number">2</span> <span class="code-keyword">@Repository</span></span>
+          <span class="code-line"><span class="line-number">3</span> <span class="code-keyword">public interface</span> <span class="code-variable">JpaDiscountCodeRepository</span> <span class="code-keyword">extends</span> <span class="code-variable">JpaRepository</span>&lt;<span class="code-variable">DiscountCode</span>, <span class="code-variable">Long</span>&gt; {</span>
+          <span class="code-line"><span class="line-number">4</span>   <span class="code-variable">Optional</span>&lt;<span class="code-variable">DiscountCode</span>&gt; <span class="code-function">findByCode</span>(<span class="code-variable">String</span> <span class="code-variable">code</span>);</span>
+          <span class="code-line"><span class="line-number">5</span>   <span class="code-variable">List</span>&lt;<span class="code-variable">DiscountCode</span>&gt; <span class="code-function">findByActiveTrueAndValidToAfter</span>(<span class="code-variable">LocalDateTime</span> <span class="code-variable">date</span>);</span>
+          <span class="code-line"><span class="line-number">6</span> }</span>
+        </code>
+      </div>
+
+      <h4 class="font-semibold text-blue-700 mb-2">Presentation Layer:</h4>
+      <div class="code-container">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> <span class="code-comment">// DiscountController.java</span></span>
+          <span class="code-line"><span class="line-number">2</span> <span class="code-keyword">@Controller</span></span>
+          <span class="code-line"><span class="line-number">3</span> <span class="code-keyword">public class</span> <span class="code-variable">DiscountController</span> {</span>
+          <span class="code-line"><span class="line-number">4</span>   <span class="code-keyword">private final</span> <span class="code-variable">ApplyDiscountHandler</span> <span class="code-variable">applyDiscountHandler</span>;</span>
+          <span class="code-line"><span class="line-number">5</span> </span>
+          <span class="code-line"><span class="line-number">6</span>   <span class="code-keyword">@PostMapping</span>(<span class="code-string">"/apply-discount"</span>)</span>
+          <span class="code-line"><span class="line-number">7</span>   <span class="code-keyword">public</span> <span class="code-variable">String</span> <span class="code-function">applyDiscount</span>(<span class="code-keyword">@RequestParam</span> <span class="code-variable">String</span> <span class="code-variable">discountCode</span>, </span>
+          <span class="code-line"><span class="line-number">8</span>                           <span class="code-keyword">@SessionAttribute</span> <span class="code-variable">String</span> <span class="code-variable">orderId</span>,</span>
+          <span class="code-line"><span class="line-number">9</span>                           <span class="code-variable">Model</span> <span class="code-variable">model</span>) {</span>
+          <span class="code-line"><span class="line-number">10</span>    <span class="code-keyword">try</span> {</span>
+          <span class="code-line"><span class="line-number">11</span>      <span class="code-variable">ApplyDiscountCommand</span> <span class="code-variable">command</span> = <span class="code-keyword">new</span> <span class="code-variable">ApplyDiscountCommand</span>(<span class="code-variable">orderId</span>, <span class="code-variable">discountCode</span>);</span>
+          <span class="code-line"><span class="line-number">12</span>      <span class="code-variable">Order</span> <span class="code-variable">order</span> = <span class="code-variable">applyDiscountHandler</span>.<span class="code-function">handle</span>(<span class="code-variable">command</span>);</span>
+          <span class="code-line"><span class="line-number">13</span>      </span>
+          <span class="code-line"><span class="line-number">14</span>      <span class="code-variable">model</span>.<span class="code-function">addAttribute</span>(<span class="code-string">"success"</span>, <span class="code-keyword">true</span>);</span>
+          <span class="code-line"><span class="line-number">15</span>      <span class="code-variable">model</span>.<span class="code-function">addAttribute</span>(<span class="code-string">"message"</span>, <span class="code-string">"Discount applied successfully"</span>);</span>
+          <span class="code-line"><span class="line-number">16</span>      <span class="code-variable">model</span>.<span class="code-function">addAttribute</span>(<span class="code-string">"discountAmount"</span>, <span class="code-variable">order</span>.<span class="code-function">getDiscountAmount</span>());</span>
+          <span class="code-line"><span class="line-number">17</span>    } <span class="code-keyword">catch</span> (<span class="code-variable">InvalidDiscountCodeException</span> | <span class="code-variable">OrderNotFoundException</span> <span class="code-variable">e</span>) {</span>
+          <span class="code-line"><span class="line-number">18</span>      <span class="code-variable">model</span>.<span class="code-function">addAttribute</span>(<span class="code-string">"success"</span>, <span class="code-keyword">false</span>);</span>
+          <span class="code-line"><span class="line-number">19</span>      <span class="code-variable">model</span>.<span class="code-function">addAttribute</span>(<span class="code-string">"message"</span>, <span class="code-variable">e</span>.<span class="code-function">getMessage</span>());</span>
+          <span class="code-line"><span class="line-number">20</span>    }</span>
+          <span class="code-line"><span class="line-number">21</span>    </span>
+          <span class="code-line"><span class="line-number">22</span>    <span class="code-keyword">return</span> <span class="code-string">"fragments :: discount-response"</span>;</span>
+          <span class="code-line"><span class="line-number">23</span>  }</span>
+          <span class="code-line"><span class="line-number">24</span> }</span>
+        </code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database Schema Section -->
+  <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+    <div class="section-toggle flex justify-between items-center cursor-pointer" data-target="database-schema">
+      <h3 class="font-bold text-lg text-blue-800">
+        <i class="fas fa-database mr-2 text-blue-600"></i>
+        Database Schema/Model Changes
+      </h3>
+      <i class="fas fa-chevron-down text-blue-600 transition-transform"></i>
+    </div>
+
+    <div id="database-schema" class="section-content mt-4">
+      <div class="code-container">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> <span class="code-comment">-- New discount_codes table</span></span>
+          <span class="code-line"><span class="line-number">2</span> <span class="code-keyword">CREATE TABLE</span> <span class="code-variable">discount_codes</span> (</span>
+          <span class="code-line"><span class="line-number">3</span>   <span class="code-variable">id</span> <span class="code-variable">BIGINT</span> <span class="code-keyword">AUTO_INCREMENT PRIMARY KEY</span>,</span>
+          <span class="code-line"><span class="line-number">4</span>   <span class="code-variable">code</span> <span class="code-variable">VARCHAR</span>(<span class="code-number">20</span>) <span class="code-keyword">NOT NULL UNIQUE</span>,</span>
+          <span class="code-line"><span class="line-number">5</span>   <span class="code-variable">type</span> <span class="code-variable">ENUM</span>(<span class="code-string">'PERCENTAGE'</span>, <span class="code-string">'FIXED_AMOUNT'</span>) <span class="code-keyword">NOT NULL</span>,</span>
+          <span class="code-line"><span class="line-number">6</span>   <span class="code-variable">value</span> <span class="code-variable">DECIMAL</span>(<span class="code-number">10</span>, <span class="code-number">2</span>) <span class="code-keyword">NOT NULL</span>,</span>
+          <span class="code-line"><span class="line-number">7</span>   <span class="code-variable">valid_from</span> <span class="code-variable">DATETIME</span> <span class="code-keyword">NOT NULL</span>,</span>
+          <span class="code-line"><span class="line-number">8</span>   <span class="code-variable">valid_to</span> <span class="code-variable">DATETIME</span> <span class="code-keyword">NOT NULL</span>,</span>
+          <span class="code-line"><span class="line-number">9</span>   <span class="code-variable">usage_limit</span> <span class="code-variable">INT</span> <span class="code-keyword">NULL</span>,</span>
+          <span class="code-line"><span class="line-number">10</span>  <span class="code-variable">times_used</span> <span class="code-variable">INT</span> <span class="code-keyword">DEFAULT</span> <span class="code-number">0</span>,</span>
+          <span class="code-line"><span class="line-number">11</span>  <span class="code-variable">active</span> <span class="code-variable">BOOLEAN</span> <span class="code-keyword">DEFAULT TRUE</span>,</span>
+          <span class="code-line"><span class="line-number">12</span>  <span class="code-variable">created_at</span> <span class="code-variable">TIMESTAMP</span> <span class="code-keyword">DEFAULT CURRENT_TIMESTAMP</span>,</span>
+          <span class="code-line"><span class="line-number">13</span>  <span class="code-variable">updated_at</span> <span class="code-variable">TIMESTAMP</span> <span class="code-keyword">DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</span></span>
+          <span class="code-line"><span class="line-number">14</span> );</span>
+          <span class="code-line"><span class="line-number">15</span> </span>
+          <span class="code-line"><span class="line-number">16</span> <span class="code-comment">-- Add discount columns to orders table</span></span>
+          <span class="code-line"><span class="line-number">17</span> <span class="code-keyword">ALTER TABLE</span> <span class="code-variable">orders</span></span>
+          <span class="code-line"><span class="line-number">18</span> <span class="code-keyword">ADD COLUMN</span> <span class="code-variable">discount_code_id</span> <span class="code-variable">BIGINT</span> <span class="code-keyword">NULL</span>,</span>
+          <span class="code-line"><span class="line-number">19</span> <span class="code-keyword">ADD COLUMN</span> <span class="code-variable">discount_amount</span> <span class="code-variable">DECIMAL</span>(<span class="code-number">10</span>, <span class="code-number">2</span>) <span class="code-keyword">DEFAULT 0</span>,</span>
+          <span class="code-line"><span class="line-number">20</span> <span class="code-keyword">ADD CONSTRAINT</span> <span class="code-variable">fk_orders_discount_code</span> </span>
+          <span class="code-line"><span class="line-number">21</span>   <span class="code-keyword">FOREIGN KEY</span> (<span class="code-variable">discount_code_id</span>) <span class="code-keyword">REFERENCES</span> <span class="code-variable">discount_codes</span>(<span class="code-variable">id</span>);</span>
+        </code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Configuration Section -->
+  <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+    <div class="section-toggle flex justify-between items-center cursor-pointer" data-target="application-config">
+      <h3 class="font-bold text-lg text-blue-800">
+        <i class="fas fa-cog mr-2 text-blue-600"></i>
+        Application Configuration (application.yml)
+      </h3>
+      <i class="fas fa-chevron-down text-blue-600 transition-transform"></i>
+    </div>
+
+    <div id="application-config" class="section-content mt-4">
+      <div class="code-container">
+        <code>
+          <span class="code-line"><span class="line-number">1</span> <span class="code-comment"># application.yml</span></span>
+          <span class="code-line"><span class="line-number">2</span> <span class="code-variable">spring:</span></span>
+          <span class="code-line"><span class="line-number">3</span>   <span class="code-variable">datasource:</span></span>
+          <span class="code-line"><span class="line-number">4</span>     <span class="code-variable">url:</span> <span class="code-variable">jdbc:mysql://localhost:3306/ecommerce_db</span></span>
+          <span class="code-line"><span class="line-number">5</span>     <span class="code-variable">username:</span> <span class="code-variable">app_user</span></span>
+          <span class="code-line"><span class="line-number">6</span>     <span class="code-variable">password:</span> <span class="code-variable">${DB_PASSWORD:default_password}</span></span>
+          <span class="code-line"><span class="line-number">7</span>     <span class="code-variable">driver-class-name:</span> <span class="code-variable">com.mysql.cj.jdbc.Driver</span></span>
+          <span class="code-line"><span class="line-number">8</span> </span>
+          <span class="code-line"><span class="line-number">9</span>   <span class="code-variable">jpa:</span></span>
+          <span class="code-line"><span class="line-number">10</span>    <span class="code-variable">hibernate:</span></span>
+          <span class="code-line"><span class="line-number">11</span>      <span class="code-variable">ddl-auto:</span> <span class="code-variable">validate</span></span>
+          <span class="code-line"><span class="line-number">12</span>    <span class="code-variable">properties:</span></span>
+          <span class="code-line"><span class="line-number">13</span>      <span class="code-variable">hibernate:</span></span>
+          <span class="code-line"><span class="line-number">14</span>        <span class="code-variable">dialect:</span> <span class="code-variable">org.hibernate.dialect.MySQL8Dialect</span></span>
+          <span class="code-line"><span class="line-number">15</span>        <span class="code-variable">format_sql:</span> <span class="code-keyword">true</span></span>
+          <span class="code-line"><span class="line-number">16</span>    <span class="code-variable">show-sql:</span> <span class="code-keyword">true</span></span>
+          <span class="code-line"><span class="line-number">17</span> </span>
+          <span class="code-line"><span class="line-number">18</span>   <span class="code-variable">thymeleaf:</span></span>
+          <span class="code-line"><span class="line-number">19</span>    <span class="code-variable">cache:</span> <span class="code-keyword">false</span></span>
+          <span class="code-line"><span class="line-number">20</span>    <span class="code-variable">prefix:</span> <span class="code-variable">classpath:/templates/</span></span>
+          <span class="code-line"><span class="line-number">21</span>    <span class="code-variable">suffix:</span> <span class="code-variable">.html</span></span>
+          <span class="code-line"><span class="line-number">22</span> </span>
+          <span class="code-line"><span class="line-number">23</span> <span class="code-variable">server:</span></span>
+          <span class="code-line"><span class="line-number">24</span>   <span class="code-variable">port:</span> <span class="code-number">8080</span></span>
+          <span class="code-line"><span class="line-number">25</span> </span>
+          <span class="code-line"><span class="line-number">26</span> <span class="code-variable">logging:</span></span>
+          <span class="code-line"><span class="line-number">27</span>   <span class="code-variable">level:</span></span>
+          <span class="code-line"><span class="line-number">28</span>     <span class="code-variable">com.example.ecommerce:</span> <span class="code-variable">DEBUG</span></span>
+          <span class="code-line"><span class="line-number">29</span>     <span class="code-variable">org.hibernate.SQL:</span> <span class="code-variable">DEBUG</span></span>
+          <span class="code-line"><span class="line-number">30</span> </span>
+          <span class="code-line"><span class="line-number">31</span> <span class="code-comment"># Custom application properties</span></span>
+          <span class="code-line"><span class="line-number">32</span> <span class="code-variable">app:</span></span>
+          <span class="code-line"><span class="line-number">33</span>   <span class="code-variable">discount:</span></span>
+          <span class="code-line"><span class="line-number">34</span>     <span class="code-variable">max-percentage:</span> <span class="code-number">50</span></span>
+          <span class="code-line"><span class="line-number">35</span>     <span class="code-variable">validation-timeout-ms:</span> <span class="code-number">2000</span></span>
+        </code>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Review Form -->
+  <div class="review-form mb-6">
+    <h3 class="text-lg font-semibold text-blue-800 mb-4">
+      <i class="fas fa-comments mr-2 text-blue-600"></i>
+      Submit Code Review
+    </h3>
+
+    <form class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 text-sm font-medium mb-2" for="email">
+            Email Address
+          </label>
+          <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 id="email" type="email" placeholder="your.email@example.com" required>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 text-sm font-medium mb-2" for="comment">
+          Review Comments
+        </label>
+        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  id="comment" rows="5" placeholder="Provide detailed feedback on the code..." required></textarea>
+      </div>
+
+      <div class="flex items-center">
+        <input class="mr-2" type="checkbox" id="approve">
+        <label class="text-gray-700 text-sm" for="approve">
+          Approve this code for merge
+        </label>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-4">
+        <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+          Cancel
+        </button>
+        <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-md flex items-center action-btn">
+          <i class="fas fa-paper-plane mr-2"></i>
+          Submit Review
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Section toggle functionality
+        const sectionToggles = document.querySelectorAll('.section-toggle');
+        sectionToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const targetId = toggle.getAttribute('data-target');
+                const targetSection = document.getElementById(targetId);
+                const icon = toggle.querySelector('i');
+
+                targetSection.classList.toggle('expanded');
+            });
+        });
+    });
+  </script>
+</div>
+</body>
+</html>

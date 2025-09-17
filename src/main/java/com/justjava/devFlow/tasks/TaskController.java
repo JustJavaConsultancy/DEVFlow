@@ -25,4 +25,8 @@ public class TaskController {
     public String getUAT(){
         return "tasks/UAT";
     }
+    @GetMapping("/codeReview")
+    public String getCodeReview(){
+        return "tasks/codeReview";
+    }
 }
