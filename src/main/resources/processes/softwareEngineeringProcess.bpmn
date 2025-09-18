@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" exporter="Flowable Design" exporterVersion="2025.1.02" design:palette="flowable-work-process-palette">
+  <process id="softwareEngineeringProcess" name="Software Engineering Process" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
+    <documentation>Form Submission URL: @{http://localhost:9000/processes/start}
+
+Submit button caption : Start
+projectOwner:
+type: text
+label: Project Owner
+placeholder: Project Owner
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+email:
+type: text
+label: Email
+placeholder: Email
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+phoneNumber:
+type: text
+label: Phone Number
+placeholder: Phone Number
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+address:
+type: text
+label: Address
+placeholder: Address
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12
+
+requirement:
+type: textarea
+label: Requirement
+placeholder: Enter your Detailed Requirement
+required: true
+labelCss: block text-sm font-medium text-slate-300 mb-2
+inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
+    <extensionElements>
+      <flowable:processInstanceName><![CDATA[${projectName}]]></flowable:processInstanceName>
+      <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
+      <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
+      <design:creationdate><![CDATA[2025-09-17T11:24:18.074Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2025-09-17T11:27:49.707Z]]></design:modificationdate>
+    </extensionElements>
+    <userTask id="FormTask_43" name="Review User Stories List" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <userTask id="FormTask_1" name="Review Current User Story Implementation" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <userTask id="FormTask_3" name="Code Cleanup" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <userTask id="FormTask_4" name="UAT" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <userTask id="FormTask_5" name="Deliver the Project" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <userTask id="FormTask_11" name="Solution Architecture Review" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <documentation>Create a form to collect the following information:
+                                
+                1. architectureApproved:
+                   - Type: boolean
+                   - Label: Approve the architecture
+                   - Placeholder: Approve the architecture
+                   - Required
+                                
+                2. architecture:
+                   - Type: text
+                   - Label: Solution Architecture
+                   - Placeholder: Enter Project Description
+                   - Required
+                   
+
+                Include HTMX attributes to submit the form asynchronously to `/submitForm`, and replace the form container with the response.</documentation>
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <serviceTask id="HttpTask_11" name="Analyze the Requirement" flowable:parallelInSameTransaction="false" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[POST]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/analyzerequirement]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestBody">
+          <flowable:expression><![CDATA[${requirement}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[500000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="disallowRedirects">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[aiRequirementAnalysis]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="ignoreException">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveRequestVariables">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParametersTransient">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseVariableAsJson">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <userTask id="FormTask_12" name="Review The SRS" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <serviceTask id="HttpTask_12" name="AgenticAI-Solution Architect" flowable:parallelInSameTransaction="false" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[POST]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/architect]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestBody">
+          <flowable:expression><![CDATA[${architectureRequestBody}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[500000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="disallowRedirects">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[architecture]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="ignoreException">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveRequestVariables">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParametersTransient">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseVariableAsJson">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <scriptTask id="ServiceTask_26" name="Select the Next User Story" scriptFormat="javascript" flowable:autoStoreVariables="false">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[// Retrieve the stories process variable (map containing user_stories and total)
+var u_stories = execution.getVariable('stories');
+var architecture = execution.getVariable('architecture');
+
+architecture = architecture.replace("")
+print("The u_stories around here======" + u_stories);
+
+// Extract the user stories list and total count
+var storiesList = u_stories.get("user_stories");
+var totalStories = u_stories.get("total");
+
+print("The storiesList around here======" + storiesList);
+
+// Check if storiesList exists and is not empty
+if (storiesList !== null && storiesList.size() > 0) {
+    // Get the first item from storiesList using proper Java list method
+    var firstStory = storiesList.get(0);
+    
+    // Ensure firstStory is not null and is a valid object
+    if (firstStory !== null && firstStory !== undefined) {
+        // Get or create completedStories list
+        var completedStories = execution.getVariable('completedStories');
+        if (completedStories === null) {
+            completedStories = new java.util.ArrayList();
+        }
+        
+        // Add first story to completedStories (only if it's a valid Java object)
+        completedStories.add(firstStory);
+        var usCode = "usCode" + completedStories.size();
+        
+        // Remove the first story from storiesList using index
+        storiesList.remove(0);
+        
+        // Update the map with the modified list
+        u_stories.put("user_stories", storiesList);
+        
+        // Check if all stories are completed
+        if (completedStories.size() === totalStories) {
+            execution.setVariable('completed', true);
+        } else {
+            execution.setVariable('completed', false);
+        }
+        
+        // Set process variables
+        execution.setVariable('completedStories', completedStories);
+        execution.setVariable('activeStory', firstStory);
+        execution.setVariable('stories', u_stories); // Store the updated map
+        execution.setVariable('usCode', usCode);
+        execution.setVariable('totalStories', totalStories);
+        execution.setVariable('developmentProgress', architecture + 'Select number ' + completedStories.size() + ' user story ');
+    } else {
+        // Handle case when firstStory is null or undefined
+        execution.setVariable('activeStory', null);
+        execution.setVariable('completed', true);
+        print("Error: First story is null or undefined");
+    }
+} else {
+    // Handle case when storiesList is empty or null
+    execution.setVariable('activeStory', null);
+    execution.setVariable('completed', true);
+    print("Info: No more stories to process");
+}]]></script>
+    </scriptTask>
+    <serviceTask id="ServiceTask_27" name="StringToMapConverter" flowable:delegateExpression="${stringToMapConverter}">
+      <extensionElements>
+        <flowable:field name="variableToConvertToMap">
+          <flowable:string><![CDATA[stories]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[ServiceTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="HttpTask_43" name="Generate Development Guides" flowable:parallelInSameTransaction="false" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[POST]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/generateCode]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestBody">
+          <flowable:expression><![CDATA[${developmentProgress}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[100000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="disallowRedirects">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[storyDevelopmentDetail]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="ignoreException">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveRequestVariables">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParametersTransient">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseVariableAsJson">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <scriptTask id="ScriptTask_44" name="Set Architecture Request Body" scriptFormat="javascript" flowable:autoStoreVariables="false">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[// Create Java HashMap
+var HashMap = Java.type("java.util.HashMap");
+var ObjectMapper = Java.type("com.fasterxml.jackson.databind.ObjectMapper");
+
+var data = new HashMap();
+
+// Get the stories variable
+// var stories = execution.getVariable("stories"); // This is a Map
+var u_stories = execution.getVariable('stories');
+
+print(" The u_stories around here======"+u_stories);
+var stories = u_stories.get("user_stories");
+
+// Safely get the requirement with default
+var requirement = execution.getVariable("aiRequirementAnalysis");
+if (requirement === null) {
+    requirement = "Unknown";
+}
+
+// Put values in the HashMap
+data.put("requirement", requirement);
+data.put("stories", stories);
+
+// Convert HashMap to JSON string using Jackson ObjectMapper
+var mapper = new ObjectMapper();
+try {
+    var dataStr = mapper.writeValueAsString(data);
+    print("architectureRequestBody: " + dataStr);
+    execution.setVariable("architectureRequestBody", dataStr);
+} catch (e) {
+    print("Error converting to JSON: " + e.getMessage());
+    // Fallback: create a simple string representation
+    var fallbackStr = "architecture: " + requirement + ", stories: " + stories;
+    execution.setVariable("architectureRequestBody", fallbackStr);
+}]]></script>
+    </scriptTask>
+    <serviceTask id="HttpTask_22" name="AgenticAI - Develop&amp; Prioritize User Stories" flowable:parallelInSameTransaction="false" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[POST]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/prioritization]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestBody">
+          <flowable:expression><![CDATA[${aiRequirementAnalysis}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[500000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="disallowRedirects">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[stories]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="ignoreException">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveRequestVariables">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParametersTransient">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseVariableAsJson">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <userTask id="requirement_elicitation" name="Requirement Elicitation" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="Exclusive_Databased_Gateway_3" name="featuresCompleted?">
+      <extensionElements>
+        <design:stencilid><![CDATA[Exclusive_Databased_Gateway]]></design:stencilid>
+        <design:display_ref_in_diagram><![CDATA[true]]></design:display_ref_in_diagram>
+      </extensionElements>
+    </exclusiveGateway>
+    <exclusiveGateway id="Exclusive_Databased_Gateway_4" name="UAT Accepted?">
+      <extensionElements>
+        <design:stencilid><![CDATA[Exclusive_Databased_Gateway]]></design:stencilid>
+        <design:display_ref_in_diagram><![CDATA[true]]></design:display_ref_in_diagram>
+      </extensionElements>
+    </exclusiveGateway>
+    <startEvent id="startnoneevent1" flowable:initiator="initiator" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[StartNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="EndNoneEvent_11">
+      <extensionElements>
+        <design:stencilid><![CDATA[EndNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_46" sourceRef="FormTask_43" targetRef="ScriptTask_44">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_47" sourceRef="FormTask_1" targetRef="FormTask_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_6" sourceRef="FormTask_3" targetRef="Exclusive_Databased_Gateway_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_8" sourceRef="FormTask_4" targetRef="Exclusive_Databased_Gateway_4">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_12" sourceRef="FormTask_5" targetRef="EndNoneEvent_11">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_55" sourceRef="FormTask_11" targetRef="ServiceTask_26">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_49" sourceRef="HttpTask_11" targetRef="FormTask_12">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_43" sourceRef="FormTask_12" targetRef="HttpTask_22">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_20" sourceRef="HttpTask_12" targetRef="FormTask_11">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_45" sourceRef="ServiceTask_26" targetRef="HttpTask_43">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_52" sourceRef="ServiceTask_27" targetRef="FormTask_43">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_50" sourceRef="HttpTask_43" targetRef="FormTask_1">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_53" sourceRef="ScriptTask_44" targetRef="HttpTask_12">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_51" sourceRef="HttpTask_22" targetRef="ServiceTask_27">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_48" sourceRef="requirement_elicitation" targetRef="HttpTask_11">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_3" name="Not Completed" sourceRef="Exclusive_Databased_Gateway_3" targetRef="ServiceTask_26">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+        <design:display_ref_in_diagram><![CDATA[true]]></design:display_ref_in_diagram>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!completed}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_7" sourceRef="Exclusive_Databased_Gateway_3" targetRef="FormTask_4">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${completed}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_9" name="Not Accepted" sourceRef="Exclusive_Databased_Gateway_4" targetRef="FormTask_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+        <design:display_ref_in_diagram><![CDATA[true]]></design:display_ref_in_diagram>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!accepted}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_10" sourceRef="Exclusive_Databased_Gateway_4" targetRef="FormTask_5">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${accepted}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_26" sourceRef="startnoneevent1" targetRef="requirement_elicitation">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_softwareEngineeringProcess">
+    <bpmndi:BPMNPlane bpmnElement="softwareEngineeringProcess" id="BPMNPlane_softwareEngineeringProcess">
+      <bpmndi:BPMNShape bpmnElement="FormTask_43" id="BPMNShape_FormTask_43">
+        <omgdc:Bounds height="80.00000000000003" width="100.0" x="1604.009664000002" y="235.99999999999997"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_1" id="BPMNShape_FormTask_1">
+        <omgdc:Bounds height="80.0" width="100.0" x="3345.500356620259" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_3" id="BPMNShape_FormTask_3">
+        <omgdc:Bounds height="80.0" width="100.0" x="3624.3872046202596" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_4" id="BPMNShape_FormTask_4">
+        <omgdc:Bounds height="80.0" width="100.0" x="4129.587204620259" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_5" id="BPMNShape_FormTask_5">
+        <omgdc:Bounds height="80.0" width="100.0" x="4700.587204620259" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_11" id="BPMNShape_FormTask_11">
+        <omgdc:Bounds height="80.0" width="100.0" x="2183.3199999999997" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HttpTask_11" id="BPMNShape_HttpTask_11">
+        <omgdc:Bounds height="80.0" width="100.0" x="850.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_12" id="BPMNShape_FormTask_12">
+        <omgdc:Bounds height="80.0" width="100.0" x="1037.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HttpTask_12" id="BPMNShape_HttpTask_12">
+        <omgdc:Bounds height="80.0" width="99.99999999999977" x="1966.4799999999998" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ServiceTask_26" id="BPMNShape_ServiceTask_26">
+        <omgdc:Bounds height="80.0" width="100.0" x="2870.840004620259" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ServiceTask_27" id="BPMNShape_ServiceTask_27">
+        <omgdc:Bounds height="80.0" width="100.0" x="1420.6799999999998" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HttpTask_43" id="BPMNShape_HttpTask_43">
+        <omgdc:Bounds height="80.0" width="100.0" x="3110.68" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ScriptTask_44" id="BPMNShape_ScriptTask_44">
+        <omgdc:Bounds height="80.0" width="100.0" x="1783.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HttpTask_22" id="BPMNShape_HttpTask_22">
+        <omgdc:Bounds height="80.0" width="100.0" x="1239.0800000000004" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="requirement_elicitation" id="BPMNShape_requirement_elicitation">
+        <omgdc:Bounds height="80.0" width="100.0" x="609.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Exclusive_Databased_Gateway_3" id="BPMNShape_Exclusive_Databased_Gateway_3">
+        <omgdc:Bounds height="40.0" width="40.0" x="3934.5872046202594" y="256.0"></omgdc:Bounds>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.0" width="108.0" x="3900.0" y="300.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Exclusive_Databased_Gateway_4" id="BPMNShape_Exclusive_Databased_Gateway_4">
+        <omgdc:Bounds height="40.0" width="40.0" x="4435.587204620259" y="256.0"></omgdc:Bounds>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.0" width="82.0" x="4418.0" y="228.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startnoneevent1" id="BPMNShape_startnoneevent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="458.0" y="261.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="EndNoneEvent_11" id="BPMNShape_EndNoneEvent_11">
+        <omgdc:Bounds height="28.0" width="28.0" x="4905.787204620259" y="262.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_48" id="BPMNEdge_SequenceFlow_48" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="709.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="850.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_26" id="BPMNEdge_SequenceFlow_26" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="488.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="548.5" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="548.5" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="609.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_49" id="BPMNEdge_SequenceFlow_49" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="950.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1037.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_55" id="BPMNEdge_SequenceFlow_55" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="2283.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2870.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_12" id="BPMNEdge_SequenceFlow_12" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="4800.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="4905.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_45" id="BPMNEdge_SequenceFlow_45" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="2970.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3110.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_46" id="BPMNEdge_SequenceFlow_46" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="1704.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1743.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1743.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1783.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_8" id="BPMNEdge_SequenceFlow_8" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="20.0" flowable:targetDockerY="20.0">
+        <omgdi:waypoint x="4229.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="4435.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_47" id="BPMNEdge_SequenceFlow_47" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="3445.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3624.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_9" id="BPMNEdge_SequenceFlow_9" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="4454.0" y="296.0"></omgdi:waypoint>
+        <omgdi:waypoint x="4455.0" y="550.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3674.0" y="550.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3673.0" y="316.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.0" width="71.0" x="5860.0" y="376.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_6" id="BPMNEdge_SequenceFlow_6" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="20.0" flowable:targetDockerY="20.0">
+        <omgdi:waypoint x="3724.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3934.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_7" id="BPMNEdge_SequenceFlow_7" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="3974.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="4129.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_3" id="BPMNEdge_SequenceFlow_3" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="3953.0" y="256.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3954.0" y="87.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2920.0" y="87.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2919.0" y="236.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.0" width="80.0" x="4522.0" y="255.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_51" id="BPMNEdge_SequenceFlow_51" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="1339.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1420.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_52" id="BPMNEdge_SequenceFlow_52" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="1520.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1604.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_20" id="BPMNEdge_SequenceFlow_20" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="2066.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2183.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_53" id="BPMNEdge_SequenceFlow_53" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="1883.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1966.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_43" id="BPMNEdge_SequenceFlow_43" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="1137.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1239.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_10" id="BPMNEdge_SequenceFlow_10" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="4475.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="4700.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_50" id="BPMNEdge_SequenceFlow_50" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="3210.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="3345.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

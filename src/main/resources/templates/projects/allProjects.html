@@ -35,7 +35,7 @@
     </style>
 </head>
 <body>
-<div layout:fragment="content">
+<div layout:fragment="content" id="main">
     <!-- Page Title and Actions -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
@@ -54,42 +54,42 @@
         <!-- Total Projects -->
         <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-4 md:p-6 text-white shadow-md">
             <i class="fas fa-project-diagram text-2xl md:text-3xl mb-4 text-blue-200"></i>
-            <h3 class="text-xl md:text-2xl font-bold mb-1">12</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-1" th:text="${activeProject}">12</h3>
             <p class="text-blue-200 text-sm md:text-base">Total Projects</p>
         </div>
 
         <!-- Active -->
         <div class="bg-gradient-to-r from-green-500 to-emerald-700 rounded-xl p-4 md:p-6 text-white shadow-md">
             <i class="fas fa-spinner text-2xl md:text-3xl mb-4 text-blue-200"></i>
-            <h3 class="text-xl md:text-2xl font-bold mb-1">7</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-1" th:text="${activeProject}">7</h3>
             <p class="text-blue-200 text-sm md:text-base">Active</p>
         </div>
 
         <!-- Completed -->
         <div class="bg-gradient-to-r from-purple-600 to-pink-700 rounded-xl p-4 md:p-6 text-white shadow-md">
             <i class="fas fa-check-circle text-2xl md:text-3xl mb-4 text-blue-200"></i>
-            <h3 class="text-xl md:text-2xl font-bold mb-1">3</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-1" th:text="${completedProject}">3</h3>
             <p class="text-blue-200 text-sm md:text-base">Completed</p>
         </div>
     </div>
 
     <!-- Projects Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <div th:each="project, iterStat : ${projects}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <!-- Project Card 1 -->
         <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">E-Commerce Platform</h3>
+                <h3 class="font-bold text-blue-700 text-base md:text-lg" th:text="${project.processVariables['projectName']}">E-Commerce Platform</h3>
                 <span class="bg-blue-100 text-blue-700 text-xs px-2 md:px-3 py-1 rounded-full">Development</span>
             </div>
 
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
+            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden" th:text="${project.processVariables['projectDescription']}">
                 Build a full-featured e-commerce platform with payment integration and inventory management.
             </p>
 
             <div class="flex items-center mb-4">
                 <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
                      alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Sarah Johnson</span>
+                <span class="text-sm text-gray-600" th:text="${project.processVariables['clientName']}">Sarah Johnson</span>
             </div>
 
             <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
@@ -102,170 +102,25 @@
             </div>
 
             <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
+                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1"
+                        hx-get="/tasks"
+                        hx-target="body"
+                        hx-swap="innerHTML"
+                        hx-push-url="true">
+                    View Tasks
+                </button>
+                <th:block th:with="projectDetailsUrl=@{/project-details/{projectId}(projectId=${project.processInstanceId})}">
+                    <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm"
+                            th:attr="hx-get=@{/project-details/{projectId}(projectId=${project.processInstanceId})}"
+                            hx-target="body"
+                            hx-swap="innerHTML"
+                            hx-push-url="true">
+                        View Details
+                    </button>
+                </th:block>
             </div>
         </div>
 
-        <!-- Project Card 2 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Healthcare Portal</h3>
-                <span class="bg-yellow-100 text-yellow-700 text-xs px-2 md:px-3 py-1 rounded-full">Planning</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Develop a patient portal for medical records, appointment scheduling, and telehealth services.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Dr. Michael Chen</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 20%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>3/15 tasks completed</span>
-                <span>Due: Dec 5, 2023</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
-
-        <!-- Project Card 3 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Mobile Banking App</h3>
-                <span class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Testing</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Create a secure mobile banking application with transaction history and bill payment features.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Robert Williams</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 85%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>17/20 tasks completed</span>
-                <span>Due: Oct 30, 2023</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
-
-        <!-- Project Card 4 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Educational Platform</h3>
-                <span class="bg-purple-100 text-purple-700 text-xs px-2 md:px-3 py-1 rounded-full">Design</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Design and develop an online learning platform with video courses and interactive quizzes.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Emily Rodriguez</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 45%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>9/20 tasks completed</span>
-                <span>Due: Jan 12, 2024</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
-
-        <!-- Project Card 5 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Travel Booking System</h3>
-                <span class="bg-red-100 text-red-700 text-xs px-2 md:px-3 py-1 rounded-full">On Hold</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Comprehensive travel booking system with flight, hotel, and car rental reservation capabilities.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Thomas Anderson</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 30%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>6/20 tasks completed</span>
-                <span>Due: Feb 8, 2024</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
-
-        <!-- Project Card 6 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Fitness Tracking App</h3>
-                <span class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Completed</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Mobile application for tracking workouts, nutrition, and health metrics with personalized recommendations.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Jessica Parker</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 100%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>20/20 tasks completed</span>
-                <span>Completed: Aug 20, 2023</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
     </div>
 
     <!-- Pagination -->
@@ -301,7 +156,6 @@
         </nav>
     </div>
 
-<!--    New project modal-->
     <div id="projectModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div class="glass-effect rounded-xl p-4 md:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 md:mb-6">
@@ -310,37 +164,50 @@
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
+            <form id="formContainer" th:action="@{~/project/start}" th:object="${formData}" method="post"
+                  hx-post="/project/start" hx-target="body" hx-swap="innerHTML"
+                  class="space-y-3 md:space-y-4" >
 
-            <form id="projectForm" class="space-y-3 md:space-y-4">
                 <div>
                     <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Name</label>
-                    <input type="text" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter project name">
+                    <input type="text" name="projectName"
+                           required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter project name">
                 </div>
 
                 <div>
                     <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Description</label>
-                    <textarea required rows="3" class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Describe the project"></textarea>
+                    <textarea required rows="3" name="projectDescription" class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Describe the project"></textarea>
                 </div>
 
                 <div>
                     <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Name</label>
-                    <input type="text" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+                    <input type="text" name="clientName" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
                 </div>
-
                 <div>
-                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Type</label>
-                    <select class="w-full glass-effect rounded-lg px-4 py-2 text-white input-focus text-sm md:text-base">
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Email</label>
+                    <input type="text" name="clientEmail" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+                </div>
+                <div>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Phonenumber</label>
+                    <input type="text" name="clientPhonenumber" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+                </div>
+                <div>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Address</label>
+                    <input type="text" name="clientAddress" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+                </div>
+                <div>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Due Date</label>
+                    <input type="date" name="dueDate" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base">
+                </div>
+                <div>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Sector</label>
+                    <select name="projectType" required class="w-full glass-effect rounded-lg px-4 py-2 text-white input-focus text-sm md:text-base">
                         <option>Development</option>
                         <option>Design</option>
                         <option>Marketing</option>
                         <option>Planning</option>
                         <option>Testing</option>
                     </select>
-                </div>
-
-                <div>
-                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Due Date</label>
-                    <input type="date" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base">
                 </div>
 
                 <div class="flex justify-end space-x-3 pt-4">
