@@ -6,58 +6,163 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevFlow - Project Management Dashboard</title>
+  <title>Review SRS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Document styling */
-.document-container {
-    background: white;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    height: 60vh;
-    overflow-y: auto;
-}
+    .document-container {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      height: 60vh;
+      overflow-y: auto;
+    }
 
-.document-section {
-    margin-bottom: 2rem;
-}
+    .document-section {
+      margin-bottom: 2rem;
+    }
 
-.document-section h3 {
-    color: #780aff;
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-}
+    .document-section h3 {
+      color: #780aff;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
 
-.architecture-diagram {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1.5rem 0;
-    text-align: center;
-}
+    .action-btn {
+      transition: all 0.3s ease;
+    }
 
-.component-box {
-    display: inline-block;
-    background: white;
-    border: 1px solid #780aff;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    margin: 0.5rem;
-    font-weight: 500;
-}
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-.action-btn {
-    transition: all 0.3s ease;
-}
+    .editable {
+      border: 1px dashed transparent;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
 
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+    .editable:hover {
+      border-color: #780aff;
+      background-color: #f9f5ff;
+    }
+
+    .edit-mode .editable {
+      border-color: #780aff;
+      background-color: #f9f5ff;
+    }
+
+    .edit-mode .editable:focus {
+      outline: none;
+      border: 1px solid #780aff;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1);
+    }
+
+    .btn-disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
+    }
+
+    /* New styles for the generated content */
+    .document-content h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      color: #1e40af;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .document-content h2 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #780aff;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .document-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #4b7bec;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .document-content h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4b5563;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .document-content p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    .document-content ul {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      list-style-type: disc;
+    }
+
+    .document-content ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      list-style-type: decimal;
+    }
+
+    .document-content li {
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .document-content strong {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    /* Component box for architecture diagrams */
+    .component-box {
+      display: inline-block;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 8px 16px;
+      margin: 4px;
+      font-weight: 500;
+    }
+
+    /* Architecture diagram styling */
+    .architecture-diagram {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -65,144 +170,247 @@
   <!-- Page Title -->
   <div class="mb-8 mt-6">
     <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
-      <i class="fas fa-sitemap mr-3 text-blue-600"></i>
+      <i class="fas fa-file-alt mr-3 text-blue-600"></i>
       Review Solution Architecture
     </h1>
-    <p th:text="${processVariables.projectName}" class="text-gray-600 mt-2">E-Commerce Platform Project - v2.3</p>
+    <p th:text="${processVariables.projectName}" class="text-gray-600 mt-2">
+      E-Commerce Platform Project - v2.3
+    </p>
   </div>
 
-  <!-- Action Bar -->
-  <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
-    <div class="flex items-center">
-      <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
-      <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
-    </div>
-
-    <div class="flex space-x-3 mt-3 md:mt-0">
-      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
-        <i class="fas fa-edit mr-2"></i>
-        Edit
-      </button>
-      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
-        <i class="fas fa-download mr-2"></i>
-        Download
-      </button>
-    </div>
-  </div>
-
-  <!-- Document Content -->
-  <div class="document-container mb-6">
-    <h2 class="text-2xl font-bold text-blue-800 mb-2">Solution Architecture Document</h2>
-    <p class="text-gray-600 mb-6">For E-Commerce Platform Version 2.0</p>
-
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">1. Overview</h3>
-      <p>This document outlines the proposed solution architecture for the E-Commerce Platform. The architecture follows a microservices approach to ensure scalability, maintainability, and flexibility.</p>
-    </div>
-
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">2. Architectural Patterns</h3>
-
-      <h4 class="font-medium mt-4">2.1 Microservices Architecture</h4>
-      <p>The system will be decomposed into multiple independently deployable services:</p>
-      <ul class="list-disc pl-5 mt-2 mb-4">
-        <li>User Service - handles authentication and user profiles</li>
-        <li>Product Service - manages product catalog and inventory</li>
-        <li>Order Service - processes orders and payments</li>
-        <li>Notification Service - handles emails and notifications</li>
-        <li>Search Service - provides product search functionality</li>
-      </ul>
-
-      <h4 class="font-medium mt-4">2.2 API Gateway</h4>
-      <p>All client requests will be routed through an API Gateway which will handle request routing, composition, and protocol translation.</p>
-    </div>
-
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">3. Technology Stack</h3>
-
-      <h4 class="font-medium mt-4">3.1 Backend Technologies</h4>
-      <ul class="list-disc pl-5 mt-2 mb-4">
-        <li>Node.js with Express.js for API services</li>
-        <li>Spring Boot for high-throughput services</li>
-        <li>Redis for caching and session management</li>
-        <li>MongoDB for product and user data</li>
-        <li>PostgreSQL for transactional data</li>
-      </ul>
-
-      <h4 class="font-medium mt-4">3.2 Frontend Technologies</h4>
-      <ul class="list-disc pl-5 mt-2 mb-4">
-        <li>React.js for the main storefront application</li>
-        <li>Next.js for server-side rendering and SEO</li>
-        <li>Tailwind CSS for styling and responsive design</li>
-        <li>Redux for state management</li>
-      </ul>
-    </div>
-
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">4. System Architecture</h3>
-
-      <div class="architecture-diagram">
-        <h4 class="font-medium mb-4">High-Level Architecture Diagram</h4>
-        <div class="component-box">Client Browser</div>
-        <div class="text-blue-500 my-2">↓ ↑</div>
-        <div class="component-box">CDN</div>
-        <div class="text-blue-500 my-2">↓ ↑</div>
-        <div class="component-box">API Gateway</div>
-        <div class="text-blue-500 my-2">↓ ↑</div>
-        <div class="flex flex-wrap justify-center">
-          <div class="component-box">User Service</div>
-          <div class="component-box">Product Service</div>
-          <div class="component-box">Order Service</div>
-          <div class="component-box">Search Service</div>
-        </div>
-        <div class="text-blue-500 my-2">↓ ↑</div>
-        <div class="flex flex-wrap justify-center">
-          <div class="component-box">MySQL</div>
-          <div class="component-box">MongoDB</div>
-          <div class="component-box">Redis</div>
-        </div>
+  <!-- Thymeleaf Form -->
+  <form id="architectureForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
+    <!-- Action Bar -->
+    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
+      <div class="flex items-center">
+        <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
+        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
       </div>
 
-      <p>The architecture employs a reverse proxy setup with load balancing to distribute traffic across multiple instances of each microservice.</p>
+      <div class="flex space-x-3 mt-3 md:mt-0">
+        <button type="button" id="editToggleBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+          <i class="fas fa-edit mr-2"></i>
+          Edit
+        </button>
+        <button onclick="downloadAsPDF()" type="button" id="downloadBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+          <i class="fas fa-download mr-2"></i>
+          Download
+        </button>
+      </div>
+    </div>
+    <textarea name="architecture" id="editedDocument" hidden></textarea>
+
+    <!-- Document Content -->
+    <div id="documentContent" class="document-container mb-6">
+      <div class="document-content">
+        <!-- This is where the dynamic content will be inserted with proper styling -->
+        <div th:utext="${processVariables.architecture}"></div>
+      </div>
     </div>
 
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">5. Deployment Architecture</h3>
-
-      <h4 class="font-medium mt-4">5.1 Cloud Infrastructure</h4>
-      <p>The application will be deployed on AWS using the following services:</p>
-      <ul class="list-disc pl-5 mt-2 mb-4">
-        <li>ECS Fargate for container orchestration</li>
-        <li>RDS for managed PostgreSQL databases</li>
-        <li>ElastiCache for Redis caching</li>
-        <li>S3 for static asset storage</li>
-        <li>CloudFront for CDN capabilities</li>
-      </ul>
-
-      <h4 class="font-medium mt-4">5.2 CI/CD Pipeline</h4>
-      <p>We will implement a CI/CD pipeline using GitHub Actions for automated testing and deployment to staging and production environments.</p>
+    <!-- Complete Button -->
+    <div class="flex justify-center mt-6">
+      <button type="submit" id="submitBtn" class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+        <i class="fas fa-check-circle mr-2"></i>
+        Complete Review
+      </button>
     </div>
+  </form>
 
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">6. Security Considerations</h3>
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    const editToggleBtn = document.getElementById('editToggleBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const architectureForm = document.getElementById('architectureForm');
+    const documentContent = document.getElementById('documentContent');
+    let isEditMode = false;
 
-      <ul class="list-disc pl-5 mt-2 mb-4">
-        <li>All communications will be encrypted using TLS 1.3</li>
-        <li>JWT tokens for authentication and authorization</li>
-        <li>Role-based access control for admin functionalities</li>
-        <li>Regular security audits and penetration testing</li>
-        <li>DDoS protection using AWS Shield</li>
-      </ul>
-    </div>
-  </div>
+    // Function to format the dynamic content with proper classes
+    function formatDynamicContent() {
+      // Wait for the content to be loaded
+      setTimeout(() => {
+        const contentDiv = document.querySelector('.document-content > div');
+        if (!contentDiv) return;
 
-  <!-- Complete Button -->
-  <div class="flex justify-center mt-6">
-    <button class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
-      <i class="fas fa-check-circle mr-2"></i>
-      Complete Review
-    </button>
-  </div>
+        // Add section classes to top-level divs
+        const topLevelDivs = contentDiv.querySelectorAll('body > div, body > section, .document-content > div > div');
+        topLevelDivs.forEach(div => {
+          if (!div.classList.contains('document-section')) {
+            div.classList.add('document-section');
+          }
+        });
+
+        // Format headings
+        const h3Elements = contentDiv.querySelectorAll('h3');
+        h3Elements.forEach(h3 => {
+          h3.classList.add('text-lg', 'font-semibold');
+        });
+
+        // Format lists
+        const ulElements = contentDiv.querySelectorAll('ul');
+        ulElements.forEach(ul => {
+          ul.classList.add('list-disc', 'pl-5', 'mt-2', 'mb-4');
+        });
+
+        // Make all elements editable
+        const allElements = contentDiv.querySelectorAll('h1, h2, h3, h4, p, ul, ol, li');
+        allElements.forEach(el => {
+          el.classList.add('editable');
+        });
+      }, 100);
+    }
+
+    // Call the formatting function when page loads
+    document.addEventListener('DOMContentLoaded', formatDynamicContent);
+
+    // Also call it after any dynamic content is loaded
+    const observer = new MutationObserver(formatDynamicContent);
+    observer.observe(document.querySelector('.document-content'), { childList: true, subtree: true });
+
+    // Toggle edit mode
+    editToggleBtn.addEventListener('click', function() {
+      isEditMode = !isEditMode;
+      const editableElements = document.querySelectorAll('.editable');
+      if (isEditMode) {
+        documentContent.classList.add('edit-mode');
+        editToggleBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Save';
+        editToggleBtn.classList.remove('gradient-bg');
+        editToggleBtn.classList.add('bg-green-600');
+        editableElements.forEach(el => el.setAttribute('contenteditable', 'true'));
+      } else {
+        documentContent.classList.remove('edit-mode');
+        editToggleBtn.innerHTML = '<i class="fas fa-edit mr-2"></i> Edit';
+        editToggleBtn.classList.remove('bg-green-600');
+        editToggleBtn.classList.add('gradient-bg');
+        editableElements.forEach(el => el.setAttribute('contenteditable', 'false'));
+
+        // Reformat content after editing
+        formatDynamicContent();
+      }
+    });
+
+    // Download functionality
+    async function downloadAsPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      const contentDiv = document.getElementById('documentContent');
+
+      // Page setup
+      const margin = 50;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      let y = margin;
+      const defaultLineHeight = 16;
+
+      // Add Logo + Company Name
+      const logoUrl = "/images/justjavaLogo.svg"; // static folder
+      const logo = await loadImage(logoUrl);
+      pdf.addImage(logo, "PNG", margin, 20, 40, 40);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(18);
+      pdf.setTextColor(33, 33, 33);
+      pdf.text("", margin + 50, 45);
+      y = 90;
+
+      function checkPageBreak(extra = 0) {
+        if (y + extra > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+        }
+      }
+
+      function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
+        pdf.setFont("helvetica", bold ? "bold" : "normal");
+        pdf.setFontSize(fontSize);
+        const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
+        if (extraGap > 0) y += extraGap;
+        lines.forEach(line => {
+          checkPageBreak(spacing);
+          pdf.text(line, margin + indent, y);
+          y += spacing;
+        });
+        y += 4;
+      }
+
+      function processNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (node.textContent.trim()) addText(node.textContent.trim(), 12);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toLowerCase();
+          if (tag === "h1") addText(node.textContent.trim(), 22, true, 0, 28, 12);
+          else if (tag === "h2") addText(node.textContent.trim(), 18, true, 0, 24, 10);
+          else if (tag === "h3") addText(node.textContent.trim(), 15, true, 0, 20, 8);
+          else if (tag === "p") addText(node.textContent.trim(), 12, false, 0, 18, 6);
+          else if (tag === "li") addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
+          else if (tag === "ul" || tag === "ol") {
+            y += 4; node.childNodes.forEach(child => processNode(child)); y += 6;
+          }
+          else if (tag === "table") {
+            const rows = [];
+            node.querySelectorAll("tr").forEach(tr => {
+              const row = [];
+              tr.querySelectorAll("td, th").forEach(td => row.push(td.innerText.trim()));
+              rows.push(row);
+            });
+            if (rows.length > 0) {
+              y += 10; checkPageBreak(40);
+              pdf.autoTable({
+                head: [rows[0]],
+                body: rows.slice(1),
+                startY: y,
+                margin: { left: margin, right: margin },
+                styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
+                headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
+              });
+              y = pdf.lastAutoTable.finalY + 20;
+            }
+          } else {
+            node.childNodes.forEach(child => processNode(child));
+          }
+        }
+      }
+
+      // Traverse content
+      contentDiv.childNodes.forEach(node => processNode(node));
+
+      // Footer with page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(150);
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
+      }
+
+      pdf.save("architecture-document.pdf");
+    }
+
+    function loadImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width; canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.src = url;
+      });
+    }
+
+    // Form submission handler
+    architectureForm.addEventListener('submit', function(e) {
+      const editedContent = document.querySelector('.document-content').innerHTML;
+      document.getElementById('editedDocument').value = editedContent;
+      submitBtn.disabled = true;
+      submitBtn.classList.add('btn-disabled');
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+    });
+  </script>
 </div>
 </body>
 </html>

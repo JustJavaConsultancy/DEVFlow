@@ -9,7 +9,161 @@
   <title>Review SRS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style> .document-container { background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); height: 60vh; overflow-y: auto; } .document-section { margin-bottom: 2rem; } .document-section h3 { color: #780aff; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem; } .action-btn { transition: all 0.3s ease; } .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); } .editable { border: 1px dashed transparent; padding: 4px; border-radius: 4px; transition: all 0.2s; } .editable:hover { border-color: #780aff; background-color: #f9f5ff; } .edit-mode .editable { border-color: #780aff; background-color: #f9f5ff; } .edit-mode .editable:focus { outline: none; border: 1px solid #780aff; background-color: white; box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1); } .btn-disabled { opacity: 0.7; cursor: not-allowed; } .btn-disabled:hover { transform: none; box-shadow: none; } .gradient-bg { background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%); } /* New styles for the generated content */ .document-content h1 { font-size: 1.875rem; font-weight: bold; color: #1e40af; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; } .document-content h2 { font-size: 1.5rem; font-weight: bold; color: #780aff; margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0; } .document-content h3 { font-size: 1.25rem; font-weight: 600; color: #4b7bec; margin-top: 1.25rem; margin-bottom: 0.75rem; } .document-content p { margin-bottom: 1rem; line-height: 1.6; color: #374151; } .document-content ul { margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; } .document-content li { margin-bottom: 0.5rem; line-height: 1.5; } .document-content strong { font-weight: 600; color: #4b5563; } </style>
+  <style>
+    .document-container {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      height: 60vh;
+      overflow-y: auto;
+    }
+
+    .document-section {
+      margin-bottom: 2rem;
+    }
+
+    .document-section h3 {
+      color: #780aff;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .action-btn {
+      transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .editable {
+      border: 1px dashed transparent;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .editable:hover {
+      border-color: #780aff;
+      background-color: #f9f5ff;
+    }
+
+    .edit-mode .editable {
+      border-color: #780aff;
+      background-color: #f9f5ff;
+    }
+
+    .edit-mode .editable:focus {
+      outline: none;
+      border: 1px solid #780aff;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1);
+    }
+
+    .btn-disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
+    }
+
+    /* New styles for the generated content */
+    .document-content h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      color: #1e40af;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .document-content h2 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #780aff;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .document-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #4b7bec;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .document-content h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4b5563;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .document-content p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    .document-content ul {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      list-style-type: disc;
+    }
+
+    .document-content ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      list-style-type: decimal;
+    }
+
+    .document-content li {
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .document-content strong {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    /* Component box for architecture diagrams */
+    .component-box {
+      display: inline-block;
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 8px 16px;
+      margin: 4px;
+      font-weight: 500;
+    }
+
+    /* Architecture diagram styling */
+    .architecture-diagram {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -48,7 +202,10 @@
 
     <!-- Document Content -->
     <div id="documentContent" class="document-container mb-6">
-      <div class="document-content" th:utext="${processVariables.aiRequirementAnalysis}"></div>
+      <div class="document-content">
+        <!-- This is where the dynamic content will be inserted with proper styling -->
+        <div th:utext="${processVariables.aiRequirementAnalysis}"></div>
+      </div>
     </div>
 
     <!-- Complete Button -->
@@ -70,6 +227,48 @@
     const documentContent = document.getElementById('documentContent');
     let isEditMode = false;
 
+    // Function to format the dynamic content with proper classes
+    function formatDynamicContent() {
+      // Wait for the content to be loaded
+      setTimeout(() => {
+        const contentDiv = document.querySelector('.document-content > div');
+        if (!contentDiv) return;
+
+        // Add section classes to top-level divs
+        const topLevelDivs = contentDiv.querySelectorAll('body > div, body > section, .document-content > div > div');
+        topLevelDivs.forEach(div => {
+          if (!div.classList.contains('document-section')) {
+            div.classList.add('document-section');
+          }
+        });
+
+        // Format headings
+        const h3Elements = contentDiv.querySelectorAll('h3');
+        h3Elements.forEach(h3 => {
+          h3.classList.add('text-lg', 'font-semibold');
+        });
+
+        // Format lists
+        const ulElements = contentDiv.querySelectorAll('ul');
+        ulElements.forEach(ul => {
+          ul.classList.add('list-disc', 'pl-5', 'mt-2', 'mb-4');
+        });
+
+        // Make all elements editable
+        const allElements = contentDiv.querySelectorAll('h1, h2, h3, h4, p, ul, ol, li');
+        allElements.forEach(el => {
+          el.classList.add('editable');
+        });
+      }, 100);
+    }
+
+    // Call the formatting function when page loads
+    document.addEventListener('DOMContentLoaded', formatDynamicContent);
+
+    // Also call it after any dynamic content is loaded
+    const observer = new MutationObserver(formatDynamicContent);
+    observer.observe(document.querySelector('.document-content'), { childList: true, subtree: true });
+
     // Toggle edit mode
     editToggleBtn.addEventListener('click', function() {
       isEditMode = !isEditMode;
@@ -86,6 +285,9 @@
         editToggleBtn.classList.remove('bg-green-600');
         editToggleBtn.classList.add('gradient-bg');
         editableElements.forEach(el => el.setAttribute('contenteditable', 'false'));
+
+        // Reformat content after editing
+        formatDynamicContent();
       }
     });
 
