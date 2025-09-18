@@ -36,7 +36,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
         <div class="gradient-bg rounded-xl p-4 md:p-6 text-white">
             <i class="fas fa-project-diagram text-2xl md:text-3xl mb-4 text-blue-200"></i>
-            <h3 class="text-xl md:text-2xl font-bold mb-1">7</h3>
+            <h3 th:text="${activeProject}" class="text-xl md:text-2xl font-bold mb-1">7</h3>
             <p class="text-blue-200 text-sm md:text-base">Active Projects</p>
         </div>
 
@@ -59,30 +59,62 @@
             <i class="fas fa-project-diagram mr-3 text-blue-600"></i>
             Client Projects
         </h2>
-
-        <button id="newProjectBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center hover:opacity-90 transition-opacity text-sm md:text-base">
-            <i class="fas fa-plus mr-2"></i>
-            New Project
-        </button>
     </div>
+    <div th:if="${#lists.isEmpty(projects)}">
+        <!-- Empty State -->
+        <div class="glass-effect rounded-xl p-8 md:p-12 text-center mb-8">
+            <div class="flex justify-center">
+                <i class="fas fa-folder-open empty-state-icon"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-bold text-blue-800 mb-2">No projects yet</h2>
+            <p class="text-blue-600 mb-6 max-w-md mx-auto">Get started by creating your first project. Organize tasks, track progress, and collaborate with your team.</p>
+        </div>
 
+        <!-- Getting Started Tips -->
+        <div class="glass-effect rounded-xl p-6 md:p-8">
+            <h3 class="text-lg md:text-xl font-bold text-blue-800 mb-4">Getting Started with DevFlow</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <div class="bg-white bg-opacity-50 rounded-lg p-4 md:p-5">
+                    <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white mb-3">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h4 class="font-bold text-blue-700 mb-2">Plan Your Project</h4>
+                    <p class="text-sm text-blue-600">Define your project goals, requirements, and timeline before starting development.</p>
+                </div>
+                <div class="bg-white bg-opacity-50 rounded-lg p-4 md:p-5">
+                    <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white mb-3">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h4 class="font-bold text-blue-700 mb-2">Break Down Tasks</h4>
+                    <p class="text-sm text-blue-600">Divide your project into manageable tasks and assign them to team members.</p>
+                </div>
+                <div class="bg-white bg-opacity-50 rounded-lg p-4 md:p-5">
+                    <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white mb-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="font-bold text-blue-700 mb-2">Track Progress</h4>
+                    <p class="text-sm text-blue-600">Monitor your project's progress and make adjustments as needed to stay on track.</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Project Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <div th:if="${!#lists.isEmpty(projects)}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <!-- Project Card 1 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
+        <div th:each="project, iterStat : ${projects}" class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">E-Commerce Platform</h3>
+                <h3 class="font-bold text-blue-700 text-base md:text-lg" th:text="${project.processVariables['projectName']}">E-Commerce Platform</h3>
                 <span class="bg-blue-100 text-blue-700 text-xs px-2 md:px-3 py-1 rounded-full">Development</span>
             </div>
 
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
+            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden" th:text="${project.processVariables['projectDescription']}">
                 Build a full-featured e-commerce platform with payment integration and inventory management.
             </p>
 
             <div class="flex items-center mb-4">
                 <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
                      alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Sarah Johnson - Fashion Retail Co.</span>
+                <span class="text-sm text-gray-600" th:text="${project.processVariables['clientName']}">Sarah Johnson</span>
             </div>
 
             <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
@@ -92,75 +124,6 @@
             <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
                 <span>13/20 tasks completed</span>
                 <span>Due: Nov 15, 2023</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
-
-        <!-- Project Card 2 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Healthcare Portal</h3>
-                <span class="bg-yellow-100 text-yellow-700 text-xs px-2 md:px-3 py-1 rounded-full">Planning</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Develop a patient portal for medical records, appointment scheduling, and telehealth services.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Dr. Michael Chen - City Hospital</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 20%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>3/15 tasks completed</span>
-                <span>Due: Dec 5, 2023</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
-            </div>
-        </div>
-
-        <!-- Project Card 3 -->
-        <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-blue-700 text-base md:text-lg">Mobile Banking App</h3>
-                <span class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Testing</span>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden">
-                Create a secure mobile banking application with transaction history and bill payment features.
-            </p>
-
-            <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
-                <span class="text-sm text-gray-600">Robert Williams - First National Bank</span>
-            </div>
-
-            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 85%"></div>
-            </div>
-
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
-                <span>17/20 tasks completed</span>
-                <span>Due: Oct 30, 2023</span>
-            </div>
-
-            <div class="flex space-x-2 md:space-x-3">
-                <button class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1">View Tasks</button>
-                <button class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm">Details</button>
             </div>
         </div>
     </div>
