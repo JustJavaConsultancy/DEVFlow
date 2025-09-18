@@ -40,6 +40,21 @@ public class FlowableTaskController {
         model.addAttribute("userId", userId);
         return "task/task-list";
     }
+    @GetMapping
+    public String getAllTasks( Model model) {
+        List<Task> tasks = taskService
+                .createTaskQuery()
+                .includeProcessVariables()
+                .orderByTaskCreateTime().desc()
+                .list();
+
+        tasks.forEach(task -> {
+            System.out.println(" The task process variables here==="+task.getProcessVariables());
+        });
+        model.addAttribute("tasks", tasks);
+        //model.addAttribute("userId", userId);
+        return "task/task-list";
+    }
 
     // Get all candidate tasks for a user
     @GetMapping("/candidate/{userId}")
