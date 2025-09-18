@@ -39,6 +39,7 @@ public class TaskController {
                 .createTaskQuery()
                 .processInstanceId(projectId)
                 .includeProcessVariables()
+                .active()
                 .orderByTaskCreateTime().desc()
                 .list();
 

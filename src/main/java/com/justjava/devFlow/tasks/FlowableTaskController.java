@@ -74,7 +74,10 @@ public class FlowableTaskController {
     public String viewTaskForm(@PathVariable String taskId, Model model) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
-        if (task == null) {
+        if("requirement_elicitation".equalsIgnoreCase(task.getTaskDefinitionKey())){
+            return "redirect:tasks/requirement";
+        }
+             if (task == null) {
             model.addAttribute("error", "Task not found");
             return "error/404";
         }
@@ -198,9 +201,11 @@ public class FlowableTaskController {
     // Get task history for a process instance
     @GetMapping("/history/{processInstanceId}")
     public String getTaskHistory(@PathVariable String processInstanceId, Model model) {
-        List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+        List<HistoricTaskInstance> historicTasks = historyService
+                .createHistoricTaskInstanceQuery()
                 .processInstanceId(processInstanceId)
-                .orderByTaskCreateTime().desc()
+                .orderByTaskCreateTime()
+                .desc()
                 .list();
 
         model.addAttribute("historicTasks", historicTasks);
