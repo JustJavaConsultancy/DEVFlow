@@ -11,105 +11,66 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Rich Text Editor Styles */
-.editor-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-    background: #f8fafc;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.toolbar-group {
-    display: flex;
-    gap: 0.25rem;
-    padding-right: 0.75rem;
-    border-right: 1px solid #e2e8f0;
-}
-
-.toolbar-group:last-child {
-    border-right: none;
-}
-
-.toolbar-btn {
-    padding: 0.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #4a5568;
-    transition: all 0.2s ease;
-}
-
-.toolbar-btn:hover {
-    background: #edf2f7;
-    color: #780aff;
-}
-
-.toolbar-btn.active {
-    background: #e9d5ff;
-    color: #780aff;
-}
-
-.editor-content {
-    min-height: 400px;
-    padding: 1.5rem;
-    border: 1px solid #e2e8f0;
-    border-top: none;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    outline: none;
-    background: white;
-}
-
-.editor-content:focus {
-    border-color: #780aff;
-    box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1);
-}
-
-.editor-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
-}
-
-/* Template Selector */
-.template-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.template-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.template-card:hover {
-    border-color: #780aff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(120, 10, 255, 0.15);
-}
-
-.template-card.active {
-    border-color: #780aff;
-    background-color: #faf5ff;
-}
-
-/* Character Counter */
-.character-counter {
-    text-align: right;
-    font-size: 0.875rem;
-    color: #718096;
-    margin-top: 0.5rem;
-}
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .toolbar-group {
+            display: flex;
+            gap: 0.25rem;
+            padding-right: 0.75rem;
+            border-right: 1px solid #e2e8f0;
+        }
+        .toolbar-group:last-child { border-right: none; }
+        .toolbar-btn {
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.2s ease;
+        }
+        .toolbar-btn:hover {
+            background: #edf2f7;
+            color: #780aff;
+        }
+        .toolbar-btn.active {
+            background: #e9d5ff;
+            color: #780aff;
+        }
+        .editor-content {
+            min-height: 400px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            outline: none;
+            background: white;
+        }
+        .editor-content:focus {
+            border-color: #780aff;
+            box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1);
+        }
+        .editor-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .character-counter {
+            text-align: right;
+            font-size: 0.875rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -123,69 +84,60 @@
         <p class="text-gray-600 mt-2">Create detailed requirements for your project</p>
     </div>
 
-    <!-- Requirements Form -->
-    <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
-        <div class="mb-4">
+    <!-- ✅ Requirements Form -->
+    <form th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post"
+          id="requirementForm"
+          class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+    <div class="mb-4">
             <label class="block text-gray-700 text-sm font-medium mb-2">
                 Requirement Description
             </label>
 
-            <!-- Rich Text Editor Toolbar -->
+            <!-- Toolbar -->
             <div class="editor-toolbar">
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="bold" title="Bold"><i class="fas fa-bold"></i></button>
-                    <button class="toolbar-btn" data-command="italic" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button class="toolbar-btn" data-command="underline" title="Underline"><i class="fas fa-underline"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="bold"><i class="fas fa-bold"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="italic"><i class="fas fa-italic"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="underline"><i class="fas fa-underline"></i></button>
                 </div>
-
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="justifyLeft" title="Align Left"><i class="fas fa-align-left"></i></button>
-                    <button class="toolbar-btn" data-command="justifyCenter" title="Align Center"><i class="fas fa-align-center"></i></button>
-                    <button class="toolbar-btn" data-command="justifyRight" title="Align Right"><i class="fas fa-align-right"></i></button>
-                    <button class="toolbar-btn" data-command="justifyFull" title="Justify"><i class="fas fa-align-justify"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="justifyLeft"><i class="fas fa-align-left"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="justifyCenter"><i class="fas fa-align-center"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="justifyRight"><i class="fas fa-align-right"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="justifyFull"><i class="fas fa-align-justify"></i></button>
                 </div>
-
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="insertUnorderedList" title="Bullet List"><i class="fas fa-list-ul"></i></button>
-                    <button class="toolbar-btn" data-command="insertOrderedList" title="Numbered List"><i class="fas fa-list-ol"></i></button>
-                    <button class="toolbar-btn" data-command="outdent" title="Decrease Indent"><i class="fas fa-outdent"></i></button>
-                    <button class="toolbar-btn" data-command="indent" title="Increase Indent"><i class="fas fa-indent"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="insertOrderedList"><i class="fas fa-list-ol"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="outdent"><i class="fas fa-outdent"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="indent"><i class="fas fa-indent"></i></button>
                 </div>
-
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="createLink" title="Insert Link"><i class="fas fa-link"></i></button>
-                    <button class="toolbar-btn" data-command="insertImage" title="Insert Image"><i class="fas fa-image"></i></button>
-                    <button class="toolbar-btn" data-command="insertTable" title="Insert Table"><i class="fas fa-table"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="createLink"><i class="fas fa-link"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="insertImage"><i class="fas fa-image"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="insertTable"><i class="fas fa-table"></i></button>
                 </div>
-
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="code" title="Code Block"><i class="fas fa-code"></i></button>
-                    <button class="toolbar-btn" data-command="quote" title="Blockquote"><i class="fas fa-quote-right"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="code"><i class="fas fa-code"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="quote"><i class="fas fa-quote-right"></i></button>
                 </div>
-
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="undo" title="Undo"><i class="fas fa-undo"></i></button>
-                    <button class="toolbar-btn" data-command="redo" title="Redo"><i class="fas fa-redo"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="undo"><i class="fas fa-undo"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="redo"><i class="fas fa-redo"></i></button>
                 </div>
-
                 <div class="toolbar-group">
-                    <button class="toolbar-btn" data-command="removeFormat" title="Clear Formatting"><i class="fas fa-eraser"></i></button>
-                    <button class="toolbar-btn" data-command="hiliteColor" title="Highlight" data-value="#fffd80"><i class="fas fa-highlighter"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="removeFormat"><i class="fas fa-eraser"></i></button>
+                    <button type="button" class="toolbar-btn" data-command="hiliteColor" data-value="#fffd80"><i class="fas fa-highlighter"></i></button>
                 </div>
             </div>
 
-            <!-- Rich Text Editor Content -->
+            <!-- Editable area -->
             <div class="editor-content" id="requirementEditor" contenteditable="true">
                 <p>Describe your requirements in detail...</p>
-                <p>You can include:</p>
-                <ul>
-                    <li>User stories</li>
-                    <li>Functional requirements</li>
-                    <li>Technical specifications</li>
-                    <li>Acceptance criteria</li>
-                    <li>Design references</li>
-                </ul>
             </div>
+
+            <!-- ✅ Hidden field -->
+            <input type="hidden" name="requirement" id="requirementText"/>
 
             <div class="character-counter">
                 <span id="charCount">0</span> characters
@@ -193,116 +145,76 @@
         </div>
 
         <div class="editor-actions">
-            <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-md flex items-center action-btn">
+            <button type="submit" id="submitBtn"
+                    class="gradient-bg text-white px-4 py-2 rounded-md flex items-center action-btn">
                 <i class="fas fa-paper-plane mr-2"></i>
                 Submit Requirement
             </button>
         </div>
-    </div>
+    </form>
+
     <script>
-        // Mobile menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Rich text editor functionality
+        document.addEventListener('DOMContentLoaded', function () {
             const editor = document.getElementById('requirementEditor');
-            const toolbarButtons = document.querySelectorAll('.toolbar-btn');
+            const hiddenInput = document.getElementById('requirementText');
+            const form = document.getElementById('requirementForm');
+            const submitBtn = document.getElementById('submitBtn');
             const charCount = document.getElementById('charCount');
+            const toolbarButtons = document.querySelectorAll('.toolbar-btn');
 
             // Update character count
             function updateCharCount() {
-                const text = editor.innerText || '';
-                charCount.textContent = text.length;
+                charCount.textContent = (editor.innerText || '').length;
             }
-
             editor.addEventListener('input', updateCharCount);
-            updateCharCount(); // Initial count
+            updateCharCount();
 
-            // Check for active formatting
-            function checkActiveFormatting() {
-                toolbarButtons.forEach(button => {
-                    const command = button.dataset.command;
-
-                    // Check if the command is currently active
-                    try {
-                        if (['bold', 'italic', 'underline'].includes(command)) {
-                            const isActive = document.queryCommandState(command);
-                            button.classList.toggle('active', isActive);
-                        }
-                    } catch (e) {
-                        console.error("Error checking command state:", e);
-                    }
-                });
-            }
-
-            // Add event listeners to check formatting on selection change
-            document.addEventListener('selectionchange', checkActiveFormatting);
-            editor.addEventListener('mouseup', checkActiveFormatting);
-            editor.addEventListener('keyup', checkActiveFormatting);
-
-            // Toolbar button functionality
+            // Toolbar functionality
             toolbarButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const command = button.dataset.command;
                     const value = button.dataset.value || null;
 
-                    try {
-                        if (command === 'code') {
-                            // Create a code block
-                            document.execCommand('formatBlock', false, '<pre>');
-                        } else if (command === 'quote') {
-                            // Create a blockquote
-                            document.execCommand('formatBlock', false, '<blockquote>');
-                        } else if (command === 'insertTable') {
-                            // Create a table with better formatting
-                            const rows = prompt('Enter number of rows:', '3');
-                            const cols = prompt('Enter number of columns:', '3');
-                            if (rows && cols) {
-                                let tableHTML = '<table border="1" style="width:100%; border-collapse:collapse; margin:10px 0;">';
-                                tableHTML += '<tbody>';
-                                for (let i = 0; i < rows; i++) {
-                                    tableHTML += '<tr>';
-                                    for (let j = 0; j < cols; j++) {
-                                        tableHTML += '<td style="padding:8px;">&nbsp;</td>';
-                                    }
-                                    tableHTML += '</tr>';
+                    if (command === 'code') {
+                        document.execCommand('formatBlock', false, 'pre');
+                    } else if (command === 'quote') {
+                        document.execCommand('formatBlock', false, 'blockquote');
+                    } else if (command === 'insertTable') {
+                        const rows = prompt('Rows:', '3');
+                        const cols = prompt('Cols:', '3');
+                        if (rows && cols) {
+                            let tableHTML = '<table border="1" style="width:100%; border-collapse:collapse; margin:10px 0;"><tbody>';
+                            for (let i = 0; i < rows; i++) {
+                                tableHTML += '<tr>';
+                                for (let j = 0; j < cols; j++) {
+                                    tableHTML += '<td style="padding:8px;">&nbsp;</td>';
                                 }
-                                tableHTML += '</tbody></table>';
-                                document.execCommand('insertHTML', false, tableHTML);
+                                tableHTML += '</tr>';
                             }
-                        } else if (command === 'createLink') {
-                            const url = prompt('Enter URL:', 'https://');
-                            if (url) {
-                                document.execCommand('createLink', false, url);
-                            }
-                        } else if (command === 'insertImage') {
-                            const url = prompt('Enter image URL:', 'https://');
-                            if (url) {
-                                document.execCommand('insertImage', false, url);
-                            }
-                        } else if (command === 'hiliteColor') {
-                            document.execCommand('hiliteColor', false, value);
-                        } else {
-                            document.execCommand(command, false, value);
+                            tableHTML += '</tbody></table>';
+                            document.execCommand('insertHTML', false, tableHTML);
                         }
-
-                        // Check active formatting after command execution
-                        setTimeout(checkActiveFormatting, 100);
-                    } catch (error) {
-                        console.error("Error executing command:", error);
+                    } else if (command === 'createLink') {
+                        const url = prompt('Enter URL:', 'https://');
+                        if (url) document.execCommand('createLink', false, url);
+                    } else if (command === 'insertImage') {
+                        const url = prompt('Enter image URL:', 'https://');
+                        if (url) document.execCommand('insertImage', false, url);
+                    } else if (command === 'hiliteColor') {
+                        document.execCommand('hiliteColor', false, value);
+                    } else {
+                        document.execCommand(command, false, value);
                     }
 
                     editor.focus();
                 });
             });
 
-            // Handle paste events to clean up formatting if needed
-            editor.addEventListener('paste', function(e) {
-                e.preventDefault();
-
-                // Get text representation of clipboard
-                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-
-                // Insert text manually
-                document.execCommand('insertText', false, text);
+            // ✅ On form submit: transfer HTML & disable button
+            form.addEventListener('submit', function () {
+                hiddenInput.value = editor.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
             });
         });
     </script>
