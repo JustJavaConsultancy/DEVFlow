@@ -5,6 +5,7 @@ import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +43,11 @@ public class TaskController {
                 .active()
                 .orderByTaskCreateTime().desc()
                 .list();
-
+        List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+                .processInstanceId(projectId)
+                .finished()
+                .orderByTaskCreateTime().desc()
+                .list();
         tasks.forEach(task -> {
             System.out.println(" The task process variables here=== "+task.getProcessVariables() +
                     " The Task State ==== "+task.getState()+
@@ -50,7 +55,7 @@ public class TaskController {
                     );
         });
         model.addAttribute("tasks", tasks);
-
+        model.addAttribute("completedTasks",historicTasks);
         //model.addAttribute("userId", userId);
         return "tasks/projectTasks";
     }

@@ -78,24 +78,23 @@
         </div>
 
         <div class="flex space-x-2">
-          <button class="gradient-bg text-white px-4 py-2 rounded-lg text-sm flex items-center">
+          <a th:href="@{/tasks/view/{taskId}(taskId=${task.id})}" class="gradient-bg text-white px-4 py-2 rounded-lg text-sm flex items-center">
             <i class="fas fa-hand-paper mr-1"></i> Claim Task
-          </button>
+          </a>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Completed Tasks Section -->
-  <!-- Completed Tasks Section -->
-  <div th:if="${#lists.size(tasks.?[state != 'created']) > 0}">
+  <div th:if="${!#lists.isEmpty(completedTasks)}">
     <h2 class="text-xl font-bold text-blue-800 mb-4 flex items-center">
       <i class="fas fa-check-circle mr-2 text-green-600"></i>
       Completed Tasks
     </h2>
 
     <div class="grid grid-cols-1 gap-4">
-      <div th:each="task : ${tasks}" th:if="${task.state != 'created'}"
+      <div th:each="task : ${completedTasks}"
            class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm">
 
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">

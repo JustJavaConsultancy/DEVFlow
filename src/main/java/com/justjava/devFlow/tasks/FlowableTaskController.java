@@ -74,12 +74,36 @@ public class FlowableTaskController {
     public String viewTaskForm(@PathVariable String taskId, Model model) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
-        if("requirement_elicitation".equalsIgnoreCase(task.getTaskDefinitionKey())){
-            return "redirect:tasks/requirement";
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
-             if (task == null) {
-            model.addAttribute("error", "Task not found");
-            return "error/404";
+
+        String currentTask;
+        switch (task.getTaskDefinitionKey().toLowerCase()) {
+            case "requirement_elicitation":
+                currentTask = "tasks/requirement";
+                break;
+            case "formtask_12":
+                currentTask = "tasks/reviewSrs";
+                break;
+            case "formtask_43":
+                currentTask = "tasks/reviewUserStories";
+                break;
+            case "formtask_11":
+                currentTask = "tasks/reviewSolutionArchitecture";
+                break;
+            case "deployment":
+                currentTask = "tasks/deployment";
+                break;
+            case "review":
+                currentTask = "tasks/review";
+                break;
+            case "closure":
+                currentTask = "tasks/closure";
+                break;
+            default:
+                currentTask = "tasks/default";
+                break;
         }
 
         // Load task variables
@@ -89,10 +113,11 @@ public class FlowableTaskController {
         Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId());
 
         model.addAttribute("task", task);
+        model.addAttribute("taskId",taskId);
         model.addAttribute("taskVariables", taskVariables);
         model.addAttribute("processVariables", processVariables);
 
-        return "task/task-form";
+        return currentTask;
     }
 
     // Edit task form - generic form handler
@@ -100,6 +125,7 @@ public class FlowableTaskController {
     public String editTaskForm(@PathVariable String taskId, Model model) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
+        System.out.println(task);
         if (task == null) {
             model.addAttribute("error", "Task not found");
             return "error/404";
@@ -149,6 +175,7 @@ public class FlowableTaskController {
                                @RequestParam Map<String, String> formParams,
                                RedirectAttributes redirectAttributes) {
         try {
+
             Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
             if (task == null) {
@@ -158,16 +185,16 @@ public class FlowableTaskController {
 
             // Convert form parameters to proper types
             Map<String, Object> variables = convertFormParamsToVariables(formParams);
-
             // Complete the task with form data
             taskService.complete(taskId, variables);
 
             redirectAttributes.addFlashAttribute("success", "Task completed successfully");
-            return "redirect:/tasks/user/" + task.getAssignee();
+            return "redirect:/tasks/" + task.getProcessInstanceId();
 
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Failed to complete task: " + e.getMessage());
-            return "redirect:/tasks/edit/" + taskId;
+            return "redirect:/tasks/view/" + taskId;
         }
     }
 
