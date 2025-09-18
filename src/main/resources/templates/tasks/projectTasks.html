@@ -10,125 +10,70 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .task-priority-high {
-            border-left: 4px solid #e53e3e;
-        }
+    .task-priority-high { border-left: 4px solid #e53e3e; }
+    .task-priority-medium { border-left: 4px solid #dd6b20; }
+    .task-priority-low { border-left: 4px solid #38a169; }
 
-        .task-priority-medium {
-            border-left: 4px solid #dd6b20;
-        }
+    .task-status-todo { background-color: #ebf8ff; color: #3182ce; }
+    .task-status-inprogress { background-color: #fff5eb; color: #dd6b20; }
+    .task-status-review { background-color: #faf5ff; color: #805ad5; }
+    .task-status-completed { background-color: #f0fff4; color: #38a169; }
 
-        .task-priority-low {
-            border-left: 4px solid #38a169;
-        }
-
-        .task-status-todo {
-            background-color: #ebf8ff;
-            color: #3182ce;
-        }
-
-        .task-status-inprogress {
-            background-color: #fff5eb;
-            color: #dd6b20;
-        }
-
-        .task-status-review {
-            background-color: #faf5ff;
-            color: #805ad5;
-        }
-
-        .task-status-completed {
-            background-color: #f0fff4;
-            color: #38a169;
-        }
-
-        .completed-task {
-            opacity: 0.8;
-            background-color: #f9fafb;
-        }
-
-        .completed-task h3 {
-            text-decoration: line-through;
-            color: #9ca3af !important;
-        }
-
-        .completed-task p {
-            color: #9ca3af !important;
-        }
+    .completed-task {
+      opacity: 0.8;
+      background-color: #f9fafb;
+    }
+    .completed-task h3 { text-decoration: line-through; color: #9ca3af !important; }
+    .completed-task p { color: #9ca3af !important; }
   </style>
 </head>
 <body>
 <div layout:fragment="content">
-  <!-- Page Title and Filters -->
+
+  <!-- Page Title -->
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
     <h1 class="text-2xl md:text-3xl font-bold text-blue-800 mb-4 md:mb-0">
       <i class="fas fa-tasks mr-3 text-blue-600"></i>
       Task Management
     </h1>
-
-    <div class="flex flex-wrap gap-2">
-      <select class="glass-effect text-white px-3 py-2 rounded-lg text-sm">
-        <option>All Projects</option>
-        <option>E-Commerce Platform</option>
-        <option>Healthcare Portal</option>
-        <option>Mobile Banking App</option>
-      </select>
-
-      <select class="glass-effect text-white px-3 py-2 rounded-lg text-sm">
-        <option>All Status</option>
-        <option>To Do</option>
-        <option>In Progress</option>
-        <option>Review</option>
-        <option>Completed</option>
-      </select>
-
-      <select class="glass-effect text-white px-3 py-2 rounded-lg text-sm">
-        <option>All Priorities</option>
-        <option>High</option>
-        <option>Medium</option>
-        <option>Low</option>
-      </select>
-    </div>
   </div>
 
   <!-- Current Task Section -->
-  <div class="mb-8">
+  <div class="mb-8" th:if="${#lists.isEmpty(tasks) == false}">
     <h2 class="text-xl font-bold text-blue-800 mb-4 flex items-center">
       <i class="fas fa-star mr-2 text-yellow-500"></i>
       Current Task
     </h2>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-5 card-hover shadow-sm task-priority-high">
+    <!-- Show only tasks with state CREATED -->
+    <div th:each="task : ${tasks}" th:if="${task.state == 'created'}"
+         class="bg-white border border-gray-200 rounded-xl p-5 card-hover shadow-sm"
+         >
+
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
         <div>
-          <h3 class="font-bold text-blue-700 text-lg md:text-xl mb-1">Implement Payment Gateway</h3>
+          <h3 class="font-bold text-blue-700 text-lg md:text-xl mb-1"
+              th:text="${task.name}">Task Name</h3>
           <div class="flex items-center flex-wrap gap-2">
-            <span class="text-xs px-2 py-1 task-status-inprogress rounded-full">In Progress</span>
-            <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">High Priority</span>
-            <span class="text-xs text-gray-500">E-Commerce Platform</span>
+            <span class="text-xs px-2 py-1 task-status-inprogress rounded-full"
+                  >In Progress</span>
           </div>
         </div>
 
         <div class="flex items-center mt-3 md:mt-0">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-               alt="Assignee" class="w-6 h-6 rounded-full mr-2" title="Assigned to Sarah M.">
-          <span class="text-sm text-gray-600">Due: Oct 25, 2023</span>
+          <span class="text-sm text-gray-600"
+                th:text="${'Created Date: ' + task.createTime}">Due:</span>
         </div>
       </div>
 
-      <p class="text-gray-600 text-sm mb-4">
-        Integrate Stripe payment processing with support for multiple currencies and secure tokenization.
-        Ensure PCI compliance and implement fraud detection mechanisms.
-      </p>
-
+      <p class="text-gray-600 text-sm mb-4"
+         >This is the task currently in progress. It requires immediate attention and active work to move the project forward. Review the details and complete the pending steps to ensure the task is finished on time</p>
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center">
           <div class="mr-4">
-            <span class="text-xs text-gray-500 block">Progress</span>
-            <div class="w-32 bg-gray-200 rounded-full h-2">
-              <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 65%"></div>
-            </div>
-            <span class="text-xs text-gray-500">65% complete</span>
+            <span class="text-xs text-gray-500 block">Progress:</span>
+            <span class="text-xs text-gray-500"
+                  >Not Started</span>
           </div>
         </div>
 
@@ -142,142 +87,54 @@
   </div>
 
   <!-- Completed Tasks Section -->
-  <div>
+  <!-- Completed Tasks Section -->
+  <div th:if="${#lists.size(tasks.?[state != 'created']) > 0}">
     <h2 class="text-xl font-bold text-blue-800 mb-4 flex items-center">
       <i class="fas fa-check-circle mr-2 text-green-600"></i>
       Completed Tasks
     </h2>
 
     <div class="grid grid-cols-1 gap-4">
-      <!-- Task 1 - Completed -->
-      <div class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm task-priority-medium">
+      <div th:each="task : ${tasks}" th:if="${task.state != 'created'}"
+           class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm">
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
           <div>
-            <h3 class="font-bold text-base md:text-lg mb-1">User Profile Dashboard</h3>
+            <h3 class="font-bold text-base md:text-lg mb-1"
+                th:text="${task.name}">Completed Task</h3>
             <div class="flex items-center flex-wrap gap-2">
               <span class="text-xs px-2 py-1 task-status-completed rounded-full">Completed</span>
-              <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">Medium Priority</span>
-              <span class="text-xs text-gray-500">Healthcare Portal</span>
             </div>
           </div>
-
           <div class="flex items-center mt-2 md:mt-0">
-            <span class="text-sm text-gray-400">Completed: Oct 20, 2023</span>
+            <span class="text-sm text-gray-400">Completed: --</span>
           </div>
         </div>
 
-        <p class="text-sm mb-3">
-          Design and implement a comprehensive user profile dashboard with medical history,
-          appointment scheduling, and prescription refill capabilities.
+        <p class="text-gray-600 text-sm mb-4">
+          This task has been successfully completed. All requirements were met, and the deliverables are finalized.
+          No further action is required.
         </p>
 
         <div class="flex justify-between items-center">
           <div class="flex items-center">
-            <div class="flex -space-x-2">
-              <i class="fas fa-code-branch text-gray-400"></i>
-            </div>
+            <i class="fas fa-code-branch text-gray-400"></i>
           </div>
-          <div class="text-xs text-gray-400">
-            Created: Oct 10, 2023
-          </div>
-        </div>
-      </div>
-
-      <!-- Task 2 - Completed -->
-      <div class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm task-priority-high">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-1">Two-Factor Authentication</h3>
-            <div class="flex items-center flex-wrap gap-2">
-              <span class="text-xs px-2 py-1 task-status-completed rounded-full">Completed</span>
-              <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">High Priority</span>
-              <span class="text-xs text-gray-500">Mobile Banking App</span>
-            </div>
-          </div>
-
-          <div class="flex items-center mt-2 md:mt-0">
-            <span class="text-sm text-gray-400">Completed: Oct 22, 2023</span>
-          </div>
-        </div>
-
-        <p class="text-sm mb-3">
-          Implement two-factor authentication using SMS and authenticator apps with fallback
-          security questions for account recovery.
-        </p>
-
-        <div class="flex justify-between items-center">
-          <div class="flex items-center">
-            <div class="flex -space-x-2">
-              <i class="fas fa-mobile-alt text-gray-400"></i>
-              <i class="fas fa-shield-alt text-gray-400 ml-2"></i>
-            </div>
-          </div>
-          <div class="text-xs text-gray-400">
-            Created: Oct 12, 2023
-          </div>
-        </div>
-      </div>
-
-      <!-- Task 3 - Completed -->
-      <div class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm task-priority-low">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-1">Product Review System</h3>
-            <div class="flex items-center flex-wrap gap-2">
-              <span class="text-xs px-2 py-1 task-status-completed rounded-full">Completed</span>
-              <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">Low Priority</span>
-              <span class="text-xs text-gray-500">E-Commerce Platform</span>
-            </div>
-          </div>
-
-          <div class="flex items-center mt-2 md:mt-0">
-            <span class="text-sm text-gray-400">Completed: Oct 18, 2023</span>
-          </div>
-        </div>
-
-        <p class="text-sm mb-3">
-          Create a product rating and review system with image uploads, helpfulness voting,
-          and moderation tools for administrators.
-        </p>
-
-        <div class="flex justify-between items-center">
-          <div class="flex items-center">
-            <div class="flex -space-x-2">
-              <i class="fas fa-star text-gray-400"></i>
-              <i class="fas fa-image text-gray-400 ml-2"></i>
-            </div>
-          </div>
-          <div class="text-xs text-gray-400">
-            Created: Oct 15, 2023
-          </div>
+          <div class="text-xs text-gray-400" th:text="${'Created Date: ' + task.createTime}">Created: --</div>
         </div>
       </div>
     </div>
   </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Progress bar animation
-        const progressBars = document.querySelectorAll('.progress-transition');
-        progressBars.forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0';
-            setTimeout(() => {
-                bar.style.width = width;
-            }, 500);
-        });
-
-        // Card hover effect
-        const cards = document.querySelectorAll('.card-hover');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.classList.add('shadow-lg');
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.classList.remove('shadow-lg');
-            });
-        });
-
+      // Animate progress bars
+      const bars = document.querySelectorAll('.progress-transition');
+      bars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => bar.style.width = width, 500);
+      });
     });
   </script>
 </div>

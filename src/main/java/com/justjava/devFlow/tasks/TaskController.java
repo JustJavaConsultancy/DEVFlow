@@ -43,11 +43,13 @@ public class TaskController {
                 .list();
 
         tasks.forEach(task -> {
-            System.out.println(" The task process variables here==="+
-                    " The Task State ==== "+task.getState()
-                    +task.getProcessVariables());
+            System.out.println(" The task process variables here=== "+task.getProcessVariables() +
+                    " The Task State ==== "+task.getState()+
+                    "This is the task name === "+task.getName()+ " project description == " + task.getCreateTime()
+                    );
         });
         model.addAttribute("tasks", tasks);
+
         //model.addAttribute("userId", userId);
         return "tasks/projectTasks";
     }

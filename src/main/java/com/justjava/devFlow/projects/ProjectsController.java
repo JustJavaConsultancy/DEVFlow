@@ -2,8 +2,10 @@ package com.justjava.devFlow.projects;
 
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
+import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,9 @@ import java.util.Map;
 
 @Controller
 public class ProjectsController {
+    @Autowired
+    private TaskService taskService;
+
     @Autowired
     RuntimeService runtimeService;
 
@@ -56,7 +61,14 @@ public class ProjectsController {
                 .processInstanceId(projectId)
                 .includeProcessVariables()
                 .singleResult();
+        List<Task> tasks = taskService
+                .createTaskQuery()
+                .processInstanceId(projectId)
+                .includeProcessVariables()
+                .orderByTaskCreateTime().desc()
+                .list();
         model.addAttribute("project",project);
+        model.addAttribute("tasks", tasks);
         return "projects/projectDetails";
     }
     @PostMapping("/project/start")

@@ -81,7 +81,7 @@
 
       <div class="flex justify-between text-sm text-gray-500 mb-6">
         <span>13/20 tasks completed</span>
-        <span th:text="'Due: '+${project.startTime}">Due: Nov 15, 2023</span>
+        <span th:text="${'Expected: ' + project.processVariables['dueDate']}">Due: Nov 15, 2023</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -111,7 +111,7 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Budget</p>
-            <p class="font-medium">$15,000</p>
+            <p class="font-medium">$0</p>
           </div>
         </div>
 
@@ -121,7 +121,7 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Team Size</p>
-            <p class="font-medium">5 Members</p>
+            <p class="font-medium">7 Members</p>
           </div>
         </div>
       </div>
@@ -132,11 +132,18 @@
       <h2 class="text-xl font-bold text-blue-800 mb-4">Client Information</h2>
 
       <div class="flex items-center mb-4">
-        <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-             alt="Client" class="w-16 h-16 rounded-full mr-4">
+        <!-- Profile Circle with Client Initial -->
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+    <span th:text="${#strings.substring(project.processVariables['clientName'],0,1)}"
+          class="text-blue-800 font-bold text-2xl">
+      S
+    </span>
+        </div>
+
+        <!-- Client Name and Company -->
         <div>
-          <h3 class="font-bold text-lg">Sarah Johnson</h3>
-          <p class="text-gray-600">Fashion Retail Co.</p>
+          <h3 th:text="${project.processVariables['clientName']}" class="font-bold text-lg">Sarah Johnson</h3>
+          <p th:text="${project.processVariables['clientCompanyName']}" class="text-gray-600">Fashion Retail Co.</p>
         </div>
       </div>
 
@@ -147,7 +154,11 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Email</p>
-            <p class="font-medium">sarah@fashionretail.co</p>
+            <p th:text="${project.processVariables['clientEmail']}"
+               class="font-medium"
+               style="word-break: break-word; overflow-wrap: break-word;">
+              sarah@fashionretail.co
+            </p>
           </div>
         </div>
 
@@ -157,7 +168,7 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Phone</p>
-            <p class="font-medium">(555) 123-4567</p>
+            <p th:text="${project.processVariables['clientPhonenumber']}" class="font-medium">(555) 123-4567</p>
           </div>
         </div>
 
@@ -167,7 +178,7 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Location</p>
-            <p class="font-medium">New York, NY</p>
+            <p th:text="${project.processVariables['clientAddress']}" class="font-medium">New York, NY</p>
           </div>
         </div>
       </div>
@@ -176,20 +187,7 @@
         <h3 class="font-medium text-blue-800 mb-2">Client Requirements</h3>
         <div id="requirements-container" class="requirements-container">
           <ul class="list-disc pl-5 text-sm text-gray-600 space-y-1">
-            <li>Mobile-responsive design with support for all modern browsers and devices</li>
-            <li>Payment gateway integration with Stripe, PayPal, and Apple Pay options</li>
-            <li>Comprehensive inventory management system with real-time stock updates</li>
-            <li>Customer review and rating system with moderation capabilities</li>
-            <li>Advanced search and filtering functionality for products</li>
-            <li>User account management with order history and wishlists</li>
-            <li>Email notifications for order confirmations, shipping updates, and promotions</li>
-            <li>Admin dashboard for managing products, orders, customers, and analytics</li>
-            <li>SEO optimization with customizable meta tags and URLs</li>
-            <li>Integration with social media platforms for sharing and login</li>
-            <li>Multi-currency and multi-language support for international expansion</li>
-            <li>Order tracking system with shipping carrier integration</li>
-            <li>Customer support chat system with AI-powered responses</li>
-            <li>Advanced reporting and analytics for sales and customer behavior</li>
+
           </ul>
         </div>
         <div id="show-more-btn" class="show-more-btn mt-2">Show more</div>
@@ -198,33 +196,21 @@
   </div>
 
   <!-- Current Task Section -->
-  <div class="bg-white border border-gray-200 rounded-xl p-5 md:p-6 card-hover shadow-sm mb-8">
+  <div th:each="task : ${tasks}" th:if="${task.state == 'created'}" class="bg-white border border-gray-200 rounded-xl p-5 md:p-6 card-hover shadow-sm mb-8">
     <h2 class="text-xl font-bold text-blue-800 mb-4">Current Task</h2>
 
     <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 md:p-5">
       <div class="flex justify-between items-start mb-3">
-        <h3 class="text-lg font-bold text-blue-800">Payment Gateway Integration</h3>
+        <h3 th:text="${task.name}" class="text-lg font-bold text-blue-800">Payment Gateway Integration</h3>
         <span class="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">In Progress</span>
       </div>
 
       <p class="text-gray-600 mb-4">
-        Integrate Stripe payment processing system with the checkout functionality.
-        Implement secure transaction handling, error management, and success confirmation.
+        This is the task currently in progress. We are keeping a close eye on every detail to make sure it meets users expectations and contributes to the overall success of the project
       </p>
 
-      <div class="flex items-center mb-4">
-        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-             alt="Assignee" class="w-8 h-8 rounded-full mr-2">
-        <span class="text-sm text-gray-600">Assigned to: David Wilson</span>
-      </div>
-
-      <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-        <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 70%"></div>
-      </div>
-
       <div class="flex justify-between text-xs text-gray-500 mb-4">
-        <span>Started: Oct 20, 2023</span>
-        <span>Due: Nov 5, 2023</span>
+        <span th:text="${'Started: ' + task.createTime}">Started: Oct 20, 2023</span>
       </div>
 
     </div>

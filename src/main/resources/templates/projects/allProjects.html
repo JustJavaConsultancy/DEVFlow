@@ -132,23 +132,29 @@
             </p>
 
             <div class="flex items-center mb-4">
-                <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                     alt="Client" class="w-8 h-8 rounded-full mr-2">
+                <!-- Profile Circle with Client Initial -->
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                    <span th:text="${#strings.substring(project.processVariables['clientName'],0,1)}" class="text-blue-800 font-bold text-sm">S
+                    </span>
+                </div>
+
+                <!-- Client Name -->
                 <span class="text-sm text-gray-600" th:text="${project.processVariables['clientName']}">Sarah Johnson</span>
             </div>
+
 
             <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
                 <div class="bg-blue-600 h-2 rounded-full progress-transition" style="width: 65%"></div>
             </div>
 
-            <div class="flex justify-between text-xs md:text-sm text-gray-500 mb-4">
+            <div class="flex justify-between text-xs text-sm text-gray-500 mb-4">
                 <span>13/20 tasks completed</span>
-                <span>Due: Nov 15, 2023</span>
+                <span th:text="${'Expected: ' + project.processVariables['dueDate']}">Due: Nov 15, 2023</span>
             </div>
 
             <div class="flex space-x-2 md:space-x-3">
                 <a style="text-align:center" class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1"
-                   th:href="@{/tasks}"
+                   th:href="@{/tasks/{projectId}(projectId=${project.processInstanceId})}"
                   >
                     View Tasks
                 </a>
@@ -216,7 +222,10 @@
                     <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Description</label>
                     <textarea required rows="3" name="projectDescription" class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Describe the project"></textarea>
                 </div>
-
+                <div>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Company Name</label>
+                    <input type="text" name="clientCompanyName" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter company name">
+                </div>
                 <div>
                     <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Name</label>
                     <input type="text" name="clientName" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
@@ -226,7 +235,7 @@
                     <input type="text" name="clientEmail" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
                 </div>
                 <div>
-                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Phonenumber</label>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Phone Number</label>
                     <input type="text" name="clientPhonenumber" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
                 </div>
                 <div>
@@ -234,7 +243,7 @@
                     <input type="text" name="clientAddress" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
                 </div>
                 <div>
-                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Due Date</label>
+                    <label class="block text-blue-100 mb-1 text-sm md:text-base">Expected Due Date</label>
                     <input type="date" name="dueDate" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base">
                 </div>
                 <div>
