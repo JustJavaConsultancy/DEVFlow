@@ -111,6 +111,7 @@ public class FlowableTaskController {
 
         // Load process variables
         Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId());
+        System.out.println("This is the process variable== " + processVariables);
 
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
@@ -174,6 +175,7 @@ public class FlowableTaskController {
     public String completeTask(@PathVariable String taskId,
                                @RequestParam Map<String, String> formParams,
                                RedirectAttributes redirectAttributes) {
+        System.out.println("This is what is submitted === " + formParams);
         try {
 
             Task task = taskService.createTaskQuery().taskId(taskId).singleResult();

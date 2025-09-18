@@ -9,38 +9,7 @@
   <title>Review SRS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* Document styling */
-        .document-container {
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            height: 60vh;
-            overflow-y: auto;
-        }
-
-        .document-section {
-            margin-bottom: 2rem;
-        }
-
-        .document-section h3 {
-            color: #780aff;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Action buttons */
-        .action-btn {
-            transition: all 0.3s ease;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-  </style>
+  <style> .document-container { background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); height: 60vh; overflow-y: auto; } .document-section { margin-bottom: 2rem; } .document-section h3 { color: #780aff; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1rem; } .action-btn { transition: all 0.3s ease; } .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); } .editable { border: 1px dashed transparent; padding: 4px; border-radius: 4px; transition: all 0.2s; } .editable:hover { border-color: #780aff; background-color: #f9f5ff; } .edit-mode .editable { border-color: #780aff; background-color: #f9f5ff; } .edit-mode .editable:focus { outline: none; border: 1px solid #780aff; background-color: white; box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1); } .btn-disabled { opacity: 0.7; cursor: not-allowed; } .btn-disabled:hover { transform: none; box-shadow: none; } .gradient-bg { background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%); } /* New styles for the generated content */ .document-content h1 { font-size: 1.875rem; font-weight: bold; color: #1e40af; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; } .document-content h2 { font-size: 1.5rem; font-weight: bold; color: #780aff; margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.25rem; border-bottom: 1px solid #e2e8f0; } .document-content h3 { font-size: 1.25rem; font-weight: 600; color: #4b7bec; margin-top: 1.25rem; margin-bottom: 0.75rem; } .document-content p { margin-bottom: 1rem; line-height: 1.6; color: #374151; } .document-content ul { margin-bottom: 1rem; padding-left: 1.5rem; list-style-type: disc; } .document-content li { margin-bottom: 0.5rem; line-height: 1.5; } .document-content strong { font-weight: 600; color: #4b5563; } </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -50,114 +19,196 @@
       <i class="fas fa-file-alt mr-3 text-blue-600"></i>
       Review SRS Document
     </h1>
-    <p class="text-gray-600 mt-2">E-Commerce Platform Project - v2.3</p>
+    <p th:text="${processVariables.projectName}" class="text-gray-600 mt-2">
+      E-Commerce Platform Project - v2.3
+    </p>
   </div>
 
-  <!-- Action Bar -->
-  <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
-    <div class="flex items-center">
-      <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
-      <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
+  <!-- Thymeleaf Form -->
+  <form id="srsForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
+    <!-- Action Bar -->
+    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
+      <div class="flex items-center">
+        <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
+        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
+      </div>
+
+      <div class="flex space-x-3 mt-3 md:mt-0">
+        <button type="button" id="editToggleBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+          <i class="fas fa-edit mr-2"></i>
+          Edit
+        </button>
+        <button onclick="downloadAsPDF()" type="button" id="downloadBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+          <i class="fas fa-download mr-2"></i>
+          Download
+        </button>
+      </div>
+    </div>
+    <textarea name="requirement" id="editedDocument" hidden></textarea>
+
+    <!-- Document Content -->
+    <div id="documentContent" class="document-container mb-6">
+      <div class="document-content" th:utext="${processVariables.aiRequirementAnalysis}"></div>
     </div>
 
-    <div class="flex space-x-3 mt-3 md:mt-0">
-      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
-        <i class="fas fa-edit mr-2"></i>
-        Edit
+    <!-- Complete Button -->
+    <div class="flex justify-center mt-6">
+      <button type="submit" id="submitBtn" class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+        <i class="fas fa-check-circle mr-2"></i>
+        Complete Review
       </button>
-      <button class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
-        <i class="fas fa-download mr-2"></i>
-        Download
-      </button>
     </div>
-  </div>
+  </form>
 
-  <!-- Document Content -->
-  <div class="document-container mb-6">
-    <h2 class="text-2xl font-bold text-blue-800 mb-2">Software Requirements Specification</h2>
-    <p class="text-gray-600 mb-6">For E-Commerce Platform Version 2.0</p>
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    const editToggleBtn = document.getElementById('editToggleBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const srsForm = document.getElementById('srsForm');
+    const documentContent = document.getElementById('documentContent');
+    let isEditMode = false;
 
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">1. Introduction</h3>
-      <p>This document describes the requirements for the E-Commerce Platform project. The system will allow users to browse products, add them to a cart, and complete purchases securely.</p>
-    </div>
+    // Toggle edit mode
+    editToggleBtn.addEventListener('click', function() {
+      isEditMode = !isEditMode;
+      const editableElements = document.querySelectorAll('.editable');
+      if (isEditMode) {
+        documentContent.classList.add('edit-mode');
+        editToggleBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Save';
+        editToggleBtn.classList.remove('gradient-bg');
+        editToggleBtn.classList.add('bg-green-600');
+        editableElements.forEach(el => el.setAttribute('contenteditable', 'true'));
+      } else {
+        documentContent.classList.remove('edit-mode');
+        editToggleBtn.innerHTML = '<i class="fas fa-edit mr-2"></i> Edit';
+        editToggleBtn.classList.remove('bg-green-600');
+        editToggleBtn.classList.add('gradient-bg');
+        editableElements.forEach(el => el.setAttribute('contenteditable', 'false'));
+      }
+    });
 
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">2. Functional Requirements</h3>
+    // Download functionality
+    async function downloadAsPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      const contentDiv = document.getElementById('documentContent');
 
-      <h4 class="font-medium mt-4">2.1 User Management</h4>
-      <p>The system shall allow users to:</p>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Create a new account</li>
-        <li>Log in to an existing account</li>
-        <li>Reset password</li>
-        <li>View and edit profile information</li>
-      </ul>
+      // Page setup
+      const margin = 50;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      let y = margin;
+      const defaultLineHeight = 16;
 
-      <h4 class="font-medium mt-4">2.2 Product Catalog</h4>
-      <p>The system shall provide:</p>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Product browsing with filtering options</li>
-        <li>Product search functionality</li>
-        <li>Product detail pages with images and specifications</li>
-        <li>Product reviews and ratings</li>
-      </ul>
+      // Add Logo + Company Name
+      const logoUrl = "/images/justjavaLogo.svg"; // static folder
+      const logo = await loadImage(logoUrl);
+      pdf.addImage(logo, "PNG", margin, 20, 40, 40);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(18);
+      pdf.setTextColor(33, 33, 33);
+      pdf.text("", margin + 50, 45);
+      y = 90;
 
-      <h4 class="font-medium mt-4">2.3 Shopping Cart</h4>
-      <p>The system shall allow users to:</p>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Add products to a shopping cart</li>
-        <li>View and edit cart contents</li>
-        <li>Save cart for later</li>
-      </ul>
+      function checkPageBreak(extra = 0) {
+        if (y + extra > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+        }
+      }
 
-      <h4 class="font-medium mt-4">2.4 Checkout Process</h4>
-      <p>The system shall provide:</p>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Multiple payment options (credit card, PayPal)</li>
-        <li>Address validation</li>
-        <li>Order confirmation</li>
-        <li>Order tracking functionality</li>
-      </ul>
-    </div>
+      function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
+        pdf.setFont("helvetica", bold ? "bold" : "normal");
+        pdf.setFontSize(fontSize);
+        const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
+        if (extraGap > 0) y += extraGap;
+        lines.forEach(line => {
+          checkPageBreak(spacing);
+          pdf.text(line, margin + indent, y);
+          y += spacing;
+        });
+        y += 4;
+      }
 
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">3. Non-Functional Requirements</h3>
+      function processNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (node.textContent.trim()) addText(node.textContent.trim(), 12);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toLowerCase();
+          if (tag === "h1") addText(node.textContent.trim(), 22, true, 0, 28, 12);
+          else if (tag === "h2") addText(node.textContent.trim(), 18, true, 0, 24, 10);
+          else if (tag === "h3") addText(node.textContent.trim(), 15, true, 0, 20, 8);
+          else if (tag === "p") addText(node.textContent.trim(), 12, false, 0, 18, 6);
+          else if (tag === "li") addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
+          else if (tag === "ul" || tag === "ol") {
+            y += 4; node.childNodes.forEach(child => processNode(child)); y += 6;
+          }
+          else if (tag === "table") {
+            const rows = [];
+            node.querySelectorAll("tr").forEach(tr => {
+              const row = [];
+              tr.querySelectorAll("td, th").forEach(td => row.push(td.innerText.trim()));
+              rows.push(row);
+            });
+            if (rows.length > 0) {
+              y += 10; checkPageBreak(40);
+              pdf.autoTable({
+                head: [rows[0]],
+                body: rows.slice(1),
+                startY: y,
+                margin: { left: margin, right: margin },
+                styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
+                headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
+              });
+              y = pdf.lastAutoTable.finalY + 20;
+            }
+          } else {
+            node.childNodes.forEach(child => processNode(child));
+          }
+        }
+      }
 
-      <h4 class="font-medium mt-4">3.1 Performance</h4>
-      <p>The system shall support:</p>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Page load times under 2 seconds</li>
-        <li>Up to 10,000 concurrent users</li>
-      </ul>
+      // Traverse content
+      contentDiv.childNodes.forEach(node => processNode(node));
 
-      <h4 class="font-medium mt-4">3.2 Security</h4>
-      <p>The system shall:</p>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Encrypt all sensitive data</li>
-        <li>Comply with PCI DSS standards for payment processing</li>
-        <li>Implement protection against common web vulnerabilities</li>
-      </ul>
-    </div>
+      // Footer with page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(150);
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
+      }
 
-    <div class="document-section">
-      <h3 class="text-lg font-semibold">4. Future Enhancements</h3>
-      <ul class="list-disc pl-5 mt-2">
-        <li>Mobile application development</li>
-        <li>AI-based product recommendations</li>
-        <li>Integration with social media platforms</li>
-        <li>Multi-language support</li>
-      </ul>
-    </div>
-  </div>
+      pdf.save("srs-document.pdf");
+    }
 
-  <!-- Complete Button -->
-  <div class="flex justify-center mt-6">
-    <button class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
-      <i class="fas fa-check-circle mr-2"></i>
-      Complete Review
-    </button>
-  </div>
+    function loadImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width; canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.src = url;
+      });
+    }
+
+    // Form submission handler
+    srsForm.addEventListener('submit', function(e) {
+      const editedContent = document.querySelector('.document-content').innerHTML;
+      document.getElementById('editedDocument').value = editedContent;
+      submitBtn.disabled = true;
+      submitBtn.classList.add('btn-disabled');
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+    });
+  </script>
 </div>
 </body>
 </html>
