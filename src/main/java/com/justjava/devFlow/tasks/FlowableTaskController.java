@@ -72,14 +72,22 @@ public class FlowableTaskController {
     // View task form
     @GetMapping("/view/{taskId}")
     public String viewTaskForm(@PathVariable String taskId, Model model) {
+        String taskKey;
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
+
         if (task == null) {
-            throw new IllegalArgumentException("Task not found with id: " + taskId);
+            HistoricTaskInstance historicTask = historyService.createHistoricTaskInstanceQuery()
+                    .finished()
+                    .taskId(taskId)
+                    .singleResult();
+            taskKey = historicTask.getTaskDefinitionKey().toLowerCase();
+        }else {
+            taskKey = task.getTaskDefinitionKey().toLowerCase();
         }
 
         String currentTask;
-        switch (task.getTaskDefinitionKey().toLowerCase()) {
+        switch (taskKey) {
             case "requirement_elicitation":
                 currentTask = "tasks/requirement";
                 break;
