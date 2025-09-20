@@ -94,7 +94,7 @@
     </h2>
 
     <div class="grid grid-cols-1 gap-4">
-      <a th:href="@{/tasks/view/{taskId}(taskId=${task.id})}" th:each="task : ${completedTasks}"
+      <div th:each="task : ${completedTasks}"
            class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm">
 
 
@@ -122,7 +122,7 @@
           </div>
           <div class="text-xs text-gray-400" th:text="${'Created Date: ' + task.createTime}">Created: --</div>
         </div>
-      </a>
+      </div>
     </div>
   </div>
 

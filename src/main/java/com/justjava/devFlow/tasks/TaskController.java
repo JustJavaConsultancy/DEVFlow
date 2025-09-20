@@ -45,13 +45,17 @@ public class TaskController {
                 .list();
         List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
                 .processInstanceId(projectId)
+                .includeProcessVariables()
                 .finished()
                 .orderByTaskCreateTime().desc()
                 .list();
-        tasks.forEach(task -> {
+        historicTasks.forEach(task -> {
             System.out.println(" The task process variables here=== "+task.getProcessVariables() +
                     " The Task State ==== "+task.getState()+
-                    "This is the task name === "+task.getName()+ " project description == " + task.getCreateTime()
+                    " task ID==="+  task.getId()+
+                    " the task kept variable==="+runtimeService.getVariables(task.getExecutionId(),List.of(task.getId())).get(task.getId())+
+                    " This is the task name === "+task.getName()+ " project descriptiontask creation date" +
+                            " == " + task.getCreateTime()
                     );
         });
         model.addAttribute("tasks", tasks);
