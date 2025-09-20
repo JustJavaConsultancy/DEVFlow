@@ -26,15 +26,15 @@
         line-height: 1.5;
         color: #e2e8f0;
         margin: 1.5rem 0;
-        overflow-x: auto;   /* horizontal scroll inside only */
+        overflow-x: auto;
         max-width: 100%;
-        box-sizing: border-box; /* Added to fix box model issues */
+        box-sizing: border-box;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .code-line {
         display: block;
-        white-space: pre-wrap;   /* Changed to pre-wrap to prevent horizontal overflow */
+        white-space: pre-wrap;
         padding: 1px 0;
     }
 
@@ -53,7 +53,7 @@
         line-height: 1.7;
         color: #334155;
         max-width: 100%;
-        overflow-wrap: break-word; /* wrap text safely */
+        overflow-wrap: break-word;
     }
 
     .dynamic-content h1, .dynamic-content h2, .dynamic-content h3, .dynamic-content h4 {
@@ -202,9 +202,13 @@
   <!-- Script kept inside content fragment -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Only process code blocks that are direct children of pre elements (standard markdown)
-        document.querySelectorAll('.dynamic-content pre > code').forEach(block => {
-            const code = block.textContent.trim();
+        // Process all <code> blocks into styled .code-blocks
+        document.querySelectorAll('.dynamic-content code').forEach(block => {
+            // Escape HTML so it doesn't render
+            const code = block.innerHTML
+                .replace(/&/g, '&amp;')   // escape ampersand first
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
 
             // Create code block container
             const codeBlock = document.createElement('div');
@@ -217,13 +221,8 @@
                 `<span class="code-line"><span class="line-number">${i+1}</span>${line}</span>`
             ).join('');
 
-            // Replace the parent pre element with our formatted code block
-            block.parentElement.replaceWith(codeBlock);
-        });
-
-        // Remove any remaining pre tags but keep their content
-        document.querySelectorAll('.dynamic-content pre').forEach(pre => {
-            pre.outerHTML = pre.innerHTML;
+            // Replace <code> with formatted block
+            block.replaceWith(codeBlock);
         });
     });
   </script>

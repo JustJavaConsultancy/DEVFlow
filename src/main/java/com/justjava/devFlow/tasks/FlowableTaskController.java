@@ -73,19 +73,16 @@ public class FlowableTaskController {
     @GetMapping("/view/{taskId}")
     public String viewTaskForm(@PathVariable String taskId, Model model) {
         String taskKey;
-        String processInstanceId;
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-        HistoricTaskInstance historicTask = null;
+
 
         if (task == null) {
-            historicTask = historyService.createHistoricTaskInstanceQuery()
+            HistoricTaskInstance historicTask = historyService.createHistoricTaskInstanceQuery()
                     .finished()
                     .taskId(taskId)
                     .singleResult();
             taskKey = historicTask.getTaskDefinitionKey().toLowerCase();
-            processInstanceId = historicTask.getProcessInstanceId();
         }else {
-            processInstanceId = task.getProcessInstanceId();
             taskKey = task.getTaskDefinitionKey().toLowerCase();
         }
 
@@ -118,15 +115,15 @@ public class FlowableTaskController {
         }
 
         // Load task variables
-        //Map<String, Object> taskVariables = runtimeService.getVariables(processInstanceId);
+        Map<String, Object> taskVariables = taskService.getVariables(taskId);
 
         // Load process variables
-        Map<String, Object> processVariables = (Map<String, Object>) runtimeService.getVariables(processInstanceId).get(taskId);
+        Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId());
         System.out.println("This is the process variable== " + processVariables);
 
-        model.addAttribute("task", task != null?task:historicTask);
+        model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
-        //model.addAttribute("taskVariables", taskVariables);
+        model.addAttribute("taskVariables", taskVariables);
         model.addAttribute("processVariables", processVariables);
 
         return currentTask;
@@ -199,7 +196,6 @@ public class FlowableTaskController {
             // Convert form parameters to proper types
             Map<String, Object> variables = convertFormParamsToVariables(formParams);
             // Complete the task with form data
-            runtimeService.setVariable(task.getProcessInstanceId(),taskId, variables);
             taskService.complete(taskId, variables);
 
             redirectAttributes.addFlashAttribute("success", "Task completed successfully");
