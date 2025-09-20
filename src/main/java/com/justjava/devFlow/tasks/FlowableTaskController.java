@@ -98,9 +98,6 @@ public class FlowableTaskController {
             case "review":
                 currentTask = "tasks/review";
                 break;
-            case "closure":
-                currentTask = "tasks/closure";
-                break;
             default:
                 currentTask = "tasks/default";
                 break;
