@@ -36,10 +36,10 @@ public class ProjectsController {
                 .active()
                 .list();
         projects.forEach(project -> {
-            System.out.println(" The Process Instance" +
+/*            System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
                     +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables());
+                    +" the variables==="+project.getProcessVariables().get("b0e80426-962f-11f0-a585-00155dd09231"));*/
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
@@ -47,7 +47,7 @@ public class ProjectsController {
                 .orderByProcessInstanceEndTime()
                 .desc()
                 .list();
-        System.out.println(" The Completed Process Here==="+completedProcess.size());
+        //System.out.println(" The Completed Process Here==="+completedProcess.size());
         model.addAttribute("projects",projects);
         model.addAttribute("completedProject",completedProcess.size());
         model.addAttribute("activeProject",projects.size());
@@ -86,10 +86,10 @@ public class ProjectsController {
                 .active()
                 .list();
         projects.forEach(project -> {
-            System.out.println(" The Process Instance" +
+/*            System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
                     +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables());
+                    +" the variables==="+project.getProcessVariables());*/
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
@@ -97,11 +97,11 @@ public class ProjectsController {
                 .orderByProcessInstanceEndTime()
                 .desc()
                 .list();
-        System.out.println(" The Completed Process Here==="+completedProcess.size());
+        //System.out.println(" The Completed Process Here==="+completedProcess.size());
         model.addAttribute("projects",projects);
         model.addAttribute("completedProject",completedProcess.size());
         model.addAttribute("activeProject",projects.size());
-        System.out.println(" The Process Instance Here==="+processInstance.getProcessVariables());
+        //System.out.println(" The Process Instance Here==="+processInstance.getProcessVariables());
         return "/projects/allProjects";
     }
 

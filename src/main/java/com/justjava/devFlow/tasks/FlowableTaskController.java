@@ -49,7 +49,7 @@ public class FlowableTaskController {
                 .list();
 
         tasks.forEach(task -> {
-            System.out.println(" The task process variables here==="+task.getProcessVariables());
+            //System.out.println(" The task process variables here==="+task.getProcessVariables());
         });
         model.addAttribute("tasks", tasks);
         //model.addAttribute("userId", userId);
@@ -72,22 +72,14 @@ public class FlowableTaskController {
     // View task form
     @GetMapping("/view/{taskId}")
     public String viewTaskForm(@PathVariable String taskId, Model model) {
-        String taskKey;
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
-
         if (task == null) {
-            HistoricTaskInstance historicTask = historyService.createHistoricTaskInstanceQuery()
-                    .finished()
-                    .taskId(taskId)
-                    .singleResult();
-            taskKey = historicTask.getTaskDefinitionKey().toLowerCase();
-        }else {
-            taskKey = task.getTaskDefinitionKey().toLowerCase();
+            throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
 
         String currentTask;
-        switch (taskKey) {
+        switch (task.getTaskDefinitionKey().toLowerCase()) {
             case "requirement_elicitation":
                 currentTask = "tasks/requirement";
                 break;
@@ -100,8 +92,8 @@ public class FlowableTaskController {
             case "formtask_11":
                 currentTask = "tasks/reviewSolutionArchitecture";
                 break;
-            case "formtask_1":
-                currentTask = "tasks/codeReview";
+            case "deployment":
+                currentTask = "tasks/deployment";
                 break;
             case "review":
                 currentTask = "tasks/review";
@@ -118,13 +110,70 @@ public class FlowableTaskController {
         Map<String, Object> taskVariables = taskService.getVariables(taskId);
 
         // Load process variables
-        Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId());
-        System.out.println("This is the process variable== " + processVariables);
+        Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId(),List.of(taskId));
+
+/*        System.out.println(" The Task Id==="+task.getId()+"\n\n\n\n\n\n\n\n " + " The whole process variables===="+
+                runtimeService.getVariables(task.getExecutionId()));
+        System.out.println("This is the process variable== " + processVariables);*/
 
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
         model.addAttribute("taskVariables", taskVariables);
-        model.addAttribute("processVariables", processVariables);
+        model.addAttribute("processVariables", runtimeService.getVariables(task.getExecutionId()));
+
+        return currentTask;
+    }
+    @GetMapping("/viewCompleted/{taskId}")
+    public String viewCompletedTaskForm(@PathVariable String taskId, Model model) {
+        HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery()
+                .finished()
+                .taskId(taskId)
+                .singleResult();
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found with id: " + taskId);
+        }
+
+        String currentTask;
+        switch (task.getTaskDefinitionKey().toLowerCase()) {
+            case "requirement_elicitation":
+                currentTask = "tasks/requirement";
+                break;
+            case "formtask_12":
+                currentTask = "tasks/reviewSrs";
+                break;
+            case "formtask_43":
+                currentTask = "tasks/reviewUserStories";
+                break;
+            case "formtask_11":
+                currentTask = "tasks/reviewSolutionArchitecture";
+                break;
+            case "deployment":
+                currentTask = "tasks/deployment";
+                break;
+            case "review":
+                currentTask = "tasks/review";
+                break;
+            case "closure":
+                currentTask = "tasks/closure";
+                break;
+            default:
+                currentTask = "tasks/default";
+                break;
+        }
+
+        // Load task variables
+        //Map<String, Object> taskVariables = taskService.getVariables(taskId);
+
+        // Load process variables
+        Map<String, Object> processVariables = runtimeService.getVariables(task.getExecutionId(),
+                List.of(task.getId()));
+        //System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
+        processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
+        model.addAttribute("task", task);
+        model.addAttribute("taskId",taskId);
+        //model.addAttribute("taskVariables", taskVariables);
+        model.addAttribute("processVariables",processVariables );
 
         return currentTask;
     }
@@ -196,7 +245,14 @@ public class FlowableTaskController {
             // Convert form parameters to proper types
             Map<String, Object> variables = convertFormParamsToVariables(formParams);
             // Complete the task with form data
+            runtimeService.setVariable(task.getExecutionId(),task.getId(),variables);
+
+/*
+            System.out.println(" During the complete cycle The task id here==="+task.getId()+"\n\n\n\n\n\n\n\n "
+                            + " The whole process variables===="+ runtimeService.getVariables(task.getExecutionId()));
+*/
             taskService.complete(taskId, variables);
+
 
             redirectAttributes.addFlashAttribute("success", "Task completed successfully");
             return "redirect:/tasks/" + task.getProcessInstanceId();
