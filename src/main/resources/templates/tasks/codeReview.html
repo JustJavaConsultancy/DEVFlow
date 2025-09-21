@@ -214,8 +214,10 @@
     const codeReview = document.getElementById('codeReview');
         // Process all <code> blocks into styled .code-blocks
         document.querySelectorAll('.dynamic-content code').forEach(block => {
+            // Replace encoded angle brackets with actual characters
+            let code = block.innerHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
             // Escape HTML so it doesn't render
-            const code = block.innerHTML
+            code = code
                 .replace(/&/g, '&amp;')   // escape ampersand first
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');

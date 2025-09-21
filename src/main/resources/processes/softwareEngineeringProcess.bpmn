@@ -47,8 +47,8 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
       <flowable:processInstanceName><![CDATA[${projectName}]]></flowable:processInstanceName>
       <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
-      <design:creationdate><![CDATA[2025-09-17T11:24:18.074Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-09-17T11:27:49.707Z]]></design:modificationdate>
+      <design:creationdate><![CDATA[2025-09-21T22:00:41.958Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2025-09-21T22:01:52.450Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_43" name="Review User Stories List" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -157,48 +157,6 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </userTask>
-    <serviceTask id="HttpTask_12" name="AgenticAI-Solution Architect" flowable:parallelInSameTransaction="false" flowable:type="http">
-      <extensionElements>
-        <flowable:field name="requestMethod">
-          <flowable:string><![CDATA[POST]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="requestUrl">
-          <flowable:expression><![CDATA[${env.get('app.ai.url')}/architect]]></flowable:expression>
-        </flowable:field>
-        <flowable:field name="requestHeaders">
-          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="requestBody">
-          <flowable:expression><![CDATA[${architectureRequestBody}]]></flowable:expression>
-        </flowable:field>
-        <flowable:field name="requestTimeout">
-          <flowable:string><![CDATA[500000]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="disallowRedirects">
-          <flowable:string><![CDATA[false]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="responseVariableName">
-          <flowable:string><![CDATA[architecture]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="ignoreException">
-          <flowable:string><![CDATA[false]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="saveRequestVariables">
-          <flowable:string><![CDATA[false]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="saveResponseParameters">
-          <flowable:string><![CDATA[false]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="saveResponseParametersTransient">
-          <flowable:string><![CDATA[false]]></flowable:string>
-        </flowable:field>
-        <flowable:field name="saveResponseVariableAsJson">
-          <flowable:string><![CDATA[false]]></flowable:string>
-        </flowable:field>
-        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
-        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
-      </extensionElements>
-    </serviceTask>
     <scriptTask id="ServiceTask_26" name="Select the Next User Story" scriptFormat="javascript" flowable:autoStoreVariables="false">
       <extensionElements>
         <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
@@ -291,7 +249,7 @@ if (storiesList !== null && storiesList.size() > 0) {
           <flowable:expression><![CDATA[${developmentProgress}]]></flowable:expression>
         </flowable:field>
         <flowable:field name="requestTimeout">
-          <flowable:string><![CDATA[100000]]></flowable:string>
+          <flowable:string><![CDATA[1000000]]></flowable:string>
         </flowable:field>
         <flowable:field name="disallowRedirects">
           <flowable:string><![CDATA[false]]></flowable:string>
@@ -408,6 +366,48 @@ try {
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </userTask>
+    <serviceTask id="HttpTask_12" name="AgenticAI-Solution Architect" flowable:parallelInSameTransaction="false" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[POST]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/architect]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestBody">
+          <flowable:expression><![CDATA[${architectureRequestBody}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[500000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="disallowRedirects">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[architecture]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="ignoreException">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveRequestVariables">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParametersTransient">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseVariableAsJson">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
     <exclusiveGateway id="Exclusive_Databased_Gateway_3" name="featuresCompleted?">
       <extensionElements>
         <design:stencilid><![CDATA[Exclusive_Databased_Gateway]]></design:stencilid>
@@ -471,11 +471,6 @@ try {
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_20" sourceRef="HttpTask_12" targetRef="FormTask_11">
-      <extensionElements>
-        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
-      </extensionElements>
-    </sequenceFlow>
     <sequenceFlow id="SequenceFlow_45" sourceRef="ServiceTask_26" targetRef="HttpTask_43">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
@@ -502,6 +497,11 @@ try {
       </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_48" sourceRef="requirement_elicitation" targetRef="HttpTask_11">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_20" sourceRef="HttpTask_12" targetRef="FormTask_11">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
@@ -564,9 +564,6 @@ try {
       <bpmndi:BPMNShape bpmnElement="FormTask_12" id="BPMNShape_FormTask_12">
         <omgdc:Bounds height="80.0" width="100.0" x="1037.0" y="236.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="HttpTask_12" id="BPMNShape_HttpTask_12">
-        <omgdc:Bounds height="80.0" width="99.99999999999977" x="1966.4799999999998" y="236.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ServiceTask_26" id="BPMNShape_ServiceTask_26">
         <omgdc:Bounds height="80.0" width="100.0" x="2870.840004620259" y="236.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
@@ -585,10 +582,13 @@ try {
       <bpmndi:BPMNShape bpmnElement="requirement_elicitation" id="BPMNShape_requirement_elicitation">
         <omgdc:Bounds height="80.0" width="100.0" x="609.0" y="236.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HttpTask_12" id="BPMNShape_HttpTask_12">
+        <omgdc:Bounds height="80.0" width="99.99999999999977" x="1966.4799999999998" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="Exclusive_Databased_Gateway_3" id="BPMNShape_Exclusive_Databased_Gateway_3">
         <omgdc:Bounds height="40.0" width="40.0" x="3934.5872046202594" y="256.0"></omgdc:Bounds>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="18.0" width="108.0" x="3900.0" y="300.0"></omgdc:Bounds>
+          <omgdc:Bounds height="18.0" width="108.0" x="3900.5872046202594" y="300.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="Exclusive_Databased_Gateway_4" id="BPMNShape_Exclusive_Databased_Gateway_4">
@@ -609,8 +609,8 @@ try {
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_26" id="BPMNEdge_SequenceFlow_26" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="488.0" y="276.0"></omgdi:waypoint>
-        <omgdi:waypoint x="548.5" y="276.0"></omgdi:waypoint>
-        <omgdi:waypoint x="548.5" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="548.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="548.0" y="276.0"></omgdi:waypoint>
         <omgdi:waypoint x="609.0" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_49" id="BPMNEdge_SequenceFlow_49" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
@@ -677,13 +677,13 @@ try {
         <omgdi:waypoint x="1520.0" y="276.0"></omgdi:waypoint>
         <omgdi:waypoint x="1604.0" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_20" id="BPMNEdge_SequenceFlow_20" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="2066.0" y="276.0"></omgdi:waypoint>
-        <omgdi:waypoint x="2183.0" y="276.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_53" id="BPMNEdge_SequenceFlow_53" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="1883.0" y="276.0"></omgdi:waypoint>
         <omgdi:waypoint x="1966.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_20" id="BPMNEdge_SequenceFlow_20" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="2066.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2183.0" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_43" id="BPMNEdge_SequenceFlow_43" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="1137.0" y="276.0"></omgdi:waypoint>
