@@ -102,7 +102,7 @@ public class ProjectsController {
         model.addAttribute("completedProject",completedProcess.size());
         model.addAttribute("activeProject",projects.size());
         //System.out.println(" The Process Instance Here==="+processInstance.getProcessVariables());
-        return "/projects/allProjects";
+        return "redirect:/projects";
     }
 
 }

@@ -209,7 +209,6 @@
                 </button>
             </div>
             <form id="formContainer" th:action="@{~/project/start}" th:object="${formData}" method="post"
-                  hx-post="/project/start" hx-target="body" hx-swap="innerHTML"
                   class="space-y-3 md:space-y-4" >
 
                 <div>
@@ -298,6 +297,8 @@
             const closeModal = document.getElementById('closeModal');
             const cancelBtn = document.getElementById('cancelBtn');
             const projectForm = document.getElementById('projectForm');
+            const formContainer = document.getElementById('formContainer');
+            const submitBtn = formContainer.querySelector('button[type="submit"]');
 
             function openModal() {
                 modal.classList.add('active');
@@ -318,6 +319,11 @@
                 if (e.target === modal) {
                     closeModalFunc();
                 }
+            });
+
+            formContainer.addEventListener('submit', function(e) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating...';
             });
         });
     </script>

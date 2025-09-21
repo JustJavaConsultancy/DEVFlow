@@ -1,5 +1,7 @@
 package com.justjava.devFlow;
 
+import com.justjava.devFlow.aau.AuthenticationManager;
+import jakarta.servlet.http.HttpServletRequest;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -24,8 +26,11 @@ public class HomeController {
 
     @Autowired
     HistoryService historyService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(HttpServletRequest request, Model model) {
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
                 .processDefinitionKey("softwareEngineeringProcess")
@@ -53,6 +58,7 @@ public class HomeController {
                 .includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
+        request.getSession().setAttribute("userName", authenticationManager.get("name"));
         //System.out.println(" The Completed Process Here==="+completedProcess.size());
         model.addAttribute("projects",projects);
         model.addAttribute("activeTask",tasks.size());

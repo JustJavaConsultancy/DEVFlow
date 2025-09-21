@@ -116,14 +116,13 @@
             <!-- Header -->
             <div class="flex justify-between items-center mb-8">
                 <div class="glass-effect flex items-center rounded-full px-4 py-2 w-64 md:w-96">
-                    <i class="fas fa-search text-blue-200 mr-2"></i>
-                    <input type="text" placeholder="Search projects..." class="bg-transparent text-white placeholder-blue-200 outline-none w-full">
                 </div>
 
                 <div class="flex items-center">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80"
-                         alt="User" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3">
-                    <span class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
+                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3 bg-blue-200 flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600 text-sm"></i>
+                    </div>
+                    <span th:text="${session.userName}" class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
                 </div>
             </div>
             <div layout:fragment="content" id="content"></div>
