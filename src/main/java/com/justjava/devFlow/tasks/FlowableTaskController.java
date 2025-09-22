@@ -117,7 +117,7 @@ public class FlowableTaskController {
         model.addAttribute("taskId",taskId);
         model.addAttribute("taskVariables", taskVariables);
         model.addAttribute("processVariables", runtimeService.getVariables(task.getExecutionId()));
-
+        model.addAttribute("isCompleted", false);
         return currentTask;
     }
     @GetMapping("/viewCompleted/{taskId}")
@@ -171,7 +171,7 @@ public class FlowableTaskController {
         model.addAttribute("taskId",taskId);
         //model.addAttribute("taskVariables", taskVariables);
         model.addAttribute("processVariables",processVariables );
-
+        model.addAttribute("isCompleted", true);
         return currentTask;
     }
 
