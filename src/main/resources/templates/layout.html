@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
@@ -122,7 +123,7 @@
                     <div class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3 bg-blue-200 flex items-center justify-center">
                         <i class="fas fa-user text-blue-600 text-sm"></i>
                     </div>
-                    <span th:text="${session.userName}" class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
+                    <span th:text="${userName}" class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
                 </div>
             </div>
             <div layout:fragment="content" id="content"></div>
