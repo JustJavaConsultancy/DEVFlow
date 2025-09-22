@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <div class="editor-actions">
+        <div th:if="${!isCompleted}" class="editor-actions">
             <button type="submit" id="submitBtn"
                     class="gradient-bg text-white px-4 py-2 rounded-md flex items-center action-btn">
                 <i class="fas fa-paper-plane mr-2"></i>
