@@ -1,5 +1,6 @@
 package com.justjava.devFlow.tasks;
 
+import ognl.ObjectElementsAccessor;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.HistoryService;
@@ -248,6 +249,10 @@ public class FlowableTaskController {
             System.out.println(" During the complete cycle The task id here==="+task.getId()+"\n\n\n\n\n\n\n\n "
                             + " The whole process variables===="+ runtimeService.getVariables(task.getExecutionId()));
 */
+            Map<String, Object> processVariables=runtimeService.getVariables(task.getProcessInstanceId());
+            int progress=processVariables.get("progress")!=null?
+                    (Integer) processVariables.get("progress"):0;
+            runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
             taskService.complete(taskId, variables);
 
 

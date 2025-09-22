@@ -77,6 +77,7 @@ public class ProjectsController {
 
         System.out.println(" The Sent Parameter Here==="+startVariables);
 
+        startVariables.put("progress",0);
         ProcessInstance processInstance=runtimeService
                 .startProcessInstanceByKey("softwareEngineeringProcess",startVariables);
         List<ProcessInstance> projects = runtimeService

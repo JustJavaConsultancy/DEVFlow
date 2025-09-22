@@ -66,7 +66,9 @@
     <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 md:p-6 card-hover shadow-sm">
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl md:text-3xl font-bold text-blue-800" th:text="${project.processVariables['projectName']}">E-Commerce Platform</h1>
-        <span class="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">Development</span>
+        <span th:if="${project.processVariables['progress'] < 4}" class="bg-yellow-100 text-yellow-700 text-xs px-2 md:px-3 py-1 rounded-full">Documentation</span>
+<span th:if="${project.processVariables['progress'] == 4}" class="bg-blue-100 text-blue-700 text-xs px-2 md:px-3 py-1 rounded-full">Development</span>
+<span th:if="${project.processVariables['progress'] > 4}" class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Testing</span>
       </div>
 
       <p class="text-gray-600 mb-6" th:text="${project.processVariables['projectDescription']}">
@@ -75,12 +77,22 @@
         and admin dashboard for managing products and orders.
       </p>
 
-      <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-        <div class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 65%"></div>
+      <div th:each="task : ${tasks}" th:if="${task.state == 'created'}" class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div th:if="${task.name == 'Requirement Elicitation'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 0%"></div>
+        <div th:if="${task.name == 'Review The SRS'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 17%"></div>
+        <div th:if="${task.name == 'Review User Stories List'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 33%"></div>
+        <div th:if="${task.name == 'Solution Architecture Review'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 50%"></div>
+        <div th:if="${task.name == 'Review Current User Story Implementation'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width:67%"></div>
+        <div th:if="${task.name == 'UAT'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 83%"></div>
       </div>
 
-      <div class="flex justify-between text-sm text-gray-500 mb-6">
-        <span>13/20 tasks completed</span>
+      <div th:each="task : ${tasks}" th:if="${task.state == 'created'}" class="flex justify-between text-sm text-gray-500 mb-6">
+        <span th:if="${task.name == 'Requirement Elicitation'}">0/6 tasks completed</span>
+        <span th:if="${task.name == 'Review The SRS'}">1/6 tasks completed</span>
+        <span th:if="${task.name == 'Review User Stories List'}">2/6 tasks completed</span>
+        <span th:if="${task.name == 'Solution Architecture Review'}">3/6 tasks completed</span>
+        <span th:if="${task.name == 'Review Current User Story Implementation'}">4/6 tasks completed</span>
+        <span th:if="${task.name == 'UAT'}">5/6 tasks completed</span>
         <span th:text="${'Expected: ' + project.processVariables['dueDate']}">Due: Nov 15, 2023</span>
       </div>
 
@@ -244,7 +256,6 @@
           Delete Project
         </button>
       </div>
-    </form>
   </div>
 
   <script>
@@ -319,6 +330,6 @@
     });
   </script>
 </div>
+</div>
 </body>
 </html>
-
