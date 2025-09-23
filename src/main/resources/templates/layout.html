@@ -46,31 +46,25 @@
             box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
         }
 
+        /* Responsive header improvements (removed fixed styles) */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                background: var(--gradient-bg); /* Added gradient background */
-                z-index: 40; /* Ensure it's above content */
-                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
             .main-content {
                 margin-left: 0;
             }
-
-            .menu-btn {
-                display: block;
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                background: var(--gradient-bg);
+                z-index: 40;
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
             }
-
-            /* Override glass effect on mobile for better visibility */
-            .sidebar .glass-effect {
-                background: rgba(255, 255, 255, 0.15);
-                backdrop-filter: none;
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+        @media (min-width: 769px) {
+            .main-content {
+                margin-left: 16rem;
             }
         }
     </style>
@@ -113,19 +107,20 @@
 
     <!-- Main Content -->
     <div class="ml-0 md:ml-64 flex-1 main-content">
-        <div class="bg-white min-h-screen p-4 md:p-8">
-            <!-- Header -->
-            <div class="flex justify-between items-center mb-8">
-                <div class="glass-effect flex items-center rounded-full px-4 py-2 w-64 md:w-96">
-                </div>
-
-                <div class="flex items-center">
-                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3 bg-blue-200 flex items-center justify-center">
-                        <i class="fas fa-user text-blue-600 text-sm"></i>
-                    </div>
-                    <span th:text="${userName}" class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
-                </div>
+        <!-- Header (no longer fixed) -->
+        <div class="bg-white shadow-md px-4 md:px-8 h-16 flex items-center justify-between" style="width:100%;">
+            <div class="glass-effect flex items-center rounded-full px-4 py-2 w-48 md:w-96">
+                <!-- You can add search or logo here if needed -->
             </div>
+            <div class="flex items-center">
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3 bg-blue-200 flex items-center justify-center">
+                    <i class="fas fa-user text-blue-600 text-sm"></i>
+                </div>
+                <span th:text="${userName}" class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
+            </div>
+        </div>
+        <!-- Main Content Area (remove extra top padding) -->
+        <div class="bg-white min-h-screen p-4 md:p-8">
             <div layout:fragment="content" id="content"></div>
         </div>
     </div>
