@@ -123,7 +123,8 @@ public class FlowableTaskController {
     }
     @GetMapping("/viewCompleted/{taskId}")
     public String viewCompletedTaskForm(@PathVariable String taskId, Model model) {
-        HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery()
+        HistoricTaskInstance task = historyService
+                .createHistoricTaskInstanceQuery()
                 .finished()
                 .taskId(taskId)
                 .singleResult();

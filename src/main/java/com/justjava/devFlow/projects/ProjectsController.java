@@ -1,5 +1,6 @@
 package com.justjava.devFlow.projects;
 
+import com.justjava.devFlow.aau.AuthenticationManager;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -26,11 +27,15 @@ public class ProjectsController {
     RuntimeService runtimeService;
 
     @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
     HistoryService  historyService;
     @GetMapping("/projects")
     public String getProjects(Model model){
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
+                .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .processDefinitionKey("softwareEngineeringProcess")
                 .includeProcessVariables()
                 .active()
@@ -43,6 +48,7 @@ public class ProjectsController {
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
+                .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .finished()
                 .orderByProcessInstanceEndTime()
                 .desc()
@@ -77,9 +83,10 @@ public class ProjectsController {
 
         System.out.println(" The Sent Parameter Here==="+startVariables);
 
+        String businessKey= String.valueOf(authenticationManager.get("sub")) ;
         startVariables.put("progress",0);
         ProcessInstance processInstance=runtimeService
-                .startProcessInstanceByKey("softwareEngineeringProcess",startVariables);
+                .startProcessInstanceByKey("softwareEngineeringProcess",businessKey,startVariables);
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
                 .processDefinitionKey("softwareEngineeringProcess")
