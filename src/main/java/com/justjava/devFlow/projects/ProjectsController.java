@@ -33,9 +33,10 @@ public class ProjectsController {
     HistoryService  historyService;
     @GetMapping("/projects")
     public String getProjects(Model model){
+
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
-                .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
+                //.processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .processDefinitionKey("softwareEngineeringProcess")
                 .includeProcessVariables()
                 .active()
@@ -48,7 +49,7 @@ public class ProjectsController {
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
-                .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
+                //.processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .finished()
                 .orderByProcessInstanceEndTime()
                 .desc()
