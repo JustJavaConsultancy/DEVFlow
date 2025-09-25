@@ -36,9 +36,10 @@ public class ProjectsController {
 
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
-                //.processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .processDefinitionKey("softwareEngineeringProcess")
-                .orderByStartTime().desc()
+                .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
+                .orderByStartTime()
+                .desc()
                 .includeProcessVariables()
                 .active()
                 .list();
@@ -50,7 +51,7 @@ public class ProjectsController {
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
-                //.processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
+                .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .finished()
                 .orderByProcessInstanceEndTime()
                 .desc()
@@ -86,6 +87,8 @@ public class ProjectsController {
         System.out.println(" The Sent Parameter Here==="+startVariables);
 
         String businessKey= String.valueOf(authenticationManager.get("sub")) ;
+
+        System.out.println(" The login user here==="+businessKey);
         startVariables.put("progress",0);
         ProcessInstance processInstance=runtimeService
                 .startProcessInstanceByKey("softwareEngineeringProcess",businessKey,startVariables);
