@@ -38,6 +38,7 @@ public class ProjectsController {
                 .createProcessInstanceQuery()
                 //.processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
                 .processDefinitionKey("softwareEngineeringProcess")
+                .orderByStartTime().desc()
                 .includeProcessVariables()
                 .active()
                 .list();
