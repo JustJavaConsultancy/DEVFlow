@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Progress - Client Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.15);
+        }
+
+        .progress-transition {
+            transition: width 1.5s ease-in-out;
+        }
+
+        .priority-high {
+            border-left: 4px solid #ef4444;
+        }
+
+        .priority-medium {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .priority-low {
+            border-left: 4px solid #10b981;
+        }
+
+        .status-completed {
+            color: #10b981;
+        }
+
+        .status-in-progress {
+            color: #3b82f6;
+        }
+
+        .status-pending {
+            color: #f59e0b;
+        }
+
+        .status-blocked {
+            color: #ef4444;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .progress-dot.completed {
+            background-color: #10b981;
+        }
+
+        .progress-dot.current {
+            background-color: #3b82f6;
+        }
+
+        .progress-dot.upcoming {
+            background-color: #d1d5db;
+        }
+
+        .document-item {
+            transition: all 0.2s ease;
+        }
+
+        .document-item:hover {
+            background-color: #f3f4f6;
+            transform: translateX(5px);
+        }
+
+        .activity-item {
+            border-left: 3px solid #e5e7eb;
+            padding-left: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .activity-item:last-child {
+            border-left: 3px solid transparent;
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+        }
+
+        .connect-app-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+         .empty-state {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #d1d5db;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, 10px); }
+            100% { transform: translate(0, -0px); }
+        }
+
+        /* New styles for equal height grid */
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .equal-height-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .equal-height-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-scrollable {
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        /* Ensure cards take full height of their container */
+        .h-full {
+            height: 100%;
+        }
+
+        /* Custom scrollbar for better appearance */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body class="text-gray-800 grid-container">
+<!-- Header -->
+<header class="gradient-bg text-white shadow-lg">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fas fa-code-branch text-2xl mr-3"></i>
+                <h1 class="text-xl font-bold">DevFlow</h1>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex items-center space-x-2 bg-white bg-opacity-20 rounded-full px-4 py-2">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate"></span>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full px-4 py-2 glow">
+                    <span  th:text="${'Project: ' + project.processVariables['projectName']}">Project: E-Commerce Platform</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container mx-auto px-4 py-8 flex-1">
+    <!-- Project Overview -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 glow">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div>
+                <h2 th:text="${project.processVariables['projectName']}" class="text-2xl font-bold text-gray-800 mb-2">E-Commerce Platform</h2>
+                <p th:text="${project.processVariables['projectDescription']}" class="text-gray-600">Build a full-featured e-commerce platform with payment integration and inventory management.</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                    <span th:text="${project.processVariables['clientCompanyName']}" class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <i class="fas fa-building mr-1"></i> Fashion Retail Co.
+                    </span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Project Progress -->
+            <div class="md:col-span-2 equal-height-container">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <span>Project Progress</span>
+                    <span th:text="${completedTaskPercentage + '%' + ' Complete'}" class="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">65% Complete</span>
+                </h3>
+
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Overall Progress</span>
+                        <span th:text="${completedTaskPercentage + '%'}">65%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full progress-transition" th:style="'width:' + ${completedTaskPercentage} + '%'"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 content-scrollable custom-scrollbar">
+
+                    <!-- 1. Planning Phase -->
+                    <div class="flex items-center">
+                        <div class="progress-dot"
+                             th:classappend="${completedTaskCount >= 2} ? ' completed' :
+                             (${completedTaskCount < 2 and completedTaskCount >= 0} ? ' current' : ' upcoming')">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="font-medium">Planning Phase</span>
+                                <span class="text-sm font-medium"
+                                      th:classappend="${completedTaskCount >= 2} ? ' text-green-600' :
+                                      (${completedTaskCount < 2 and completedTaskCount >= 0} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${completedTaskCount >= 2 ? 'Completed' :
+                               (completedTaskCount < 2 and completedTaskCount >= 0 ? 'In Progress' : 'Upcoming')}">
+                </span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">Requirements gathering and project planning</div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Design Phase -->
+                    <div class="flex items-center">
+                        <div class="progress-dot"
+                             th:classappend="${completedTaskCount >= 4} ? ' completed' :
+                             (${completedTaskCount < 4 and completedTaskCount >= 3} ? ' current' : ' upcoming')">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="font-medium">Design Phase</span>
+                                <span class="text-sm font-medium"
+                                      th:classappend="${completedTaskCount >= 4} ? ' text-green-600' :
+                                      (${completedTaskCount < 4 and completedTaskCount >= 3} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${completedTaskCount >= 4 ? 'Completed' :
+                               (completedTaskCount < 4 and completedTaskCount >= 3 ? 'In Progress' : 'Upcoming')}">
+                </span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">UI/UX design and prototyping</div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Development Phase -->
+                    <div class="flex items-center">
+                        <div class="progress-dot"
+                             th:classappend="${completedTaskCount >= 6} ? ' completed' :
+                             (${completedTaskCount < 6 and completedTaskCount >= 5} ? ' current' : ' upcoming')">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="font-medium">Development Phase</span>
+                                <span class="text-sm font-medium"
+                                      th:classappend="${completedTaskCount >= 6} ? ' text-green-600' :
+                                      (${completedTaskCount < 6 and completedTaskCount >= 5} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${completedTaskCount >= 6 ? 'Completed' :
+                               (completedTaskCount < 6 and completedTaskCount >= 5 ? 'In Progress' : 'Upcoming')}">
+                </span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">Backend development and API integration</div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Testing Phase -->
+                    <div class="flex items-center">
+                        <div class="progress-dot"
+                             th:classappend="${completedTaskCount >= 7} ? ' completed' :
+                             (${completedTaskCount == 7} ? ' current' : ' upcoming')">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="font-medium">Testing Phase</span>
+                                <span class="text-sm font-medium"
+                                      th:classappend="${completedTaskCount >= 7} ? ' text-green-600' :
+                                      (${completedTaskCount == 7} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${completedTaskCount >= 7 ? 'Completed' :
+                               (completedTaskCount == 7 ? 'In Progress' : 'Upcoming')}">
+                </span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">Quality assurance and user acceptance testing</div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Launch -->
+                    <div class="flex items-center">
+                        <div class="progress-dot"
+                             th:classappend="${completedTaskCount == 7} ? ' current' : ' upcoming'">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="font-medium">Launch</span>
+                                <span class="text-sm font-medium"
+                                      th:classappend="${completedTaskCount == 7} ? ' text-blue-600' : ' text-gray-500'"
+                                      th:text="${completedTaskCount == 7 ? 'In Progress' : 'Upcoming'}">
+                </span>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">Deployment and go-live</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Project Details -->
+            <div class="equal-height-container">
+                <h3 class="text-lg font-semibold mb-4">Project Details</h3>
+
+                <div class="space-y-4 content-scrollable custom-scrollbar">
+                    <div>
+                        <div class="text-sm text-gray-500">Start Date</div>
+                        <div th:text="${project.startTime}" class="font-medium">June 15, 2023</div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm text-gray-500">Estimated Completion</div>
+                        <div th:text="${project.processVariables['dueDate']}" class="font-medium">November 15, 2023</div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm text-gray-500">Project Manager</div>
+                        <div class="font-medium">John Doe</div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm text-gray-500">Development Team</div>
+                        <div class="font-medium">10 members</div>
+                    </div>
+
+                    <div>
+                        <div class="text-sm text-gray-500">Last Updated</div>
+                        <div class="font-medium">Today</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 equal-height-container">
+        <!-- Current Tasks & Activity -->
+        <div class="lg:col-span-2 equal-height-content">
+            <!-- Connect App Card -->
+            <div class="connect-app-card rounded-2xl shadow-lg p-6 mb-8 card-hover h-full">
+                <div class="flex flex-col md:flex-row items-center h-full">
+                    <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+                        <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center floating">
+                            <i class="fas fa-comments text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-xl font-bold mb-2">Stay Connected with Our App</h3>
+                        <p class="mb-4 opacity-90">Use our Connect app for real-time messaging, video calls, and quick updates.</p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
+                                <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
+                                    <i class="fas fa-comment-dots mr-1"></i> Real-time Messaging
+                                </span>
+                            <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
+                                    <i class="fas fa-video mr-1"></i> Video Calls
+                                </span>
+                            <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
+                                    <i class="fas fa-bolt mr-1"></i> Quick Updates
+                                </span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button class="bg-white text-purple-700 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors flex items-center">
+                                Open Connect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Tasks -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 card-hover h-full">
+                <h3 class="text-lg font-semibold mb-4">Current Tasks</h3>
+
+                <div class="space-y-4 content-scrollable custom-scrollbar">
+                    <!-- Task 1 -->
+                    <div th:each="task : ${tasks}" th:if="${task.state == 'created'}" class="border border-gray-200 rounded-xl p-4 card-hover priority-high">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 th:text="${task.name}" class="font-medium">Payment Gateway Integration</h4>
+                            <span class="status-in-progress text-sm font-medium">
+                                    <i class="fas fa-circle mr-1"></i> In Progress
+                                </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">This is the task currently in progress. We are keeping a close eye on every detail to make sure it meets users expectations and contributes to the overall success of the project</p>
+                        <div class="flex justify-between items-center text-sm">
+                            <div class="flex items-center">
+
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Started:</span>
+                                <span th:text="${task.createTime}" class="ml-1 font-medium">Oct 20, 2023</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents & Next Steps -->
+        <div class="equal-height-content">
+            <!-- Documents -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 card-hover h-full">
+                <h3 class="text-lg font-semibold mb-4">Project Documents</h3>
+                <div th:if="${project.processVariables?.['aiRequirementAnalysis'] == null}" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h4 class="text-xl font-medium text-gray-500 mb-2">No Documents Available</h4>
+                    <p class="text-gray-400 mb-4 max-w-md mx-auto">
+                        Project documents will appear here once they are uploaded by the development team.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    </div>
+                </div>
+                <div class="space-y-3 content-scrollable custom-scrollbar">
+
+                    <!-- Project Requirements -->
+                    <div th:if="${project.processVariables?.['aiRequirementAnalysis']}"
+                         class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
+                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-file-pdf text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="hidden" th:value="${project.processVariables?.['aiRequirementAnalysis']}">
+                            <div class="font-medium">Project Requirements.pdf</div>
+                        </div>
+                        <a th:href="${project.processVariables?.['aiRequirementAnalysis']}" download
+                           class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+
+                    <!-- Solution Architecture -->
+                    <div th:if="${project.processVariables?.['architecture']}"
+                         class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
+                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-file-pdf text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="hidden" th:value="${project.processVariables?.['architecture']}">
+                            <div class="font-medium">Solution Architecture.pdf</div>
+                        </div>
+                        <a th:href="${project.processVariables?.['architecture']}" download
+                           class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Recent Activity -->
+    <div th:if="${!#lists.isEmpty(completedTasks)}" class="mt-3 bg-white rounded-2xl shadow-lg p-6 card-hover h-full">
+        <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+
+        <div class="space-y-6 content-scrollable custom-scrollbar">
+            <div class="activity-item" th:each="task : ${completedTasks}">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mt-1">
+                        <div th:switch="${task}"
+                             class="w-8 h-8 rounded-full flex items-center justify-center">
+
+                            <!-- Requirement Elicitation -->
+                            <div th:case="'Requirement Elicitation'"
+                                 class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-lightbulb text-blue-600 text-sm"></i>
+                            </div>
+
+                            <!-- Review The SRS -->
+                            <div th:case="'Review The SRS'"
+                                 class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-file-alt text-green-600 text-sm"></i>
+                            </div>
+
+                            <!-- Review User Stories List -->
+                            <div th:case="'Review User Stories List'"
+                                 class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                                <i class="fas fa-list text-yellow-600 text-sm"></i>
+                            </div>
+
+                            <!-- Solution Architecture Review -->
+                            <div th:case="'Solution Architecture Review'"
+                                 class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                                <i class="fas fa-project-diagram text-purple-600 text-sm"></i>
+                            </div>
+
+                            <!-- Review Generated Layout -->
+                            <div th:case="'Review Generated Layout'"
+                                 class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+                                <i class="fas fa-columns text-pink-600 text-sm"></i>
+                            </div>
+
+                            <!-- Review Current User Story Implementation -->
+                            <div th:case="'Review Current User Story Implementation'"
+                                 class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <i class="fas fa-code text-indigo-600 text-sm"></i>
+                            </div>
+
+                            <!-- UAT -->
+                            <div th:case="'UAT in that order'"
+                                 class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                <i class="fas fa-user-check text-red-600 text-sm"></i>
+                            </div>
+
+                            <!-- Default -->
+                            <div th:case="*"
+                                 class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-tasks text-gray-600 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ml-4">
+                        <div class="flex justify-between">
+                            <span class="font-medium">Project Update</span>
+                            <span class="text-sm text-gray-500">Just now</span>
+                        </div>
+
+                        <!-- Reassuring text for each task -->
+                        <p class="text-gray-600 mt-1" th:switch="${task}">
+                        <span th:case="'Requirement Elicitation'">
+                            We've carefully gathered and confirmed your requirements, ensuring nothing important is missed.
+                        </span>
+                            <span th:case="'Review The SRS'">
+                            The Software Requirements Specification has been thoroughly reviewed and validated for accuracy.
+                        </span>
+                            <span th:case="'Review User Stories List'">
+                            Your user stories have been reviewed and refined, making sure they align perfectly with your vision.
+                        </span>
+                            <span th:case="'Solution Architecture Review'">
+                            Our team has completed a review of the solution architecture, ensuring it is solid, scalable, and reliable.
+                        </span>
+                            <span th:case="'Review Generated Layout'">
+                            The generated layouts have been reviewed for clarity and usability, keeping your users in mind.
+                        </span>
+                            <span th:case="'Review Current User Story Implementation'">
+                            The current user story implementations have been checked for quality and consistency with requirements.
+                        </span>
+                            <span th:case="'UAT in that order'">
+                            User Acceptance Testing has been carried out, confirming the solution works smoothly for your needs.
+                        </span>
+                            <span th:case="*">
+                            A project milestone has been completed successfully.
+                        </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fas fa-code-branch text-xl mr-3"></i>
+                <span class="font-medium">DevFlow Client Portal</span>
+            </div>
+
+            <div class="text-sm text-gray-400 text-center md:text-right">
+                This is a read-only view of your project. For any questions, please contact your project manager.
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set current date
+        const currentDate = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = currentDate.toLocaleDateString('en-US', options);
+
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-transition');
+
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 500);
+        });
+
+        // Add hover effects to cards
+        const cards = document.querySelectorAll('.card-hover');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-lg');
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-lg');
+            });
+        });
+
+        // Add download functionality to document buttons
+        const downloadButtons = document.querySelectorAll('.document-item button');
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const documentItem = this.closest('.document-item');
+                const documentName = documentItem.querySelector('.font-medium').textContent;
+                alert(`Downloading: ${documentName}`);
+                // In a real application, this would trigger an actual download
+            });
+        });
+
+        // Add click functionality to document items
+        const documentItems = document.querySelectorAll('.document-item');
+        documentItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const documentName = this.querySelector('.font-medium').textContent;
+                alert(`Opening: ${documentName}`);
+                // In a real application, this would open a preview or download the document
+            });
+        });
+    });
+</script>
+</body>
+</html>
