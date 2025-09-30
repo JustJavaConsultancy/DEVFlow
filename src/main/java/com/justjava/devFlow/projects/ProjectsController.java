@@ -1,12 +1,14 @@
 package com.justjava.devFlow.projects;
 
 import com.justjava.devFlow.aau.AuthenticationManager;
+import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 public class ProjectsController {
     @Autowired
@@ -81,6 +84,35 @@ public class ProjectsController {
         model.addAttribute("tasks", tasks);
         return "projects/projectDetails";
     }
+    @GetMapping("/project-progress/{projectId}")
+    public String getProjectProgress(@PathVariable String projectId,  Model model){
+        ProcessInstance project=runtimeService
+                .createProcessInstanceQuery()
+                .processInstanceId(projectId)
+                .includeProcessVariables()
+                .singleResult();
+        List<Task> tasks = taskService
+                .createTaskQuery()
+                .processInstanceId(projectId)
+                .includeProcessVariables()
+                .orderByTaskCreateTime().desc()
+                .list();
+        List <HistoricTaskInstance> completedTasks= historyService
+                .createHistoricTaskInstanceQuery()
+                .processInstanceId(projectId)
+                .includeProcessVariables()
+                .finished()
+                .orderByTaskCreateTime().desc()
+                .list();
+        double percentage = ((double) completedTasks.size() / 7) * 100;
+        model.addAttribute("completedTasks",completedTasks);
+        model.addAttribute("project",project);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("completedTaskPercentage",percentage);
+        model.addAttribute("completedTaskCount",completedTasks.size());
+        return "client/dashboard";
+    }
+
     @PostMapping("/project/start")
     public String startProject(@RequestParam Map<String,Object>  startVariables,Model model){
 
