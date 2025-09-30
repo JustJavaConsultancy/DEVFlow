@@ -9,6 +9,8 @@
     <title>DevFlow - Project Management Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PDF.js library for PDF text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <style>
         /* Rich Text Editor Styles */
         .editor-toolbar {
@@ -71,6 +73,194 @@
             color: #718096;
             margin-top: 0.5rem;
         }
+
+        /* Upload Modal Styles */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+        }
+        .close-modal:hover {
+            color: #4a5568;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #780aff;
+            background-color: #f8fafc;
+        }
+        .upload-icon {
+            font-size: 3rem;
+            color: #a0aec0;
+            margin-bottom: 1rem;
+        }
+        .upload-text {
+            margin-bottom: 1rem;
+            color: #4a5568;
+        }
+        .file-input {
+            display: none;
+        }
+        .file-info {
+            display: none;
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        .file-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        .file-size {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: #780aff;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #6a00e6;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            color: #4a5568;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(120, 10, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #780aff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .pdf-source-indicator {
+            background-color: #f0f9ff;
+            border-left: 4px solid #780aff;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Enhanced PDF Upload Button */
+        .pdf-upload-btn {
+            background: linear-gradient(135deg, #780aff 0%, #9d4dff 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(120, 10, 255, 0.2);
+        }
+        .pdf-upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(120, 10, 255, 0.3);
+        }
+        .pdf-upload-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Placeholder text styling */
+        .editor-content[data-placeholder]:empty:before {
+            content: attr(data-placeholder);
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        /* Upload button highlight */
+        .highlight-upload {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -88,7 +278,7 @@
     <form th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post"
           id="requirementForm"
           class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
-    <div class="mb-4">
+        <div class="mb-4">
             <label class="block text-gray-700 text-sm font-medium mb-2">
                 Requirement Description
             </label>
@@ -129,12 +319,17 @@
                     <button type="button" class="toolbar-btn" data-command="removeFormat"><i class="fas fa-eraser"></i></button>
                     <button type="button" class="toolbar-btn" data-command="hiliteColor" data-value="#fffd80"><i class="fas fa-highlighter"></i></button>
                 </div>
+                <div class="toolbar-group">
+                    <button type="button" class="pdf-upload-btn highlight-upload" id="uploadPdfBtn" title="Upload PDF">
+                        <i class="fas fa-file-pdf"></i>
+                        Upload PDF
+                    </button>
+                </div>
             </div>
 
-            <!-- Editable area -->
-            <div class="editor-content" id="requirementEditor" contenteditable="true">
-                <p>Describe your requirements in detail...</p>
-            </div>
+            <!-- Editable area with placeholder -->
+            <div class="editor-content" id="requirementEditor" contenteditable="true"
+                 data-placeholder="Describe your requirements in detail..."></div>
 
             <!-- ✅ Hidden field -->
             <input type="hidden" name="requirement" id="requirementText"/>
@@ -153,7 +348,50 @@
         </div>
     </form>
 
+    <!-- Upload PDF Modal -->
+    <div class="upload-modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Upload PDF Document</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-gray-600 mb-4">Only PDF files are accepted. Maximum file size: 10MB</p>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <p class="upload-text">Click to browse or drag and drop a PDF file</p>
+                    <button class="btn btn-secondary">Select PDF</button>
+                    <input type="file" id="pdfFileInput" class="file-input" accept=".pdf">
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    Please select a valid PDF file (max 10MB)
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    Extracting and formatting text from PDF...
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelUpload">Cancel</button>
+                <button class="btn btn-primary" id="insertPdf" disabled>Insert as Rich Text</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Set up PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
         document.addEventListener('DOMContentLoaded', function () {
             const editor = document.getElementById('requirementEditor');
             const hiddenInput = document.getElementById('requirementText');
@@ -162,16 +400,58 @@
             const charCount = document.getElementById('charCount');
             const toolbarButtons = document.querySelectorAll('.toolbar-btn');
 
+            // Upload modal elements
+            const uploadPdfBtn = document.getElementById('uploadPdfBtn');
+            const uploadModal = document.getElementById('uploadModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelUpload = document.getElementById('cancelUpload');
+            const uploadArea = document.getElementById('uploadArea');
+            const pdfFileInput = document.getElementById('pdfFileInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const insertPdf = document.getElementById('insertPdf');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            let selectedFile = null;
+
             // Update character count
             function updateCharCount() {
-                charCount.textContent = (editor.innerText || '').length;
+                // Don't count placeholder text
+                const text = editor.textContent;
+                const placeholderText = editor.getAttribute('data-placeholder');
+                const actualText = text === placeholderText ? '' : text;
+                charCount.textContent = actualText.length;
             }
-            editor.addEventListener('input', updateCharCount);
+
+            // Handle placeholder behavior
+            function handlePlaceholder() {
+                if (!editor.textContent.trim()) {
+                    editor.textContent = editor.getAttribute('data-placeholder');
+                    editor.classList.add('placeholder');
+                }
+            }
+
+            function clearPlaceholder() {
+                if (editor.classList.contains('placeholder')) {
+                    editor.textContent = '';
+                    editor.classList.remove('placeholder');
+                }
+            }
+
+            // Initialize placeholder
+            handlePlaceholder();
             updateCharCount();
+
+            editor.addEventListener('focus', clearPlaceholder);
+            editor.addEventListener('blur', handlePlaceholder);
+            editor.addEventListener('input', updateCharCount);
 
             // Toolbar functionality
             toolbarButtons.forEach(button => {
                 button.addEventListener('click', () => {
+                    clearPlaceholder();
                     const command = button.dataset.command;
                     const value = button.dataset.value || null;
 
@@ -207,12 +487,268 @@
                     }
 
                     editor.focus();
+                    updateCharCount();
                 });
             });
 
+            // Upload PDF functionality
+            uploadPdfBtn.addEventListener('click', () => {
+                uploadModal.style.display = 'flex';
+                // Stop the highlight animation once clicked
+                uploadPdfBtn.classList.remove('highlight-upload');
+            });
+
+            closeModal.addEventListener('click', () => {
+                uploadModal.style.display = 'none';
+                resetUploadModal();
+            });
+
+            cancelUpload.addEventListener('click', () => {
+                uploadModal.style.display = 'none';
+                resetUploadModal();
+            });
+
+            // Upload area click handler
+            uploadArea.addEventListener('click', () => {
+                pdfFileInput.click();
+            });
+
+            // File input change handler
+            pdfFileInput.addEventListener('change', (e) => {
+                handleFileSelection(e.target.files[0]);
+            });
+
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelection(e.dataTransfer.files[0]);
+                }
+            });
+
+            // Handle file selection
+            function handleFileSelection(file) {
+                if (!file) return;
+
+                // Validate file type
+                if (file.type !== 'application/pdf') {
+                    errorMessage.textContent = 'Please select a PDF file.';
+                    errorMessage.style.display = 'block';
+                    insertPdf.disabled = true;
+                    return;
+                }
+
+                // Validate file size (max 10MB)
+                const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                if (file.size > maxSize) {
+                    errorMessage.textContent = 'File size exceeds 10MB limit.';
+                    errorMessage.style.display = 'block';
+                    insertPdf.disabled = true;
+                    return;
+                }
+
+                // File is valid
+                selectedFile = file;
+                errorMessage.style.display = 'none';
+
+                // Display file info
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.style.display = 'block';
+
+                // Enable insert button
+                insertPdf.disabled = false;
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Extract text from PDF
+            async function extractTextFromPDF(file) {
+                return new Promise((resolve, reject) => {
+                    const fileReader = new FileReader();
+
+                    fileReader.onload = async function() {
+                        try {
+                            const typedarray = new Uint8Array(this.result);
+                            const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                            let fullText = '';
+
+                            // Extract text from each page
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const textContent = await page.getTextContent();
+                                const pageText = textContent.items.map(item => item.str).join(' ');
+                                fullText += pageText + '\n\n';
+                            }
+
+                            resolve(fullText);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+
+                    fileReader.onerror = function(error) {
+                        reject(error);
+                    };
+
+                    fileReader.readAsArrayBuffer(file);
+                });
+            }
+
+            // Format text with rich text structure
+            function formatAsRichText(text, fileName) {
+                // Clean up the text
+                let cleanedText = text.replace(/\s+/g, ' ').trim();
+
+                // Simple heuristic formatting - in a real application you might use more sophisticated NLP
+                let formattedHTML = '';
+
+                // Add source indicator
+                formattedHTML += `<div class="pdf-source-indicator" contenteditable="false">
+                    <i class="fas fa-file-pdf mr-1"></i> Content extracted from: ${fileName}
+                </div>`;
+
+                // Split into paragraphs
+                const paragraphs = cleanedText.split(/(?:\n\s*){2,}/);
+
+                paragraphs.forEach(paragraph => {
+                    if (!paragraph.trim()) return;
+
+                    // Check if this might be a heading (short, ends with colon, or contains keywords)
+                    const isHeading = paragraph.length < 100 &&
+                        (paragraph.endsWith(':') ||
+                         /^(introduction|abstract|summary|conclusion|references|chapter|section)/i.test(paragraph));
+
+                    // Check if this might be a list item
+                    const isListItem = /^(\d+\.\s|[-•*]\s)/.test(paragraph);
+
+                    if (isHeading) {
+                        formattedHTML += `<h3 style="font-weight: bold; font-size: 1.2em; margin: 1.2em 0 0.5em 0;">${paragraph}</h3>`;
+                    } else if (isListItem) {
+                        // Simple list detection - in a real app you'd want more sophisticated list parsing
+                        if (!formattedHTML.endsWith('</ul>') && !formattedHTML.endsWith('</ol>')) {
+                            formattedHTML += '<ul style="margin: 0.5em 0; padding-left: 1.5em;">';
+                        }
+                        formattedHTML += `<li>${paragraph.replace(/^(\d+\.\s|[-•*]\s)/, '')}</li>`;
+                    } else {
+                        // Check if we need to close a list
+                        if (formattedHTML.endsWith('</li>')) {
+                            if (/^(\d+\.\s|[-•*]\s)/.test(paragraph)) {
+                                // Next item is also a list item, keep the list open
+                            } else {
+                                formattedHTML += '</ul>';
+                            }
+                        }
+                        formattedHTML += `<p style="margin: 0.8em 0;">${paragraph}</p>`;
+                    }
+                });
+
+                // Close any open lists
+                if (formattedHTML.endsWith('</li>')) {
+                    formattedHTML += '</ul>';
+                }
+
+                return formattedHTML;
+            }
+
+            // Insert PDF text into editor as rich text
+            insertPdf.addEventListener('click', async () => {
+                if (!selectedFile) return;
+
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                insertPdf.disabled = true;
+                insertPdf.textContent = 'Processing...';
+
+                try {
+                    // Extract text from PDF
+                    const pdfText = await extractTextFromPDF(selectedFile);
+
+                    // Format the text as rich HTML
+                    const formattedText = formatAsRichText(pdfText, selectedFile.name);
+
+                    // Clear placeholder if it's the only content
+                    clearPlaceholder();
+
+                    // Insert into editor at cursor position or at the end
+                    if (window.getSelection && document.createRange) {
+                        const selection = window.getSelection();
+                        const range = selection.getRangeAt(0);
+
+                        // Create a temporary div to parse HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = formattedText;
+
+                        // Insert each node individually to maintain proper formatting
+                        while (tempDiv.firstChild) {
+                            range.insertNode(tempDiv.firstChild);
+                        }
+
+                        // Move cursor after inserted content
+                        range.collapse(false);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    } else {
+                        // Fallback for older browsers
+                        document.execCommand('insertHTML', false, formattedText);
+                    }
+
+                    // Close modal and reset
+                    uploadModal.style.display = 'none';
+                    resetUploadModal();
+
+                    // Focus editor and update character count
+                    editor.focus();
+                    updateCharCount();
+                } catch (error) {
+                    console.error('Error extracting text from PDF:', error);
+                    errorMessage.textContent = 'Error extracting text from PDF. Please try another file.';
+                    errorMessage.style.display = 'block';
+                } finally {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    insertPdf.disabled = false;
+                    insertPdf.textContent = 'Insert as Rich Text';
+                }
+            });
+
+            // Reset upload modal
+            function resetUploadModal() {
+                selectedFile = null;
+                pdfFileInput.value = '';
+                errorMessage.style.display = 'none';
+                fileInfo.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+                insertPdf.disabled = true;
+                insertPdf.textContent = 'Insert as Rich Text';
+            }
+
             // ✅ On form submit: transfer HTML & disable button
             form.addEventListener('submit', function () {
-                hiddenInput.value = editor.innerHTML;
+                // Don't submit placeholder text
+                if (editor.classList.contains('placeholder')) {
+                    hiddenInput.value = '';
+                } else {
+                    hiddenInput.value = editor.innerHTML;
+                }
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
             });
