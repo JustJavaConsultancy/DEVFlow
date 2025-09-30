@@ -6,6 +6,9 @@
     <title>Project Progress - Client Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -190,6 +193,123 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .completed-tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .completed-tasks-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .completed-tasks-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .completed-task-card {
+            border-left: 4px solid #10b981;
+            background: linear-gradient(to right, #f0fdf4, #ffffff);
+        }
+
+        .completion-badge {
+            background-color: #10b981;
+            color: white;
+        }
+
+        /* Hidden content div for PDF generation */
+        #documentContent {
+            display: none;
+        }
+        .invite-section {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .invite-section:hover {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .invite-input {
+            background: rgba(249, 250, 251, 0.8);
+            border: 1px solid rgba(209, 213, 219, 0.6);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .invite-input:focus {
+            background: white;
+            border-color: rgba(79, 70, 229, 0.4);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .invite-btn {
+            background: rgba(79, 70, 229, 0.9);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .invite-btn:hover {
+            background: rgba(79, 70, 229, 1);
+            transform: translateY(-1px);
+        }
+
+        .invite-btn:disabled {
+            background: rgba(156, 163, 175, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .validation-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .input-error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .input-valid {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body class="text-gray-800 grid-container">
@@ -216,6 +336,45 @@
 </header>
 
 <div class="container mx-auto px-4 py-8 flex-1">
+    <!-- Invite Section - Positioned outside the grid -->
+    <div class="invite-section rounded-xl p-4 mb-8 card-hover">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 md:mb-0 md:mr-6">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-3">
+                    <i class="fas fa-user-plus text-white text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-800">Invite Team Members</h3>
+                    <p class="text-sm text-gray-600">Share this project with other stakeholders</p>
+                </div>
+            </div>
+
+            <form class="flex flex-col sm:flex-row w-full md:w-2/3">
+                <div class="flex-1 mb-2 sm:mb-0 sm:mr-2">
+                    <div class="input-wrapper">
+                        <input
+                                type="email"
+                                name="email"
+                                id="inviteEmail"
+                                placeholder="Enter email address"
+                                class="invite-input w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none"
+                        >
+                        <div id="validationIcon" class="validation-icon hidden"></div>
+                    </div>
+                    <div id="emailError" class="error-message hidden">
+                        Please enter a valid email address
+                    </div>
+                    <div id="emailSuccess" class="success-message hidden">
+                        Invitation sent successfully!
+                    </div>
+                </div>
+                <button id="sendInviteBtn" class="invite-btn font-medium py-2 px-6 rounded-lg flex items-center justify-center whitespace-nowrap" disabled>
+                    <i class="fas fa-paper-plane mr-2"></i> Send Invite
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Project Overview -->
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 glow">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -357,7 +516,7 @@
                 <div class="space-y-4 content-scrollable custom-scrollbar">
                     <div>
                         <div class="text-sm text-gray-500">Start Date</div>
-                        <div th:text="${project.startTime}" class="font-medium">June 15, 2023</div>
+                        <div th:text="${#dates.format(project.startTime, 'MMM dd, yyyy')}" class="font-medium">June 15, 2023</div>
                     </div>
 
                     <div>
@@ -410,9 +569,9 @@
                                 </span>
                         </div>
                         <div class="flex space-x-3">
-                            <button class="bg-white text-purple-700 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors flex items-center">
+                            <a href="https://just-community.up.railway.app/oauth2/authorization/keycloak" class="bg-white text-purple-700 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg transition-colors flex items-center">
                                 Open Connect
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -438,8 +597,7 @@
                             </div>
                             <div>
                                 <span class="text-gray-500">Started:</span>
-                                <span th:text="${task.createTime}" class="ml-1 font-medium">Oct 20, 2023</span>
-                            </div>
+                                <span th:text="${#dates.format(task.createTime, 'MMM dd, yyyy')}" class="ml-1 font-medium">Oct 20, 2023</div>
                         </div>
                     </div>
                 </div>
@@ -471,13 +629,13 @@
                             <i class="fas fa-file-pdf text-blue-600"></i>
                         </div>
                         <div class="flex-1">
-                            <input type="hidden" th:value="${project.processVariables?.['aiRequirementAnalysis']}">
+                            <input type="hidden" id="requirementSpec" th:value="${project.processVariables?.['aiRequirementAnalysis']}">
                             <div class="font-medium">Requirements Specification.pdf</div>
                         </div>
-                        <a th:href="${project.processVariables?.['aiRequirementAnalysis']}" download
-                           class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                        <button onclick="downloadRequirementSpec()"
+                                class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
                             <i class="fas fa-download"></i>
-                        </a>
+                        </button>
                     </div>
 
                     <!-- Solution Architecture -->
@@ -487,13 +645,13 @@
                             <i class="fas fa-file-pdf text-green-600"></i>
                         </div>
                         <div class="flex-1">
-                            <input type="hidden" th:value="${project.processVariables?.['architecture']}">
+                            <input type="hidden" id="architectureSpec" th:value="${project.processVariables?.['architecture']}">
                             <div class="font-medium">Solution Architecture.pdf</div>
                         </div>
-                        <a th:href="${project.processVariables?.['architecture']}" download
-                           class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                        <button onclick="downloadArchitectureSpec()"
+                                class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
                             <i class="fas fa-download"></i>
-                        </a>
+                        </button>
                     </div>
 
                 </div>
@@ -501,106 +659,69 @@
         </div>
 
     </div>
-    <!-- Recent Activity -->
-    <div th:if="${!#lists.isEmpty(completedTasks)}" class="mt-1 bg-white rounded-2xl shadow-lg p-6 card-hover h-full">
-        <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+    <!-- Full Width Completed Tasks Section -->
+    <div th:if="${!#lists.isEmpty(completedTasks)}" class="mt-6">
+        <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Completed Tasks</h3>
+                <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">
+                            <span th:text="${completedTaskCount}" class="font-semibold text-green-600">32</span> tasks completed
+                        </span>
+                </div>
+            </div>
 
-        <div class="space-y-6 content-scrollable custom-scrollbar">
-            <div class="activity-item" th:each="task : ${completedTasks}">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 mt-1">
-                        <div th:switch="${task}"
-                             class="w-8 h-8 rounded-full flex items-center justify-center">
-
-                            <!-- Requirement Elicitation -->
-                            <div th:case="'Requirement Elicitation'"
-                                 class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                <i class="fas fa-lightbulb text-blue-600 text-sm"></i>
-                            </div>
-
-                            <!-- Review The SRS -->
-                            <div th:case="'Review The SRS'"
-                                 class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                <i class="fas fa-file-alt text-green-600 text-sm"></i>
-                            </div>
-
-                            <!-- Review User Stories List -->
-                            <div th:case="'Review User Stories List'"
-                                 class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                                <i class="fas fa-list text-yellow-600 text-sm"></i>
-                            </div>
-
-                            <!-- Solution Architecture Review -->
-                            <div th:case="'Solution Architecture Review'"
-                                 class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                                <i class="fas fa-project-diagram text-purple-600 text-sm"></i>
-                            </div>
-
-                            <!-- Review Generated Layout -->
-                            <div th:case="'Review Generated Layout'"
-                                 class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
-                                <i class="fas fa-columns text-pink-600 text-sm"></i>
-                            </div>
-
-                            <!-- Review Current User Story Implementation -->
-                            <div th:case="'Review Current User Story Implementation'"
-                                 class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <i class="fas fa-code text-indigo-600 text-sm"></i>
-                            </div>
-
-                            <!-- UAT -->
-                            <div th:case="'UAT in that order'"
-                                 class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                                <i class="fas fa-user-check text-red-600 text-sm"></i>
-                            </div>
-
-                            <!-- Default -->
-                            <div th:case="*"
-                                 class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-tasks text-gray-600 text-sm"></i>
-                            </div>
-                        </div>
+            <div class="completed-tasks-grid">
+                <!-- Completed Task 1 -->
+                <div th:each="task : ${completedTasks}" class="completed-task-card border border-gray-200 rounded-xl p-4 card-hover">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 th:text="${task.name}" class="font-medium">User Authentication System</h4>
+                        <span class="completion-badge text-xs font-medium px-2 py-1 rounded-full">
+                                <i class="fas fa-check mr-1"></i> Completed
+                            </span>
                     </div>
+                    <p th:if="${task.name == 'Requirement Elicitation'}" class="text-sm text-gray-600 mb-3">
+                        Gathered and documented client requirements to ensure clear understanding of project goals
+                    </p>
+                    <p th:if="${task.name == 'Review The SRS'}" class="text-sm text-gray-600 mb-3">
+                        Reviewed and validated the Software Requirements Specification to ensure accuracy and completeness
+                    </p>
+                    <p th:if="${task.name == 'Review User Stories List'}" class="text-sm text-gray-600 mb-3">
+                        Reviewed and refined user stories to ensure clarity, completeness, and alignment with project requirements
+                    </p>
 
-                    <div class="ml-4">
-                        <div class="flex justify-between">
-                            <span class="font-medium">Project Update</span>
-                            <span class="text-sm text-gray-500">Just now</span>
+                    <p th:if="${task.name == 'Solution Architecture Review'}" class="text-sm text-gray-600 mb-3">
+                        Evaluated the proposed solution architecture for scalability, security, and alignment with business objectives
+                    </p>
+
+                    <p th:if="${task.name == 'Review Generated Layout'}" class="text-sm text-gray-600 mb-3">
+                        Assessed the generated UI layouts for usability, consistency, and adherence to design standards
+                    </p>
+
+                    <p th:if="${task.name == 'Review Current User Story Implementation'}" class="text-sm text-gray-600 mb-3">
+                        Reviewed implemented user stories to verify functionality and ensure alignment with acceptance criteria
+                    </p>
+
+                    <p th:if="${task.name == 'UAT'}" class="text-sm text-gray-600 mb-3">
+                        Conducted User Acceptance Testing to validate the system against business needs and confirm readiness for deployment
+                    </p>
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="flex items-center">
+                            <span class="text-gray-500">Completed by:</span>
+                            <span class="ml-2 font-medium">JustJava Team</span>
                         </div>
-
-                        <!-- Reassuring text for each task -->
-                        <p class="text-gray-600 mt-1" th:switch="${task}">
-                        <span th:case="'Requirement Elicitation'">
-                            We've carefully gathered and confirmed your requirements, ensuring nothing important is missed.
-                        </span>
-                            <span th:case="'Review The SRS'">
-                            The Software Requirements Specification has been thoroughly reviewed and validated for accuracy.
-                        </span>
-                            <span th:case="'Review User Stories List'">
-                            Your user stories have been reviewed and refined, making sure they align perfectly with your vision.
-                        </span>
-                            <span th:case="'Solution Architecture Review'">
-                            Our team has completed a review of the solution architecture, ensuring it is solid, scalable, and reliable.
-                        </span>
-                            <span th:case="'Review Generated Layout'">
-                            The generated layouts have been reviewed for clarity and usability, keeping your users in mind.
-                        </span>
-                            <span th:case="'Review Current User Story Implementation'">
-                            The current user story implementations have been checked for quality and consistency with requirements.
-                        </span>
-                            <span th:case="'UAT in that order'">
-                            User Acceptance Testing has been carried out, confirming the solution works smoothly for your needs.
-                        </span>
-                            <span th:case="*">
-                            A project milestone has been completed successfully.
-                        </span>
-                        </p>
+                        <div>
+                            <span th:text="${#dates.format(task.createTime, 'MMM dd, yyyy')}"  class="text-gray-500">Oct 8, 2023</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Hidden content div for PDF generation -->
+<div id="documentContent" style="display: none;"></div>
 
 <!-- Footer -->
 <footer class="bg-gray-800 text-white py-6 mt-12">
@@ -620,6 +741,81 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+    // Email validation and invite functionality
+const inviteEmailInput = document.getElementById('inviteEmail');
+const sendInviteBtn = document.getElementById('sendInviteBtn');
+const emailError = document.getElementById('emailError');
+const emailSuccess = document.getElementById('emailSuccess');
+const validationIcon = document.getElementById('validationIcon');
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function showError() {
+    emailError.classList.remove('hidden');
+    emailSuccess.classList.add('hidden');
+    inviteEmailInput.classList.add('input-error', 'shake');
+    inviteEmailInput.classList.remove('input-valid');
+    validationIcon.classList.remove('hidden');
+    validationIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i>';
+    sendInviteBtn.disabled = true;
+
+    // Remove shake animation after it completes
+    setTimeout(() => {
+        inviteEmailInput.classList.remove('shake');
+    }, 500);
+}
+
+function showSuccess() {
+    emailError.classList.add('hidden');
+    emailSuccess.classList.remove('hidden');
+    inviteEmailInput.classList.remove('input-error');
+    inviteEmailInput.classList.add('input-valid');
+    validationIcon.classList.remove('hidden');
+    validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+    sendInviteBtn.disabled = false;
+}
+
+function validateInput() {
+    const email = inviteEmailInput.value.trim();
+
+    if (email === '') {
+        // Empty input
+        emailError.classList.add('hidden');
+        inviteEmailInput.classList.remove('input-error', 'input-valid');
+        validationIcon.classList.add('hidden');
+        sendInviteBtn.disabled = true;
+        return;
+    }
+
+    if (!validateEmail(email)) {
+        // Invalid email
+        showError();
+        return;
+    }
+
+    // Valid email
+    emailError.classList.add('hidden');
+    emailSuccess.classList.add('hidden');
+    inviteEmailInput.classList.remove('input-error');
+    inviteEmailInput.classList.add('input-valid');
+    validationIcon.classList.remove('hidden');
+    validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+    sendInviteBtn.disabled = false;
+}
+
+// Validate on input
+inviteEmailInput.addEventListener('input', validateInput);
+
+// Also validate on Enter key press
+inviteEmailInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendInviteBtn.click();
+    }
+});
+
         // Set current date
         const currentDate = new Date();
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -649,28 +845,133 @@
             });
         });
 
-        // Add download functionality to document buttons
-        const downloadButtons = document.querySelectorAll('.document-item button');
-        downloadButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const documentItem = this.closest('.document-item');
-                const documentName = documentItem.querySelector('.font-medium').textContent;
-                alert(`Downloading: ${documentName}`);
-                // In a real application, this would trigger an actual download
-            });
-        });
-
-        // Add click functionality to document items
-        const documentItems = document.querySelectorAll('.document-item');
-        documentItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const documentName = this.querySelector('.font-medium').textContent;
-                alert(`Opening: ${documentName}`);
-                // In a real application, this would open a preview or download the document
-            });
-        });
     });
+
+    // Download functionality
+    async function downloadAsPDF(content, filename) {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+        const contentDiv = document.getElementById('documentContent');
+
+        // Set the content for PDF generation
+        contentDiv.innerHTML = content;
+
+        // Page setup
+        const margin = 50;
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        let y = margin;
+        const defaultLineHeight = 16;
+
+        // Add Logo + Company Name
+        const logoUrl = "/images/justjavaLogo.svg"; // static folder
+        const logo = await loadImage(logoUrl);
+        pdf.addImage(logo, "PNG", margin, 20, 40, 40);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(18);
+        pdf.setTextColor(33, 33, 33);
+        pdf.text("", margin + 50, 45);
+        y = 90;
+
+        function checkPageBreak(extra = 0) {
+            if (y + extra > pageHeight - margin) {
+                pdf.addPage();
+                y = margin;
+            }
+        }
+
+        function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
+            pdf.setFont("helvetica", bold ? "bold" : "normal");
+            pdf.setFontSize(fontSize);
+            const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
+            if (extraGap > 0) y += extraGap;
+            lines.forEach(line => {
+                checkPageBreak(spacing);
+                pdf.text(line, margin + indent, y);
+                y += spacing;
+            });
+            y += 4;
+        }
+
+        function processNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                if (node.textContent.trim()) addText(node.textContent.trim(), 12);
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const tag = node.tagName.toLowerCase();
+                if (tag === "h1") addText(node.textContent.trim(), 22, true, 0, 28, 12);
+                else if (tag === "h2") addText(node.textContent.trim(), 18, true, 0, 24, 10);
+                else if (tag === "h3") addText(node.textContent.trim(), 15, true, 0, 20, 8);
+                else if (tag === "p") addText(node.textContent.trim(), 12, false, 0, 18, 6);
+                else if (tag === "li") addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
+                else if (tag === "ul" || tag === "ol") {
+                    y += 4; node.childNodes.forEach(child => processNode(child)); y += 6;
+                }
+                else if (tag === "table") {
+                    const rows = [];
+                    node.querySelectorAll("tr").forEach(tr => {
+                        const row = [];
+                        tr.querySelectorAll("td, th").forEach(td => row.push(td.innerText.trim()));
+                        rows.push(row);
+                    });
+                    if (rows.length > 0) {
+                        y += 10; checkPageBreak(40);
+                        pdf.autoTable({
+                            head: [rows[0]],
+                            body: rows.slice(1),
+                            startY: y,
+                            margin: { left: margin, right: margin },
+                            styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
+                            headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
+                        });
+                        y = pdf.lastAutoTable.finalY + 20;
+                    }
+                } else {
+                    node.childNodes.forEach(child => processNode(child));
+                }
+            }
+        }
+
+        // Traverse content
+        contentDiv.childNodes.forEach(node => processNode(node));
+
+        // Footer with page numbers
+        const pageCount = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            pdf.setPage(i);
+            pdf.setFontSize(10);
+            pdf.setTextColor(150);
+            pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
+        }
+
+        pdf.save(filename);
+    }
+
+    function loadImage(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width; canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.src = url;
+        });
+    }
+
+    // Function to download requirement specification
+    function downloadRequirementSpec() {
+        const content = document.getElementById('requirementSpec').value;
+        downloadAsPDF(content, "requirements-specification.pdf");
+    }
+
+    // Function to download architecture specification
+    function downloadArchitectureSpec() {
+        const content = document.getElementById('architectureSpec').value;
+        downloadAsPDF(content, "solution-architecture.pdf");
+    }
 </script>
 </body>
 </html>
