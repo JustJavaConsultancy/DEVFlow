@@ -44,10 +44,11 @@ public class ProjectsController {
                 .active()
                 .list();
         projects.forEach(project -> {
-/*            System.out.println(" The Process Instance" +
+            System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
-                    +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables().get("b0e80426-962f-11f0-a585-00155dd09231"));*/
+                    //+" the start time ==="+project.getStartTime()
+                    //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
+                    + " the artifact===" +project.getProcessVariables().get("artifact"));
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
