@@ -104,7 +104,7 @@ public class ProjectsController {
                 .finished()
                 .orderByTaskCreateTime().desc()
                 .list();
-        double percentage = ((double) completedTasks.size() / 7) * 100;
+        int percentage = (int) Math.round((completedTasks.size() / 7.0) * 100);
         model.addAttribute("completedTasks",completedTasks);
         model.addAttribute("project",project);
         model.addAttribute("tasks", tasks);
