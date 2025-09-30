@@ -33,6 +33,7 @@ public class ArtifactFileExtractor {
     public enum FileType {
         HTML_TEMPLATE,
         JAVA_CLASS,
+        YAML_CONFIG,
         UNKNOWN
     }
 
@@ -46,6 +47,9 @@ public class ArtifactFileExtractor {
 
         // Extract Java classes
         extractedFiles.addAll(extractJavaFiles(artifact));
+
+        // Extract YAML configuration files
+        extractedFiles.addAll(extractYamlFiles(artifact));
 
         System.out.println("Successfully extracted " + extractedFiles.size() + " files from artifact");
 
@@ -112,6 +116,49 @@ public class ArtifactFileExtractor {
         return files;
     }
 
+    private List<ExtractedFile> extractYamlFiles(String artifact) {
+        List<ExtractedFile> files = new ArrayList<>();
+
+        // Pattern for YAML files - matches both yaml and yml extensions
+        Pattern yamlPattern = Pattern.compile(
+                "yaml\\s*#\\s*(src/main/resources/[^\\s]+\\.ya?ml)\\s*" +
+                        "([\\s\\S]*?)(?=yaml\\s*#\\s*src/main/|java\\s*//|<!--|\\z)",
+                Pattern.DOTALL
+        );
+
+        Matcher matcher = yamlPattern.matcher(artifact);
+
+        while (matcher.find()) {
+            String filePath = cleanYamlFilePath(matcher.group(1));
+            String content = matcher.group(2).trim();
+
+            if (isValidYamlContent(content)) {
+                files.add(new ExtractedFile(filePath, content, FileType.YAML_CONFIG));
+                System.out.println("Extracted YAML file: " + filePath);
+            }
+        }
+
+        // Alternative pattern for YAML files without the "yaml" prefix
+        Pattern altYamlPattern = Pattern.compile(
+                "#\\s*(src/main/resources/[^\\s]+\\.ya?ml)\\s*" +
+                        "([\\s\\S]*?)(?=#\\s*src/main/|java\\s*//|<!--|\\z)",
+                Pattern.DOTALL
+        );
+
+        Matcher altMatcher = altYamlPattern.matcher(artifact);
+        while (altMatcher.find()) {
+            String filePath = cleanYamlFilePath(altMatcher.group(1));
+            String content = altMatcher.group(2).trim();
+
+            if (isValidYamlContent(content) && !isYamlFileAlreadyExtracted(files, filePath)) {
+                files.add(new ExtractedFile(filePath, content, FileType.YAML_CONFIG));
+                System.out.println("Extracted YAML file (alternative): " + filePath);
+            }
+        }
+
+        return files;
+    }
+
     private String cleanJavaFilePath(String filePath) {
         // FIXED: Only remove the "java //" prefix, not "java" within the path
         // Remove "java //" from the beginning of the path declaration
@@ -119,6 +166,17 @@ public class ArtifactFileExtractor {
 
         System.out.println("Cleaned Java file path: '" + filePath + "' -> '" + cleaned + "'");
         return cleaned;
+    }
+
+    private String cleanYamlFilePath(String filePath) {
+        // Remove "yaml #" or "#" prefix from YAML file paths
+        String cleaned = filePath.replaceFirst("^yaml\\s*#\\s*", "").replaceFirst("^#\\s*", "").trim();
+        System.out.println("Cleaned YAML file path: '" + filePath + "' -> '" + cleaned + "'");
+        return cleaned;
+    }
+
+    private boolean isYamlFileAlreadyExtracted(List<ExtractedFile> files, String filePath) {
+        return files.stream().anyMatch(file -> file.getFilePath().equals(filePath));
     }
 
     private boolean isValidHtmlContent(String content) {
@@ -133,6 +191,18 @@ public class ArtifactFileExtractor {
             return false;
         }
         return content.contains("package") || content.contains("class") || content.contains("@");
+    }
+
+    private boolean isValidYamlContent(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return false;
+        }
+        // YAML validation - check for common YAML patterns
+        boolean hasYamlStructure = content.contains(":") || content.contains("-");
+        boolean hasSpringProperties = content.contains("spring:") || content.contains("server:") || content.contains("logging:");
+        boolean hasKeyValuePairs = content.matches(".*\\w+:\\s*.+");
+
+        return hasYamlStructure && (hasSpringProperties || hasKeyValuePairs);
     }
 
     public void writeFiles(String appPath, List<ExtractedFile> files) throws IOException {
@@ -155,7 +225,81 @@ public class ArtifactFileExtractor {
             }
 
             Files.writeString(fullPath, file.getContent());
-            System.out.println("Successfully written: " + fullPath.toAbsolutePath());
+            System.out.println("Successfully written: " + fullPath.toAbsolutePath() +
+                    " (" + file.getFileType() + ", " + file.getContent().length() + " characters)");
         }
+    }
+
+    // Enhanced extraction method that handles multiple artifact formats
+    public List<ExtractedFile> extractFilesRobust(String artifact) {
+        List<ExtractedFile> files = new ArrayList<>();
+
+        // Split artifact by common separators to handle multiple file formats
+        String[] sections = artifact.split("---\\s*");
+
+        for (String section : sections) {
+            files.addAll(extractFilesFromSection(section));
+        }
+
+        // If no files found with section splitting, try the original method
+        if (files.isEmpty()) {
+            files.addAll(extractFiles(artifact));
+        }
+
+        return files;
+    }
+
+    private List<ExtractedFile> extractFilesFromSection(String section) {
+        List<ExtractedFile> files = new ArrayList<>();
+
+        // Try to extract HTML files from this section
+        Pattern htmlPattern = Pattern.compile(
+                "<!--\\s*(src/main/resources/templates/[^>]+\\.html)\\s*-->\\s*" +
+                        "(<!DOCTYPE[\\s\\S]*?</html>\\s*)",
+                Pattern.DOTALL
+        );
+
+        Matcher htmlMatcher = htmlPattern.matcher(section);
+        while (htmlMatcher.find()) {
+            String filePath = htmlMatcher.group(1).trim().replace("<!--", "").replace("-->", "").trim();
+            String content = htmlMatcher.group(2).trim();
+            if (isValidHtmlContent(content)) {
+                files.add(new ExtractedFile(filePath, content, FileType.HTML_TEMPLATE));
+            }
+        }
+
+        // Try to extract Java files from this section
+        Pattern javaPattern = Pattern.compile(
+                "java\\s*//\\s*(src/main/java/[^\\n]+\\.java)\\s*" +
+                        "([\\s\\S]*?})(?=\\s*(?:java\\s*//|<!--|$))",
+                Pattern.DOTALL
+        );
+
+        Matcher javaMatcher = javaPattern.matcher(section);
+        while (javaMatcher.find()) {
+            String filePath = javaMatcher.group(1).trim().replaceFirst("^java\\s*//\\s*", "").trim();
+            String content = javaMatcher.group(2).trim();
+            if (isValidJavaContent(content)) {
+                files.add(new ExtractedFile(filePath, content, FileType.JAVA_CLASS));
+            }
+        }
+
+        // Try to extract YAML files from this section
+        Pattern yamlPattern = Pattern.compile(
+                "(?:yaml\\s*)?#\\s*(src/main/resources/[^\\n]+\\.ya?ml)\\s*" +
+                        "([\\s\\S]*?)(?=(?:yaml\\s*)?#\\s*src/main/|java\\s*//|<!--|$)",
+                Pattern.DOTALL
+        );
+
+        Matcher yamlMatcher = yamlPattern.matcher(section);
+        while (yamlMatcher.find()) {
+            String filePath = yamlMatcher.group(1).trim().replaceFirst("^(?:yaml\\s*)?#\\s*", "").trim();
+            String content = yamlMatcher.group(2).trim();
+            if (isValidYamlContent(content)) {
+                files.add(new ExtractedFile(filePath, content, FileType.YAML_CONFIG));
+            }
+        }
+
+        return files;
     }
 }
