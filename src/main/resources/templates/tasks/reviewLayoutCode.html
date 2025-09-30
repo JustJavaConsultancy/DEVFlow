@@ -76,6 +76,7 @@
         }
 
         .dynamic-content h3 {
+            color: white;
             font-size: 1.25rem;
         }
 
@@ -127,6 +128,21 @@
             background-color: #f8fafc;
         }
 
+        /* Section styling */
+        .code-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-heading {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
         /* Review form enhancements */
         .review-form {
             border-top: 3px solid #3b82f6;
@@ -166,53 +182,119 @@
             <i class="fas fa-code mr-3 text-blue-600"></i>
             Review Layout Code
         </h1>
-        <p class="text-gray-600 mt-2" th:text="${processVariables.projectName}">
+        <p th:text="${processVariables.projectName}" class="text-gray-600 mt-2">
             E-Commerce Platform Project - Checkout Service
         </p>
     </div>
 
     <!-- Dynamic Content Section -->
     <div class="dynamic-content bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
-        <div th:utext="${#strings.replace(#strings.replace(processVariables.artifact, '```html', ''), '```', '')}">
-            <!-- Dynamic HTML injected here -->
+        <div id="raw-artifacts" th:text="${processVariables.artifact}" style="display:none;"></div>
+        <div id="formatted-artifacts">
+            <!-- Formatted code will be inserted here by JavaScript -->
         </div>
     </div>
 
     <!-- Script kept inside content fragment -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const submitBtn = document.getElementById('submitBtn');
-        const codeReview = document.getElementById('codeReview');
-            // Process all <code> blocks into styled .code-blocks
-            document.querySelectorAll('.dynamic-content code').forEach(block => {
-                // Replace encoded angle brackets with actual characters
-                let code = block.innerHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-                // Escape HTML so it doesn't render
-                code = code
-                    .replace(/&/g, '&amp;')   // escape ampersand first
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;');
+            const submitBtn = document.getElementById('submitBtn');
+            const codeReview = document.getElementById('codeReview');
+            const formattedArtifacts = document.getElementById('formatted-artifacts');
 
-                // Create code block container
-                const codeBlock = document.createElement('div');
-                codeBlock.classList.add('code-block');
+            // Get the raw artifacts content (this would come from your Thymeleaf variable)
+            const artifactsContent = document.getElementById('raw-artifacts').innerText;
 
-                // Split into lines and create numbered lines
-                const lines = code.split('\n');
+// Process artifacts and format them
+function formatArtifacts(content) {
+const sections = content.split('---');
+let formattedHTML = '';
 
-                codeBlock.innerHTML = lines.map((line, i) =>
-                    `<span class="code-line"><span class="line-number">${i+1}</span>${line}</span>`
-                ).join('');
+sections.forEach((section, index) => {
+section = section.trim();
+if (!section) return;
 
-                // Replace <code> with formatted block
-                block.replaceWith(codeBlock);
-            });
+// Extract language and title from comment
+const firstLine = section.split('\n')[0];
+let title = '';
+let language = '';
+
+if (firstLine.includes('<!--') && firstLine.includes('-->')) {
+const commentContent = firstLine.replace('<!--', '').replace('-->', '').trim();
+const parts = commentContent.split(' ');
+if (parts.length > 0) {
+title = commentContent;
+// Determine language from file extension
+if (commentContent.includes('.html')) {
+language = 'html';
+} else if (commentContent.includes('.java')) {
+language = 'java';
+} else if (commentContent.includes('.js')) {
+language = 'javascript';
+} else if (commentContent.includes('.css')) {
+language = 'css';
+}
+}
+} else if (section.trim().startsWith('//') || section.includes('package ') || section.includes('@Controller')) {
+language = 'java';
+title = 'Home Controller';
+}
+
+// Create section heading
+if (title) {
+formattedHTML += `<div class="code-section">
+    <h3 class="section-heading">${title}</h3>`;
+    } else {
+    formattedHTML += `<div class="code-section">
+    <h3 class="section-heading">Code Section ${index + 1}</h3>`;
+    }
+
+    // Create code block
+    const codeBlock = document.createElement('div');
+    codeBlock.classList.add('code-block');
+
+    // Clean and escape the code
+    let code = section;
+    // Remove the first line if it's a comment (for display purposes)
+    if (code.includes('\n') && (code.startsWith('<!--') || code.startsWith('//'))) {
+                        code = code.split('\n').slice(1).join('\n');
+                    }
+
+                    // Escape HTML
+                    code = code
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+
+                    // Split into lines and create numbered lines
+                    const lines = code.split('\n');
+
+                    codeBlock.innerHTML = lines.map((line, i) =>
+                        `<span class="code-line"><span class="line-number">${i+1}</span>${line}</span>`
+                    ).join('');
+
+                    formattedHTML += codeBlock.outerHTML;
+                    formattedHTML += '</div>';
+                });
+
+                return formattedHTML;
+            }
+
+            // Insert formatted artifacts
+            formattedArtifacts.innerHTML = formatArtifacts(artifactsContent);
+
             // Form submission handler
-        codeReview.addEventListener('submit', function(e) {
-          submitBtn.disabled = true;
-          submitBtn.classList.add('btn-disabled');
-          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
-        });
+            if (codeReview) {
+                codeReview.addEventListener('submit', function(e) {
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('btn-disabled');
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+                    }
+                });
+            }
         });
     </script>
 </div>
