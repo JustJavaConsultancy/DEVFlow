@@ -71,7 +71,7 @@ keycloak:
 app:
   processKey: "softwareEngineeringProcess"
   ai:
-    url: ${APP_AI_URL:http://localhost:8089}
+    url: ${APP_AI_URL:https://genaiandrag.onrender.com}
 message:
   paymentGateway-routing-key: ${PAYMENT_GATEWAY_ROUTING_KEY:}
 logging:
