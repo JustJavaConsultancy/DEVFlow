@@ -22,7 +22,7 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
         //execution.setVariable("packageName","tech.justjava"+".JDocMan".toLowerCase());
         execution.setVariable("javaVersion","21");
         execution.setVariable("springBootVersion","3.5.5");
-        execution.setVariable("outputDir","C:/workspace");
+        execution.setVariable("outputDir","../workspace");
 
 
         // Add dependencies (Spring Web as example)

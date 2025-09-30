@@ -1,5 +1,8 @@
 package com.justjava.devFlow.tasks;
 
+import com.justjava.devFlow.delegate.WriteGeneratedArtifactsDelegate;
+import com.justjava.devFlow.util.ArtifactFileExtractor;
+import com.justjava.devFlow.util.CodeDetailsExtractor;
 import ognl.ObjectElementsAccessor;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.RuntimeService;
@@ -17,6 +20,11 @@ import java.util.*;
 @Controller
 @RequestMapping("/tasks")
 public class FlowableTaskController {
+
+    @Autowired
+    CodeDetailsExtractor codeDetailsExtractor;
+
+
 
     @Autowired
     private TaskService taskService;
@@ -250,12 +258,28 @@ public class FlowableTaskController {
             runtimeService.setVariable(task.getExecutionId(),task.getId(),variables);
 
 /*
+            String storyDevelopmentDetail = (String) runtimeService.getVariable(task.getProcessInstanceId(),"storyDevelopmentDetail");
+            String appPath = (String) runtimeService.getVariable(task.getProcessInstanceId(),"appPath");
+
+            List<CodeDetailsExtractor.ExtractedCodeFile> extractedFiles = codeDetailsExtractor
+                    .extractAllCodeComponents(storyDevelopmentDetail);
+            extractedFiles.forEach(file -> {
+                System.out.println("The file path here==="+file.getFilePath());
+                System.out.println("The file content here===\n\n\n\n\n"+file.getContent());
+            });
+            codeDetailsExtractor.writeCodeFiles(appPath,extractedFiles);
+*/
+
+/*
             System.out.println(" During the complete cycle The task id here==="+task.getId()+"\n\n\n\n\n\n\n\n "
                             + " The whole process variables===="+ runtimeService.getVariables(task.getExecutionId()));
 */
             Map<String, Object> processVariables=runtimeService.getVariables(task.getProcessInstanceId());
             int progress=processVariables.get("progress")!=null?
                     (Integer) processVariables.get("progress"):0;
+
+
+            //runtimeService.
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
             taskService.complete(taskId, variables);
 

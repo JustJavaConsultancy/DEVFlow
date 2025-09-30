@@ -194,6 +194,16 @@
             <!-- Formatted code will be inserted here by JavaScript -->
         </div>
     </div>
+    <form id="layoutForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
+
+        <!-- Save All Button -->
+        <div th:if="${!isCompleted}" class="flex justify-center mt-6">
+            <button id="submitBtn" class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+                <i class="fas fa-save mr-2"></i>
+                Proceed
+            </button>
+        </div>
+    </form>
 
     <!-- Script kept inside content fragment -->
     <script>
@@ -286,15 +296,14 @@ formattedHTML += `<div class="code-section">
             formattedArtifacts.innerHTML = formatArtifacts(artifactsContent);
 
             // Form submission handler
-            if (codeReview) {
-                codeReview.addEventListener('submit', function(e) {
-                    if (submitBtn) {
-                        submitBtn.disabled = true;
-                        submitBtn.classList.add('btn-disabled');
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
-                    }
-                });
-            }
+            const layoutForm = document.getElementById('layoutForm');
+            // Form submission handler
+            layoutForm.addEventListener('submit', function(e) {
+
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-disabled');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+            });
         });
     </script>
 </div>

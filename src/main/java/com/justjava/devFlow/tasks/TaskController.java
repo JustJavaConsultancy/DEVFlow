@@ -50,13 +50,13 @@ public class TaskController {
                 .orderByTaskCreateTime().desc()
                 .list();
         historicTasks.forEach(task -> {
-            System.out.println(" The task process variables here=== "+task.getProcessVariables() +
+           /* System.out.println(" The task process variables here=== "+task.getProcessVariables() +
                     " The Task State ==== "+task.getState()+
                     " task ID==="+  task.getId()+
                     " the task kept variable==="+runtimeService.getVariables(task.getExecutionId(),List.of(task.getId())).get(task.getId())+
                     " This is the task name === "+task.getName()+ " project descriptiontask creation date" +
                             " == " + task.getCreateTime()
-                    );
+                    );*/
         });
         model.addAttribute("tasks", tasks);
         model.addAttribute("completedTasks",historicTasks);

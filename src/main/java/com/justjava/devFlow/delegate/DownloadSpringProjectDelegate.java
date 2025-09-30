@@ -42,7 +42,7 @@ public class DownloadSpringProjectDelegate implements JavaDelegate {
                     "&groupId=" + groupId +
                     "&artifactId=" + artifactId +
                     "&name=" + artifactId +
-                    "&packageName=" + groupId + "." + artifactId +
+                    "&packageName=" + groupId +
                     "&dependencies=" + dependencies;
 
             HttpHeaders headers = new HttpHeaders();
