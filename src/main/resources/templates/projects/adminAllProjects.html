@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .empty-state-icon {
+        font-size: 5rem;
+        opacity: 0.7;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #780aff, #255bec);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .modal {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                transform: scale(0.9);
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            .modal.active {
+                transform: scale(1);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .input-focus:focus {
+                border-color: #780aff;
+                box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
+            }
+
+            .filter-btn.active {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+
+  </style>
+</head>
+<body>
+<div layout:fragment="content" id="main">
+  <!-- Page Title and Actions -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
+      <i class="fas fa-project-diagram mr-3 text-blue-600"></i>
+      Projects
+    </h1>
+
+    <button id="newProjectBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center hover:opacity-90 transition-opacity text-sm md:text-base">
+      <i class="fas fa-plus mr-2"></i>
+      New Project
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+    <!-- Total Projects -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-4 md:p-6 text-white shadow-md">
+      <i class="fas fa-project-diagram text-2xl md:text-3xl mb-4 text-blue-200"></i>
+      <h3 class="text-xl md:text-2xl font-bold mb-1" th:text="${activeProject}">12</h3>
+      <p class="text-blue-200 text-sm md:text-base">Total Projects</p>
+    </div>
+
+    <!-- Active -->
+    <div class="bg-gradient-to-r from-green-500 to-emerald-700 rounded-xl p-4 md:p-6 text-white shadow-md">
+      <i class="fas fa-spinner text-2xl md:text-3xl mb-4 text-blue-200"></i>
+      <h3 class="text-xl md:text-2xl font-bold mb-1" th:text="${activeProject}">7</h3>
+      <p class="text-blue-200 text-sm md:text-base">Active</p>
+    </div>
+
+    <!-- Completed -->
+    <div class="bg-gradient-to-r from-purple-600 to-pink-700 rounded-xl p-4 md:p-6 text-white shadow-md">
+      <i class="fas fa-check-circle text-2xl md:text-3xl mb-4 text-blue-200"></i>
+      <h3 class="text-xl md:text-2xl font-bold mb-1" th:text="${completedProject}">3</h3>
+      <p class="text-blue-200 text-sm md:text-base">Completed</p>
+    </div>
+  </div>
+  <div th:if="${#lists.isEmpty(projects)}">
+    <!-- Empty State -->
+    <div class="glass-effect rounded-xl p-8 md:p-12 text-center mb-8">
+      <div class="flex justify-center">
+        <i class="fas fa-folder-open empty-state-icon"></i>
+      </div>
+      <h2 class="text-xl md:text-2xl font-bold text-blue-800 mb-2">No projects yet</h2>
+      <p class="text-blue-600 mb-6 max-w-md mx-auto">Get started by creating your first project. Organize tasks, track progress, and collaborate with your team.</p>
+    </div>
+
+    <!-- Getting Started Tips -->
+    <div class="glass-effect rounded-xl p-6 md:p-8">
+      <h3 class="text-lg md:text-xl font-bold text-blue-800 mb-4">Getting Started with DevFlow</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div class="bg-white bg-opacity-50 rounded-lg p-4 md:p-5">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white mb-3">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h4 class="font-bold text-blue-700 mb-2">Plan Your Project</h4>
+          <p class="text-sm text-blue-600">Define your project goals, requirements, and timeline before starting development.</p>
+        </div>
+        <div class="bg-white bg-opacity-50 rounded-lg p-4 md:p-5">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white mb-3">
+            <i class="fas fa-tasks"></i>
+          </div>
+          <h4 class="font-bold text-blue-700 mb-2">Break Down Tasks</h4>
+          <p class="text-sm text-blue-600">Divide your project into manageable tasks and assign them to team members.</p>
+        </div>
+        <div class="bg-white bg-opacity-50 rounded-lg p-4 md:p-5">
+          <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center text-white mb-3">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h4 class="font-bold text-blue-700 mb-2">Track Progress</h4>
+          <p class="text-sm text-blue-600">Monitor your project's progress and make adjustments as needed to stay on track.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Projects Grid -->
+  <div th:if="${!#lists.isEmpty(projects)}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <!-- Project Card 1 -->
+    <div th:each="project, iterStat : ${projects}" class="bg-white border border-gray-200 rounded-xl p-4 md:p-5 card-hover shadow-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-blue-700 text-base md:text-lg" th:text="${project.processVariables['projectName']}">E-Commerce Platform</h3>
+        <span th:if="${project.processVariables['progress'] < 4}" class="bg-yellow-100 text-yellow-700 text-xs px-2 md:px-3 py-1 rounded-full">Documentation</span>
+        <span th:if="${project.processVariables['progress'] == 4}" class="bg-blue-100 text-blue-700 text-xs px-2 md:px-3 py-1 rounded-full">Development</span>
+        <span th:if="${project.processVariables['progress'] > 4}" class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Testing</span>
+      </div>
+      <p class="text-gray-600 text-sm mb-4 h-16 overflow-hidden" th:text="${project.processVariables['projectDescription']}"></p>
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+        <div class="bg-blue-600 h-2 rounded-full progress-transition"
+             th:style="|width:${((project.processVariables['progress'] ?: 0) * 100) / 6}%|">
+        </div>
+      </div>
+      <div class="flex justify-between text-xs text-sm text-gray-500 mb-4">
+        <span th:text="${project.processVariables['progress']} + '/6' + ' Tasks Completed'">13/20 tasks completed</span>
+        <span th:text="${'Expected: ' + project.processVariables['dueDate']}">Due: Nov 15, 2023</span>
+      </div>
+
+      <div class="flex space-x-2 md:space-x-3">
+        <a style="text-align:center" class="gradient-bg text-white px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm flex-1"
+           th:href="@{/tasks/{projectId}(projectId=${project.processInstanceId})}"
+        >
+          View Tasks
+        </a>
+        <a class="border border-blue-600 text-blue-600 px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm"
+           th:href="@{/project-details/{projectId}(projectId=${project.processInstanceId})}"
+        >
+          View Details
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-center mt-8">
+    <nav class="glass-effect rounded-lg p-2">
+      <ul class="flex items-center space-x-2">
+        <li>
+          <a href="#" class="text-blue-100 px-3 py-1 rounded-lg hover:bg-white hover:bg-opacity-10">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="bg-white bg-opacity-20 text-white px-3 py-1 rounded-lg">1</a>
+        </li>
+        <li>
+          <a href="#" class="text-blue-100 px-3 py-1 rounded-lg hover:bg-white hover:bg-opacity-10">2</a>
+        </li>
+        <li>
+          <a href="#" class="text-blue-100 px-3 py-1 rounded-lg hover:bg-white hover:bg-opacity-10">3</a>
+        </li>
+        <li>
+          <span class="text-blue-100 px-2">...</span>
+        </li>
+        <li>
+          <a href="#" class="text-blue-100 px-3 py-1 rounded-lg hover:bg-white hover:bg-opacity-10">5</a>
+        </li>
+        <li>
+          <a href="#" class="text-blue-100 px-3 py-1 rounded-lg hover:bg-white hover:bg-opacity-10">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div id="projectModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="glass-effect rounded-xl p-4 md:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4 md:mb-6">
+        <h2 class="text-lg md:text-xl font-bold text-white">Create New Project</h2>
+        <button id="closeModal" class="text-blue-200 hover:text-white">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="formContainer" th:action="@{~/project/start}" th:object="${formData}" method="post"
+            class="space-y-3 md:space-y-4" >
+
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Name</label>
+          <input type="text" name="projectName"
+                 required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter project name">
+        </div>
+
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Description</label>
+          <textarea required rows="3" name="projectDescription" class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Describe the project"></textarea>
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Company Name</label>
+          <input type="text" name="clientCompanyName" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter company name">
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Name</label>
+          <input type="text" name="clientName" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Email</label>
+          <input type="text" name="clientEmail" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Phone Number</label>
+          <input type="text" name="clientPhonenumber" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Client Address</label>
+          <input type="text" name="clientAddress" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base" placeholder="Enter client name">
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Expected Due Date</label>
+          <input type="date" name="dueDate" required class="w-full glass-effect rounded-lg px-4 py-2 text-white placeholder-blue-200 input-focus text-sm md:text-base">
+        </div>
+        <div>
+          <label class="block text-blue-100 mb-1 text-sm md:text-base">Project Sector</label>
+          <select name="projectType" required class="w-full glass-effect rounded-lg px-4 py-2 text-white input-focus text-sm md:text-base">
+            <option>Development</option>
+            <option>Design</option>
+            <option>Marketing</option>
+            <option>Planning</option>
+            <option>Testing</option>
+          </select>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" id="cancelBtn" class="px-4 py-2 text-blue-100 hover:text-white text-sm md:text-base">Cancel</button>
+          <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-lg text-sm md:text-base">Create Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Simple animation for progress bars
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBars = document.querySelectorAll('.progress-transition');
+
+        // Reset widths for animation
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+
+            // Animate after a short delay
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 500);
+        });
+
+        // Add hover effect to cards
+        const cards = document.querySelectorAll('.card-hover');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-lg');
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-lg');
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('projectModal');
+        const newProjectBtn = document.getElementById('newProjectBtn');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const projectForm = document.getElementById('projectForm');
+        const formContainer = document.getElementById('formContainer');
+        const submitBtn = formContainer.querySelector('button[type="submit"]');
+
+        function openModal() {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalFunc() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        newProjectBtn.addEventListener('click', openModal);
+        closeModal.addEventListener('click', closeModalFunc);
+        cancelBtn.addEventListener('click', closeModalFunc);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalFunc();
+            }
+        });
+
+        formContainer.addEventListener('submit', function(e) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+        });
+    });
+  </script>
+</div>
+</body>
+</html>
