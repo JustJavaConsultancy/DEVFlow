@@ -2,7 +2,7 @@ name: build-devflow
 on:
   push:
     branches:
-      - master
+      - prod
 
 jobs:
   build:
@@ -47,7 +47,7 @@ jobs:
           #           -Dsonar.organization=zeezart \
           #           -Dsonar.host.url=https://sonarcloud.io \
           #           -Dsonar.login=$SONAR_TOKEN \
-          #           -X
+        #           -X
 
 
 
@@ -96,7 +96,7 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
-          RAILWAY_SERVICE_ID: Devflow
+          RAILWAY_SERVICE_ID: Devflow-2
         run: |
           IMAGE_REF="kazeemakinrinde/devflow:latest"
           echo "Updating service image to: $IMAGE_REF"
