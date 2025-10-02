@@ -38,10 +38,10 @@ public class HomeController {
                 .active()
                 .list();
         projects.forEach(project -> {
-/*            System.out.println(" The Process Instance" +
+            System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
                     +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables());*/
+                    +" the variables==="+project.getProcessVariables());
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
