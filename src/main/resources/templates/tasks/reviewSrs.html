@@ -167,21 +167,14 @@
     </div>
   </form>
 
-  <!-- Hidden SVG logo for PDF generation -->
-  <svg id="pdfLogoSvg" style="display: none;" width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-    <!-- Replace this with your actual SVG logo content -->
-    <rect width="200" height="100" fill="#4b7bec" rx="10"/>
-    <text x="100" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">LOGO</text>
-    <text x="100" y="80" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12">Your Company</text>
-  </svg>
+  <!-- Hidden logo for PDF generation -->
+  <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
 
   <!-- Scripts: htmx (for AJAX), Quill, jsPDF (kept) -->
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
   <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-  <!-- SVG to PNG converter library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/4.0.1/canvg.min.js"></script>
 
   <script>
     // Initialize Quill
@@ -266,51 +259,7 @@
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
     });
 
-    // Function to convert SVG to data URL
-    function svgToDataURL(svgElement) {
-      return new Promise((resolve, reject) => {
-        try {
-          // Get SVG as string
-          const svgString = new XMLSerializer().serializeToString(svgElement);
-
-          // Create canvas for rendering
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-
-          // Set canvas dimensions
-          const width = svgElement.getAttribute('width') || 200;
-          const height = svgElement.getAttribute('height') || 100;
-          canvas.width = width;
-          canvas.height = height;
-
-          // Create blob from SVG
-          const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-          const url = URL.createObjectURL(svgBlob);
-
-          const img = new Image();
-          img.onload = function() {
-            // Draw image on canvas
-            ctx.drawImage(img, 0, 0, width, height);
-            URL.revokeObjectURL(url);
-
-            // Get data URL
-            const dataURL = canvas.toDataURL('image/png');
-            resolve(dataURL);
-          };
-
-          img.onerror = function() {
-            URL.revokeObjectURL(url);
-            reject(new Error('Failed to load SVG image'));
-          };
-
-          img.src = url;
-        } catch (error) {
-          reject(error);
-        }
-      });
-    }
-
-    // Enhanced PDF export with SVG logo and removed borders
+    // Enhanced PDF export with logo and removed borders
     async function downloadAsPDF() {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
@@ -325,278 +274,306 @@
       const contentWidth = pageWidth - (2 * margin);
       let y = margin;
 
-      // Add SVG logo to top right corner
-      const logoSvg = document.getElementById('pdfLogoSvg');
-      if (logoSvg) {
+      // Add logo to top right corner
+      const logo = document.getElementById('pdfLogo');
+      if (logo && logo.src) {
         try {
-          const logoDataURL = await svgToDataURL(logoSvg);
-          const logoWidth = 60;
-          const logoHeight = 30;
-          const logoX = pageWidth - margin - logoWidth;
-          const logoY = margin;
+          // Create a canvas to handle the logo
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
 
-          pdf.addImage(logoDataURL, 'PNG', logoX, logoY, logoWidth, logoHeight);
+          img.onload = function() {
+            // Set logo dimensions
+            const logoWidth = 30;
+            const logoHeight = 50;
+            const logoX = pageWidth - margin - logoWidth;
+            const logoY = margin;
+
+            // Add logo to PDF
+            pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
+
+            // Continue with document content after logo is loaded
+            addDocumentContent();
+          };
+
+          img.onerror = function() {
+            console.warn('Logo could not be loaded, proceeding without logo');
+            addDocumentContent();
+          };
+
+          img.src = logo.src;
+
         } catch (error) {
-          console.warn('SVG logo could not be loaded:', error);
+          console.warn('Error loading logo:', error);
+          addDocumentContent();
         }
+      } else {
+        addDocumentContent();
       }
 
-      // Add document header (moved down to accommodate logo)
-      y += 40; // Extra space for logo
+      function addDocumentContent() {
+        // Add document header (moved down to accommodate logo)
+        y += 40; // Extra space for logo
 
-      const projectName = document.querySelector('p.text-gray-600').textContent;
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
-      pdf.setTextColor(30, 64, 175); // Blue color
-      pdf.text("SRS Document", margin, y);
+        const projectName = document.querySelector('p.text-gray-600').textContent;
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(16);
+        pdf.setTextColor(30, 64, 175); // Blue color
+        pdf.text("SRS Document", margin, y);
 
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(12);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text(projectName, margin, y + 20);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(12);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(projectName, margin, y + 20);
 
-      y += 50;
+        y += 50;
 
-      // Get the HTML content from the editor
-      const htmlContent = quill.root.innerHTML;
+        // Get the HTML content from the editor
+        const htmlContent = quill.root.innerHTML;
 
-      // Create a temporary div to process the content
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlContent;
+        // Create a temporary div to process the content
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
 
-      // Function to check if we need a page break
-      function checkPageBreak(heightNeeded = 0) {
-        if (y + heightNeeded > pageHeight - margin) {
-          pdf.addPage();
-          y = margin;
-          // Add logo to new page
-          if (logoSvg) {
-            svgToDataURL(logoSvg).then(logoDataURL => {
-              const logoWidth = 60;
-              const logoHeight = 30;
-              const logoX = pageWidth - margin - logoWidth;
-              pdf.addImage(logoDataURL, 'PNG', logoX, margin, logoWidth, logoHeight);
-            }).catch(error => {
-              console.warn('Could not add logo to new page');
-            });
-          }
-          return true;
-        }
-        return false;
-      }
-
-      // Function to add text with proper formatting (borders removed)
-      function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
-        pdf.setFont("helvetica", isBold ? "bold" : "normal");
-        pdf.setFontSize(fontSize);
-        pdf.setTextColor(...color);
-
-        const lines = pdf.splitTextToSize(text, contentWidth - indent);
-        const lineSpacing = fontSize * lineHeight;
-
-        // Check if we need a page break before adding this text
-        checkPageBreak(lines.length * lineSpacing);
-
-        lines.forEach((line, index) => {
-          // Check if we need a page break for each line
-          if (y + lineSpacing > pageHeight - margin) {
+        // Function to check if we need a page break
+        function checkPageBreak(heightNeeded = 0) {
+          if (y + heightNeeded > pageHeight - margin) {
             pdf.addPage();
             y = margin;
-          }
-
-          pdf.text(line, margin + indent, y);
-          y += lineSpacing;
-        });
-
-        // Add a small gap after the text block
-        y += 5;
-      }
-
-      // Process each node in the content
-      function processNode(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-          if (node.textContent.trim()) {
-            // Check if parent is bold
-            const parent = node.parentElement;
-            const isBold = parent && (
-                    parent.tagName === 'STRONG' ||
-                    parent.tagName === 'B' ||
-                    parent.style.fontWeight === 'bold'
-            );
-            addText(node.textContent.trim(), 12, isBold);
-          }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const tag = node.tagName.toLowerCase();
-          const textContent = node.textContent.trim();
-
-          if (!textContent) return;
-
-          switch(tag) {
-            case "h1":
-              addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
-              // Removed border line under h1
-              y += 10;
-              break;
-
-            case "h2":
-              addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
-              // Removed border line under h2
-              y += 8;
-              break;
-
-            case "h3":
-              addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
-              y += 8;
-              break;
-
-            case "h4":
-              addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
-              y += 6;
-              break;
-
-            case "p":
-              addText(textContent, 12, false);
-              break;
-
-            case "li":
-              const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
-              const prefix = isOrdered ?
-                      (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
-              addText(prefix + textContent, 12, false, 20);
-              break;
-
-            case "ul":
-            case "ol":
-              y += 8;
-              Array.from(node.children).forEach(child => processNode(child));
-              y += 8;
-              break;
-
-            case "strong":
-            case "b":
-              Array.from(node.childNodes).forEach(child => {
-                if (child.nodeType === Node.TEXT_NODE) {
-                  addText(child.textContent.trim(), 12, true);
-                } else {
-                  processNode(child);
-                }
-              });
-              break;
-
-            case "table":
-              processTable(node);
-              break;
-
-            case "div":
-              if (node.classList.contains('component-box')) {
-                processComponentBox(node);
-              } else if (node.classList.contains('architecture-diagram')) {
-                processArchitectureDiagram(node);
-              } else {
-                Array.from(node.childNodes).forEach(processNode);
+            // Add logo to new page
+            const logo = document.getElementById('pdfLogo');
+            if (logo && logo.src) {
+              try {
+                const img = new Image();
+                img.onload = function() {
+                  const logoWidth = 30;
+                  const logoHeight = 50;
+                  const logoX = pageWidth - margin - logoWidth;
+                  pdf.addImage(img, 'PNG', logoX, margin, logoWidth, logoHeight);
+                };
+                img.src = logo.src;
+              } catch (error) {
+                console.warn('Could not add logo to new page');
               }
-              break;
+            }
+            return true;
+          }
+          return false;
+        }
 
-            default:
-              Array.from(node.childNodes).forEach(processNode);
+        // Function to add text with proper formatting (borders removed)
+        function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
+          pdf.setFont("helvetica", isBold ? "bold" : "normal");
+          pdf.setFontSize(fontSize);
+          pdf.setTextColor(...color);
+
+          const lines = pdf.splitTextToSize(text, contentWidth - indent);
+          const lineSpacing = fontSize * lineHeight;
+
+          // Check if we need a page break before adding this text
+          checkPageBreak(lines.length * lineSpacing);
+
+          lines.forEach((line, index) => {
+            // Check if we need a page break for each line
+            if (y + lineSpacing > pageHeight - margin) {
+              pdf.addPage();
+              y = margin;
+            }
+
+            pdf.text(line, margin + indent, y);
+            y += lineSpacing;
+          });
+
+          // Add a small gap after the text block
+          y += 5;
+        }
+
+        // Process each node in the content
+        function processNode(node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            if (node.textContent.trim()) {
+              // Check if parent is bold
+              const parent = node.parentElement;
+              const isBold = parent && (
+                      parent.tagName === 'STRONG' ||
+                      parent.tagName === 'B' ||
+                      parent.style.fontWeight === 'bold'
+              );
+              addText(node.textContent.trim(), 12, isBold);
+            }
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const tag = node.tagName.toLowerCase();
+            const textContent = node.textContent.trim();
+
+            if (!textContent) return;
+
+            switch(tag) {
+              case "h1":
+                addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
+                // Removed border line under h1
+                y += 10;
+                break;
+
+              case "h2":
+                addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
+                // Removed border line under h2
+                y += 8;
+                break;
+
+              case "h3":
+                addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
+                y += 8;
+                break;
+
+              case "h4":
+                addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
+                y += 6;
+                break;
+
+              case "p":
+                addText(textContent, 12, false);
+                break;
+
+              case "li":
+                const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
+                const prefix = isOrdered ?
+                        (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
+                addText(prefix + textContent, 12, false, 20);
+                break;
+
+              case "ul":
+              case "ol":
+                y += 8;
+                Array.from(node.children).forEach(child => processNode(child));
+                y += 8;
+                break;
+
+              case "strong":
+              case "b":
+                Array.from(node.childNodes).forEach(child => {
+                  if (child.nodeType === Node.TEXT_NODE) {
+                    addText(child.textContent.trim(), 12, true);
+                  } else {
+                    processNode(child);
+                  }
+                });
+                break;
+
+              case "table":
+                processTable(node);
+                break;
+
+              case "div":
+                if (node.classList.contains('component-box')) {
+                  processComponentBox(node);
+                } else if (node.classList.contains('architecture-diagram')) {
+                  processArchitectureDiagram(node);
+                } else {
+                  Array.from(node.childNodes).forEach(processNode);
+                }
+                break;
+
+              default:
+                Array.from(node.childNodes).forEach(processNode);
+            }
           }
         }
-      }
 
-      // Process tables (with simplified styling - borders removed)
-      function processTable(table) {
-        const rows = [];
-        table.querySelectorAll("tr").forEach(tr => {
-          const row = [];
-          tr.querySelectorAll("td, th").forEach(cell => {
-            row.push({
-              content: cell.innerText.trim(),
-              isHeader: cell.tagName === 'TH'
+        // Process tables (with simplified styling - borders removed)
+        function processTable(table) {
+          const rows = [];
+          table.querySelectorAll("tr").forEach(tr => {
+            const row = [];
+            tr.querySelectorAll("td, th").forEach(cell => {
+              row.push({
+                content: cell.innerText.trim(),
+                isHeader: cell.tagName === 'TH'
+              });
             });
-          });
-          rows.push(row);
-        });
-
-        if (rows.length > 0) {
-          checkPageBreak(100); // Reserve space for table
-
-          const columnWidths = Array(rows[0].length).fill(contentWidth / rows[0].length);
-          const startY = y;
-
-          // Draw table header (simplified - no background color)
-          const headerRow = rows[0];
-          const rowHeight = 25;
-
-          // Draw header text (no background)
-          pdf.setFont("helvetica", "bold");
-          pdf.setFontSize(10);
-          pdf.setTextColor(55, 65, 81); // Regular text color instead of white
-
-          headerRow.forEach((cell, index) => {
-            const x = margin + (index * columnWidths[index]);
-            const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
-            pdf.text(cellContent, x + 5, y + 15);
+            rows.push(row);
           });
 
-          y += rowHeight;
+          if (rows.length > 0) {
+            checkPageBreak(100); // Reserve space for table
 
-          // Draw table rows (simplified - no alternating colors)
-          pdf.setFont("helvetica", "normal");
-          pdf.setFontSize(10);
-          pdf.setTextColor(55, 65, 81);
+            const columnWidths = Array(rows[0].length).fill(contentWidth / rows[0].length);
+            const startY = y;
 
-          for (let i = 1; i < rows.length; i++) {
-            checkPageBreak(rowHeight);
+            // Draw table header (simplified - no background color)
+            const headerRow = rows[0];
+            const rowHeight = 25;
 
-            const row = rows[i];
-            row.forEach((cell, index) => {
+            // Draw header text (no background)
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(10);
+            pdf.setTextColor(55, 65, 81); // Regular text color instead of white
+
+            headerRow.forEach((cell, index) => {
               const x = margin + (index * columnWidths[index]);
               const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
               pdf.text(cellContent, x + 5, y + 15);
             });
 
             y += rowHeight;
+
+            // Draw table rows (simplified - no alternating colors)
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(10);
+            pdf.setTextColor(55, 65, 81);
+
+            for (let i = 1; i < rows.length; i++) {
+              checkPageBreak(rowHeight);
+
+              const row = rows[i];
+              row.forEach((cell, index) => {
+                const x = margin + (index * columnWidths[index]);
+                const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
+                pdf.text(cellContent, x + 5, y + 15);
+              });
+
+              y += rowHeight;
+            }
+
+            // Removed table borders
+            y += 20;
           }
-
-          // Removed table borders
-          y += 20;
         }
+
+        // Process component boxes (borders removed)
+        function processComponentBox(box) {
+          checkPageBreak(40);
+
+          // Removed background and border
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(11);
+          pdf.setTextColor(55, 65, 81);
+
+          const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
+          pdf.text(text, margin + 10, y + 18);
+
+          y += 40;
+        }
+
+        // Process architecture diagrams (borders removed)
+        function processArchitectureDiagram(diagram) {
+          checkPageBreak(100);
+
+          // Removed background and border
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(12);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
+
+          y += 100;
+        }
+
+        // Process all content nodes
+        Array.from(tempDiv.childNodes).forEach(processNode);
+
+        // Save the PDF
+        pdf.save("srs-document.pdf");
       }
-
-      // Process component boxes (borders removed)
-      function processComponentBox(box) {
-        checkPageBreak(40);
-
-        // Removed background and border
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(11);
-        pdf.setTextColor(55, 65, 81);
-
-        const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
-        pdf.text(text, margin + 10, y + 18);
-
-        y += 40;
-      }
-
-      // Process architecture diagrams (borders removed)
-      function processArchitectureDiagram(diagram) {
-        checkPageBreak(100);
-
-        // Removed background and border
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(12);
-        pdf.setTextColor(100, 100, 100);
-        pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
-
-        y += 100;
-      }
-
-      // Process all content nodes
-      Array.from(tempDiv.childNodes).forEach(processNode);
-
-      // Save the PDF
-      pdf.save("srs-document.pdf");
-
     }
   </script>
 </div>
