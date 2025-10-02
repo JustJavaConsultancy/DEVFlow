@@ -30,6 +30,17 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
 
         System.out.println(" dependencies==="+dependencies);
         execution.setVariable("dependencies",dependencies);
+
+
+
+        // ✅ Get GitHub configuration from process variables
+        execution.setVariable("githubUsername", "JustJavaConsultancy");
+        execution.setVariable("githubToken","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");
+        execution.setVariable("repositoryDescription", "Spring Boot project: " + execution.getVariable("projectDescription"));
+        execution.setVariable("isPrivateRepo", true);
+
+
+
         // Prepare headers
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
