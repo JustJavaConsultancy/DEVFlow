@@ -71,7 +71,7 @@ keycloak:
 app:
   processKey: "softwareEngineeringProcess"
   github:
-    token: ${APP_GITHUB_TOKEN:http://localhost:9012}
+    token: ${APP_GITHUB_TOKEN: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}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
 message:
