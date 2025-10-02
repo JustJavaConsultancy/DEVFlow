@@ -117,6 +117,7 @@ public class ProjectsController {
                 .includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
+        System.out.println(project.getId());
         model.addAttribute("project",project);
         model.addAttribute("tasks", tasks);
         return "projects/projectDetails";
@@ -203,10 +204,25 @@ public class ProjectsController {
         }else {
             runtimeService.setVariable(task.getProcessInstanceId(), "aiRequirementAnalysis", requirement);
         }
-        // Debug
-        System.out.println("==== Received richtext content for task " + taskId + " ====");
-        System.out.println(requirement);
-        System.out.println("===================================================");
+
+        return ResponseEntity.ok("saved");
+    }
+    @PostMapping("/richtext/architecture")
+    public ResponseEntity<String> receiveRichTextArchitecture(
+            @RequestParam("taskId") String taskId,
+            @RequestParam("requirement") String requirement) {
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (task == null) {
+            HistoricTaskInstance completedTask = historyService
+                    .createHistoricTaskInstanceQuery()
+                    .finished()
+                    .taskId(taskId)
+                    .singleResult();
+            runtimeService.setVariable(completedTask.getProcessInstanceId(), "architecture", requirement);
+        }else {
+            runtimeService.setVariable(task.getProcessInstanceId(), "architecture", requirement);
+        }
 
         return ResponseEntity.ok("saved");
     }
