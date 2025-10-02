@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/DEVFlow}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/DEVFlow}
     username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
+    password: ${JDBC_DATABASE_PASSWORD:1234}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -62,16 +62,29 @@ server:
   tomcat:
     max-part-count: '100'
   port: 9022
+flowable:
+  http:
+    enabled: true
+  history-level: audit
+  mail:
+    server:
+      host: smtp.gmail.com
+      port: 587
+      username: oguntolavictor181@gmail.com
+      password: ${MAIL_APP_PASSWORD}   # App password, not account password
+      use-tls: true
 springdoc:
   pathsToMatch: /api/**
 keycloak:
   base-url: ${KEYCLOAK_BASE_URI:https://ngcloak.onrender.com}
   client-id: ${KEYCLOAK_CLIENT_ID:softwareEngineer}
   client-secret: ${KEYCLOAK_CLIENT_SECRET:rJuSSQDWuFvATo2pNlAlj0pTVJAbBNPo}
+  grant_type: ${KEYCLOAK_GRANT_TYPE:client_credentials}
 app:
   processKey: "softwareEngineeringProcess"
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
+  base-url: ${APP_BASE_URL:http://localhost:9022}
 message:
   paymentGateway-routing-key: ${PAYMENT_GATEWAY_ROUTING_KEY:}
 logging:

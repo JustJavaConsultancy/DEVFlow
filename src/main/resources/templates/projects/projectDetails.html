@@ -314,8 +314,8 @@
           <p class="text-sm text-gray-600">Share this project with other stakeholders</p>
         </div>
       </div>
-
-      <form class="flex flex-col sm:flex-row w-full md:w-2/3">
+      <form class="flex flex-col sm:flex-row w-full md:w-2/3" th:action="@{~/project/invite}"
+            th:object="${formData}" method="post">
         <div class="flex-1 mb-2 sm:mb-0 sm:mr-2">
           <div class="input-wrapper">
             <input
@@ -327,6 +327,7 @@
             >
             <div id="validationIcon" class="validation-icon hidden"></div>
           </div>
+          <input type="text" name="projectId" th:value="${projectId}" hidden="hidden" />
           <div id="emailError" class="error-message hidden">
             Please enter a valid email address
           </div>
@@ -334,7 +335,9 @@
             Invitation sent successfully!
           </div>
         </div>
-        <button id="sendInviteBtn" class="invite-btn font-medium py-2 px-6 rounded-lg flex items-center justify-center whitespace-nowrap" disabled>
+        <button id="sendInviteBtn"
+                class="invite-btn font-medium py-2 px-6 rounded-lg flex
+                items-center justify-center whitespace-nowrap" disabled>
           <i class="fas fa-paper-plane mr-2"></i> Send Invite
         </button>
       </form>
@@ -443,11 +446,11 @@ function validateInput() {
 inviteEmailInput.addEventListener('input', validateInput);
 
 // Also validate on Enter key press
-inviteEmailInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendInviteBtn.click();
-    }
-});
+// inviteEmailInput.addEventListener('keypress', function(e) {
+//    if (e.key === 'Enter') {
+//        sendInviteBtn.click();
+//    }
+// });
 
         const progressBars = document.querySelectorAll('.progress-transition');
 
