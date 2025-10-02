@@ -1,116 +1,102 @@
 package com.justjava.devFlow.delegate;
 
+import com.justjava.devFlow.util.SpringBootProjectGitHubService;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 @Component("downloadSpringProjectDelegate")
 public class DownloadSpringProjectDelegate implements JavaDelegate {
 
-    private static final String SPRING_INITIALIZR_URL = "https://start.spring.io/starter.zip";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final SpringBootProjectGitHubService projectGitHubService;
+
+    public DownloadSpringProjectDelegate(SpringBootProjectGitHubService projectGitHubService) {
+        this.projectGitHubService = projectGitHubService;
+    }
 
     @Override
     public void execute(DelegateExecution execution) {
         // ✅ Get project parameters from process variables
         String groupId = (String) execution.getVariable("groupId");
         String artifactId = (String) execution.getVariable("artifactId");
-        //String packageName = (String) execution.getVariable("packageName");
         String javaVersion = (String) execution.getVariable("javaVersion");
         String springBootVersion = (String) execution.getVariable("springBootVersion");
+        String dependencies = (String) execution.getVariable("dependencies");
 
-
-        String dependencies = (String) execution.getVariable("dependencies"); // e.g. "web,data-jpa"
-        String outputDir = (String) execution.getVariable("outputDir");       // e.g. "C:/projects"
+        // ✅ Get GitHub configuration from process variables
+        String githubUsername = (String) execution.getVariable("githubUsername");
+        String githubToken = (String) execution.getVariable("githubToken");
+        String repositoryDescription = (String) execution.getVariable("repositoryDescription");
+        boolean isPrivateRepo = getBooleanVariable(execution, "isPrivateRepo", true);
 
         try {
-            // ✅ Build POST request body
-            String body = "type=maven-project" +
-                    "&language=java" +
-                    "&bootVersion="+springBootVersion +   // adapt to latest
-                    "&javaVersion="+javaVersion +
-                    "&baseDir=" + artifactId +
-                    "&groupId=" + groupId +
-                    "&artifactId=" + artifactId +
-                    "&name=" + artifactId +
-                    "&packageName=" + groupId +
-                    "&dependencies=" + dependencies;
+            // ✅ Use SpringBootProjectGitHubService to download and push to GitHub
+            SpringBootProjectGitHubService.GitHubRepositoryResult result =
+                    projectGitHubService.downloadAndPushToGitHub(
+                            groupId,
+                            artifactId,
+                            javaVersion,
+                            springBootVersion,
+                            dependencies,
+                            githubUsername,
+                            githubToken,
+                            repositoryDescription != null ? repositoryDescription : "Spring Boot project: " + artifactId,
+                            isPrivateRepo
+                    );
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            // ✅ Set process variables with GitHub results
+            execution.setVariable("githubRepositoryUrl", result.getRepositoryUrl());
+            execution.setVariable("githubRepositoryName", result.getRepositoryName());
+            execution.setVariable("filesExtracted", result.getFilesCount());
+            execution.setVariable("downloadStatus", "SUCCESS");
+            execution.setVariable("projectGenerated", true);
 
-            HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+            System.out.println("✅ Spring Boot project successfully created and pushed to GitHub: " + result.getRepositoryUrl());
+            System.out.println("✅ Repository: " + result.getRepositoryName());
+            System.out.println("✅ Files processed: " + result.getFilesCount());
 
-            // ✅ Send POST request
-            ResponseEntity<byte[]> response = restTemplate.exchange(
-                    SPRING_INITIALIZR_URL,
-                    HttpMethod.POST,
-                    requestEntity,
-                    byte[].class
-            );
-
-            // ✅ Validate response
-            if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-                throw new RuntimeException("Failed to download Spring Boot project. Status: " + response.getStatusCode());
-            }
-
-            byte[] zipData = response.getBody();
-
-            // ✅ Validate zip signature
-            if (zipData.length < 4 ||
-                    zipData[0] != 'P' || zipData[1] != 'K') {
-                throw new IOException("Invalid ZIP file received from Spring Initializr");
-            }
-
-            // ✅ Ensure output directory exists
-            Path targetDir = Paths.get(outputDir);
-            if (!Files.exists(targetDir)) {
-                Files.createDirectories(targetDir);
-            }
-
-            // ✅ Unzip into outputDir
-            try (ByteArrayInputStream bais = new ByteArrayInputStream(zipData);
-                 ZipInputStream zis = new ZipInputStream(bais)) {
-
-                ZipEntry entry;
-                byte[] buffer = new byte[1024];
-
-                while ((entry = zis.getNextEntry()) != null) {
-                    Path outPath = targetDir.resolve(entry.getName());
-
-                    if (entry.isDirectory()) {
-                        Files.createDirectories(outPath);
-                    } else {
-                        // ensure parent directories exist
-                        if (outPath.getParent() != null) {
-                            Files.createDirectories(outPath.getParent());
-                        }
-                        try (FileOutputStream fos = new FileOutputStream(outPath.toFile())) {
-                            int len;
-                            while ((len = zis.read(buffer)) > 0) {
-                                fos.write(buffer, 0, len);
-                            }
-                        }
-                    }
-
-                    zis.closeEntry();
-                }
-            }
-
-            execution.setVariable("appPath",outputDir+"/"+artifactId);
-            //System.out.println("✅ Project zip saved at: " + zipFilePath);
-
+        } catch (SpringBootProjectGitHubService.ProjectDownloadException e) {
+            handleError(execution, "Failed to download Spring Boot project: " + e.getMessage(), e);
+        } catch (SpringBootProjectGitHubService.GitHubPushException e) {
+            handleError(execution, "Failed to push project to GitHub: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("Error downloading Spring Boot project from Initializr", e);
+            handleError(execution, "Unexpected error during project generation: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Helper method to safely get boolean variables from process execution
+     */
+    private boolean getBooleanVariable(DelegateExecution execution, String variableName, boolean defaultValue) {
+        try {
+            Object value = execution.getVariable(variableName);
+            if (value instanceof Boolean) {
+                return (Boolean) value;
+            } else if (value instanceof String) {
+                return Boolean.parseBoolean((String) value);
+            }
+            return defaultValue;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Helper method to handle errors consistently
+     */
+    private void handleError(DelegateExecution execution, String errorMessage, Exception e) {
+        System.err.println("❌ " + errorMessage);
+        if (e != null) {
+            e.printStackTrace();
+        }
+
+        execution.setVariable("downloadStatus", "FAILED");
+        execution.setVariable("errorMessage", errorMessage);
+        execution.setVariable("projectGenerated", false);
+        execution.setVariable("githubRepositoryUrl", null);
+        execution.setVariable("githubRepositoryName", null);
+        execution.setVariable("filesExtracted", 0);
+
+        throw new RuntimeException(errorMessage, e);
     }
 }

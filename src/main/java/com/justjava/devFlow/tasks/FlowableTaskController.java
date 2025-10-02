@@ -24,7 +24,8 @@ public class FlowableTaskController {
     @Autowired
     CodeDetailsExtractor codeDetailsExtractor;
 
-
+    @Autowired
+    ArtifactFileExtractor artifactFileExtractor;
 
     @Autowired
     private TaskService taskService;
@@ -257,18 +258,24 @@ public class FlowableTaskController {
             // Complete the task with form data
             runtimeService.setVariable(task.getExecutionId(),task.getId(),variables);
 
-/*
             String storyDevelopmentDetail = (String) runtimeService.getVariable(task.getProcessInstanceId(),"storyDevelopmentDetail");
             String appPath = (String) runtimeService.getVariable(task.getProcessInstanceId(),"appPath");
 
-            List<CodeDetailsExtractor.ExtractedCodeFile> extractedFiles = codeDetailsExtractor
-                    .extractAllCodeComponents(storyDevelopmentDetail);
+/*            List<ArtifactFileExtractor.ExtractedFile> extractedFiles = artifactFileExtractor.extractFiles(artifact);
+
             extractedFiles.forEach(file -> {
                 System.out.println("The file path here==="+file.getFilePath());
                 System.out.println("The file content here===\n\n\n\n\n"+file.getContent());
             });
-            codeDetailsExtractor.writeCodeFiles(appPath,extractedFiles);
-*/
+            artifactFileExtractor.writeFiles(appPath,extractedFiles);*/
+
+/* List<CodeDetailsExtractor.ExtractedCodeFile> extractedFiles = codeDetailsExtractor.extractAllCodeComponents(storyDevelopmentDetail);
+
+            extractedFiles.forEach(file -> {
+                System.out.println("The file path here==="+file.getFilePath());
+                System.out.println("The file content here===\n\n\n\n\n"+file.getContent());
+            });
+            codeDetailsExtractor.writeCodeFiles(appPath,extractedFiles);*/
 
 /*
             System.out.println(" During the complete cycle The task id here==="+task.getId()+"\n\n\n\n\n\n\n\n "

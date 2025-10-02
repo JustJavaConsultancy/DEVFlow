@@ -12,6 +12,7 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,6 +79,42 @@ public class ProjectsController {
 
         return "projects/allProjects";
     }
+
+    @GetMapping("/admin/projects")
+    public String getAllProjects(Model model){
+        List<ProcessInstance> projects = runtimeService
+                .createProcessInstanceQuery()
+                .processDefinitionKey("softwareEngineeringProcess")
+                .includeProcessVariables()
+                .active()
+                .list();
+        projects.forEach(project -> {
+/*            System.out.println(" The Process Instance" +
+                    " Here=ID=="+project.getProcessInstanceId()
+                    +" the start time ==="+project.getStartTime()
+                    +" the variables==="+project.getProcessVariables());*/
+        });
+        List<HistoricProcessInstance> completedProcess =historyService
+                .createHistoricProcessInstanceQuery()
+                .finished()
+                .orderByProcessInstanceEndTime()
+                .desc()
+                .list();
+        List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+                .finished()
+                .orderByTaskCreateTime().desc()
+                .list();
+        List<Task> tasks = taskService
+                .createTaskQuery()
+                .includeProcessVariables()
+                .orderByTaskCreateTime().desc()
+                .list();
+        model.addAttribute("projects",projects);
+        model.addAttribute("completedProject",completedProcess.size());
+        model.addAttribute("activeProject",projects.size());
+        return "projects/adminAllProjects";
+    }
+
     @GetMapping("/project-details/{projectId}")
     public String getProjectDetails(@PathVariable String projectId,  Model model){
         ProcessInstance project=runtimeService
@@ -160,6 +197,52 @@ public class ProjectsController {
         model.addAttribute("activeProject",projects.size());
         //System.out.println(" The Process Instance Here==="+processInstance.getProcessVariables());
         return "redirect:/projects";
+    }
+    @PostMapping("/richtext")
+    public ResponseEntity<String> receiveRichText(
+            @RequestParam("taskId") String taskId,
+            @RequestParam("requirement") String requirement) {
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (task == null) {
+            HistoricTaskInstance completedTask = historyService
+                    .createHistoricTaskInstanceQuery()
+                    .finished()
+                    .taskId(taskId)
+                    .singleResult();
+            runtimeService.setVariable(completedTask.getProcessInstanceId(), "aiRequirementAnalysis", requirement);
+        }else {
+            runtimeService.setVariable(task.getProcessInstanceId(), "aiRequirementAnalysis", requirement);
+        }
+        // Debug
+        System.out.println("==== Received richtext content for task " + taskId + " ====");
+        System.out.println(requirement);
+        System.out.println("===================================================");
+
+        return ResponseEntity.ok("saved");
+    }
+    @PostMapping("/richtext/architecture")
+    public ResponseEntity<String> receiveRichTextArchitecture(
+            @RequestParam("taskId") String taskId,
+            @RequestParam("requirement") String requirement) {
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (task == null) {
+            HistoricTaskInstance completedTask = historyService
+                    .createHistoricTaskInstanceQuery()
+                    .finished()
+                    .taskId(taskId)
+                    .singleResult();
+            runtimeService.setVariable(completedTask.getProcessInstanceId(), "architecture", requirement);
+        }else {
+            runtimeService.setVariable(task.getProcessInstanceId(), "architecture", requirement);
+        }
+        // Debug
+        System.out.println("==== Received richtext content for task " + taskId + " ====");
+        System.out.println(requirement);
+        System.out.println("===================================================");
+
+        return ResponseEntity.ok("saved");
     }
 
     @PostMapping("/project/invite")

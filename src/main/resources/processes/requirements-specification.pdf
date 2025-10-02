@@ -1,0 +1,1802 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 3618
+>>
+stream
+0.200025 w
+0 G
+q
+40. 0 0 40. 50. 781.8899999999999864 cm
+/I0 Do
+Q
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 739.8899999999999864 Td
+(1. Introduction) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 697.8899999999999864 Td
+(1.1 Purpose) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 663.8899999999999864 Td
+(This Software Requirements Specification \(SRS\) document describes the requirements for a) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 645.8899999999999864 Td
+(modern, secure, and AI-driven Document Management System \(DMS\) that enables) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 627.8899999999999864 Td
+(multiple-users edit functionality, ensures document verification through digital signatures,) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 609.8899999999999864 Td
+(maintains document versioning, and supports document scanning management.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 581.8899999999999864 Td
+(The purpose of this document is to provide a detailed and comprehensive description of the) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 563.8899999999999864 Td
+(system requirements to all stakeholders involved in the design, development, testing, and) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 545.8899999999999864 Td
+(deployment of the system.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 513.8899999999999864 Td
+(1.2 Scope) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 479.8899999999999864 Td
+(The Document Management System will provide a platform that allows creation, editing,) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 461.8899999999999864 Td
+(storing, versioning, verifying, and managing scanned documents securely with AI-enhanced) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 443.8899999999999864 Td
+(capabilities, including multi-user editing and digital signature verification.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 415.8899999999999864 Td
+(The primary scope of the system is to improve document collaboration and security in a) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 397.8899999999999864 Td
+(multi-user environment while supporting scanned document management workflows.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 369.8899999999999864 Td
+(The system will be deployed {{PLACEHOLDER}}) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 337.8899999999999864 Td
+(1.3 Intended Audience) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 303.8899999999999864 Td
+(• Project Managers) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 279.8899999999999864 Td
+(• Software Engineers and Developers) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 255.8899999999999864 Td
+(• Quality Assurance/Testers) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 231.8899999999999864 Td
+(• End Users \(document creators, editors, and approvers\)) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 207.8899999999999864 Td
+(• Security Analysts) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 183.8899999999999864 Td
+(• System Administrators) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 149.8899999999999864 Td
+(Additional stakeholders: {{PLACEHOLDER}}) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 117.8899999999999864 Td
+(1.4 Intended Use) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 83.8899999999999864 Td
+(The system is intended to be used by organizations requiring secure document creation,) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 1 of 7) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 3845
+>>
+stream
+0.200025 w
+0 G
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 791.8899999999999864 Td
+(collaborative editing, version control, digital signature verification, and scanned document) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 773.8899999999999864 Td
+(management within regulated or security-conscious environments.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 745.8899999999999864 Td
+(Users will interact with the platform to upload, edit, verify, and manage documents securely.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 713.8899999999999864 Td
+(1.5 Definitions, Acronyms, and Abbreviations) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 679.8899999999999864 Td
+(• DMS: Document Management System) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 655.8899999999999864 Td
+(• AI: Artificial Intelligence) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 631.8899999999999864 Td
+(• Digital Signature: An electronic signature that verifies the authenticity and integrity of a) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 613.8899999999999864 Td
+(document) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 589.8899999999999864 Td
+(• Versioning: System capability to maintain and manage multiple iterations of a document) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 565.8899999999999864 Td
+(• Multi-user editing: Ability for multiple users to concurrently edit the same document) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 541.8899999999999864 Td
+(• {{PLACEHOLDER}} \(other terms as applicable\)) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 503.8899999999999864 Td
+(1.6 References) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 469.8899999999999864 Td
+(The list of reference documents, standards, and technologies used or consulted during the) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 451.8899999999999864 Td
+(requirements formulation is provided in Section 2.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 419.8899999999999864 Td
+(1.7 Overview) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 385.8899999999999864 Td
+(This SRS document is organized according to the ISO/IEC/IEEE 29148:2018 standard.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 367.8899999999999864 Td
+(Section 2 lists the applicable references. Section 3 provides an overall description of the) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 349.8899999999999864 Td
+(system environment and constraints. Section 4 details specific requirements including) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 331.8899999999999864 Td
+(functional and non-functional aspects. Section 5 discusses verification strategies. Sections 6) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 313.8899999999999864 Td
+(and 7 include appendices and an index respectively.) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 279.8899999999999864 Td
+(2. References) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 241.8899999999999864 Td
+(• ISO/IEC/IEEE 29148:2018 - Systems and software engineering — Life cycle processes) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 223.8899999999999864 Td
+(— Requirements engineering) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 199.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Additional relevant standards, protocols, or documents\)) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 159.8899999999999864 Td
+(3. Overall Description) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 117.8899999999999864 Td
+(3.1 Product Perspective) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 83.8899999999999864 Td
+(The Document Management System is a standalone, AI-enhanced platform intended to) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 2 of 7) Tj
+ET
+endstream
+endobj
+7 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 8 0 R
+>>
+endobj
+8 0 obj
+<<
+/Length 3895
+>>
+stream
+0.200025 w
+0 G
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 791.8899999999999864 Td
+(operate in an enterprise IT environment. It integrates document editing, versioning, secure) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 773.8899999999999864 Td
+(storage, digital signature verification, and scanning management functionalities.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 745.8899999999999864 Td
+(The system will interface with existing authentication services and hardware scanners) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 727.8899999999999864 Td
+({{PLACEHOLDER}}.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 695.8899999999999864 Td
+(3.2 Product Functions) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 661.8899999999999864 Td
+(• Allow multiple users to concurrently edit documents.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 637.8899999999999864 Td
+(• Maintain document version history for rollback and auditing.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 613.8899999999999864 Td
+(• Perform document verification via digital signatures.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 589.8899999999999864 Td
+(• Support document scanning imports and management.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 565.8899999999999864 Td
+(• Provide AI-driven features related to document management {{PLACEHOLDER}}.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 527.8899999999999864 Td
+(3.3 User Classes and Characteristics) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 493.8899999999999864 Td
+(• Document Editors: Users responsible for creating and editing documents concurrently.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 469.8899999999999864 Td
+(• Approvers/Reviewers: Users who verify and digitally sign documents.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 445.8899999999999864 Td
+(• Administrators: Users managing system configuration, security settings, and user) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 427.8899999999999864 Td
+(permissions.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 403.8899999999999864 Td
+(• Scanner Operators: Users managing document scanning and import.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 379.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Other user roles if applicable\)) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 341.8899999999999864 Td
+(3.4 Operating Environment) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 307.8899999999999864 Td
+(The system will run on {{PLACEHOLDER}}, supporting integration with existing document) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 289.8899999999999864 Td
+(repositories, authentication/authorization infrastructure, and hardware scanners.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 257.8899999999999864 Td
+(3.5 Design and Implementation Constraints) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 223.8899999999999864 Td
+(• Must comply with organizational security policies to ensure highly secure document) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 205.8899999999999864 Td
+(management.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 181.8899999999999864 Td
+(• Must support AI-driven functionalities using approved AI frameworks {{PLACEHOLDER}}.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 157.8899999999999864 Td
+(• Must support concurrent multi-user editing with data consistency guarantees.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 133.8899999999999864 Td
+(• Must implement digital signature verification following accepted cryptographic standards.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 109.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Further constraints\)) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 3 of 7) Tj
+ET
+endstream
+endobj
+9 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 10 0 R
+>>
+endobj
+10 0 obj
+<<
+/Length 3954
+>>
+stream
+0.200025 w
+0 G
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 791.8899999999999864 Td
+(3.6 Assumptions and Dependencies) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 757.8899999999999864 Td
+(• Availability of existing authentication and directory services.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 733.8899999999999864 Td
+(• Availability of digital signature infrastructure compliant with regulations.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 709.8899999999999864 Td
+(• Users have access to document scanning hardware compatible with the system.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 685.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Other assumptions or dependencies\)) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 645.8899999999999864 Td
+(4. Specific Requirements) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 603.8899999999999864 Td
+(4.1 Functional Requirements) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 569.8899999999999864 Td
+(• FR-1: The system shall allow multiple users to edit the same document concurrently with) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 551.8899999999999864 Td
+(real-time conflict resolution.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 527.8899999999999864 Td
+(• FR-2: The system shall maintain complete document version history accessible to) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 509.8899999999999864 Td
+(authorized users.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 485.8899999999999864 Td
+(• FR-3: The system shall provide document verification functionality leveraging digital) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 467.8899999999999864 Td
+(signatures to authenticate documents.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 443.8899999999999864 Td
+(• FR-4: The system shall support import and management of scanned documents.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 419.8899999999999864 Td
+(• FR-5: The system shall provide AI-driven features to enhance document management) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 401.8899999999999864 Td
+(operations {{PLACEHOLDER}}.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 363.8899999999999864 Td
+(4.2 System Requirements) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 329.8899999999999864 Td
+(• The system shall enforce access control mechanisms to ensure only authorized users) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 311.8899999999999864 Td
+(can edit or verify documents.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 287.8899999999999864 Td
+(• The system shall use encryption for data at rest and in transit.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 263.8899999999999864 Td
+(• The system shall provide audit logs for document access and modifications.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 239.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Additional system-level requirements\)) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 201.8899999999999864 Td
+(4.3 Interface Requirements) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 167.8899999999999864 Td
+(• User Interface: The system shall provide a web-based interface for document editing,) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 149.8899999999999864 Td
+(version browsing, signature verification, and scan management.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 125.8899999999999864 Td
+(• Hardware Interface: The system shall interface with document scanners supporting) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 107.8899999999999864 Td
+({{PLACEHOLDER}} protocols/standards.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 83.8899999999999864 Td
+(• Software Interface: The system shall integrate with authentication systems such as) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 4 of 7) Tj
+ET
+endstream
+endobj
+11 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 12 0 R
+>>
+endobj
+12 0 obj
+<<
+/Length 3707
+>>
+stream
+0.200025 w
+0 G
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 791.8899999999999864 Td
+({{PLACEHOLDER}}.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 753.8899999999999864 Td
+(4.4 Performance Requirements) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 719.8899999999999864 Td
+(• The system shall support concurrent editing of documents by up to {{PLACEHOLDER}}) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 701.8899999999999864 Td
+(users without degradation.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 677.8899999999999864 Td
+(• Document verification via digital signature shall complete within {{PLACEHOLDER}}) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 659.8899999999999864 Td
+(seconds.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 635.8899999999999864 Td
+(• The system shall maintain document version history with retrieval times not exceeding) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 617.8899999999999864 Td
+({{PLACEHOLDER}} seconds per version.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 579.8899999999999864 Td
+(4.5 Logical Database Requirements) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 545.8899999999999864 Td
+(• The system shall maintain metadata and version histories for all documents.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 521.8899999999999864 Td
+(• The system shall store digital signatures and verification metadata securely.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 497.8899999999999864 Td
+(• The database shall support scalable storage to accommodate {{PLACEHOLDER}}) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 479.8899999999999864 Td
+(documents.) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 441.8899999999999864 Td
+(4.6 Design Constraints) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 407.8899999999999864 Td
+(• The system design must comply with applicable data protection regulations.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 383.8899999999999864 Td
+(• The system shall employ AI models trained on {{PLACEHOLDER}} datasets only.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 359.8899999999999864 Td
+(• The system shall prevent unauthorized access through multi-factor authentication.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 335.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Additional constraints\)) Tj
+ET
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0.129 g
+50. 297.8899999999999864 Td
+(4.7 Software System Attributes) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 263.8899999999999864 Td
+(• Reliability: The system shall have an uptime of {{PLACEHOLDER}} % to ensure) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 245.8899999999999864 Td
+(availability.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 221.8899999999999864 Td
+(• Availability: The system shall provide failover mechanisms to maintain service continuity.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 197.8899999999999864 Td
+(• Security: The system shall employ end-to-end encryption and comply with) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 179.8899999999999864 Td
+({{PLACEHOLDER}} security standards.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 155.8899999999999864 Td
+(• Maintainability: The system design shall support modular updates without system) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 137.8899999999999864 Td
+(downtime.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 113.8899999999999864 Td
+(• Portability: The system shall be deployable on {{PLACEHOLDER}} platforms.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 5 of 7) Tj
+ET
+endstream
+endobj
+13 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 14 0 R
+>>
+endobj
+14 0 obj
+<<
+/Length 4043
+>>
+stream
+0.200025 w
+0 G
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 791.8899999999999864 Td
+(5. Verification) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 753.8899999999999864 Td
+(Verification of requirements will be performed through the following methods:) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 725.8899999999999864 Td
+(• Unit and integration testing of multi-user editing, versioning, and signature verification) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 707.8899999999999864 Td
+(features.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 683.8899999999999864 Td
+(• Security testing including penetration tests and vulnerability assessments to validate high) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 665.8899999999999864 Td
+(security requirements.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 641.8899999999999864 Td
+(• Performance testing to confirm system responsiveness and concurrency support.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 617.8899999999999864 Td
+(• AI component validation for document management features.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 593.8899999999999864 Td
+(• User acceptance testing \(UAT\) with designated user groups.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 569.8899999999999864 Td
+(• {{PLACEHOLDER}} \(Additional verification methods\)) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 529.8899999999999864 Td
+(6. Appendix) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 491.8899999999999864 Td
+({{PLACEHOLDER}} \(Supporting information, diagrams, or supplemental material\)) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 457.8899999999999864 Td
+(7. Index) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+50. 419.8899999999999864 Td
+({{PLACEHOLDER}} \(Index of key terms and sections\)) Tj
+ET
+BT
+/F2 22 Tf
+25.2999999999999972 TL
+0.129 g
+50. 385.8899999999999864 Td
+(Placeholder Explanations) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 347.8899999999999864 Td
+(• Scope Deployment Context: To properly identify target deployment environments and) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 329.8899999999999864 Td
+(ecosystems to capture relevant constraints and requirements.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 305.8899999999999864 Td
+(• Additional Stakeholders: To ensure all relevant user groups and stakeholders are) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 287.8899999999999864 Td
+(accounted for, guiding requirement completeness.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 263.8899999999999864 Td
+(• Other Definitions and Acronyms: Necessary for clarity and shared understanding of) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 245.8899999999999864 Td
+(domain-specific terms.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 221.8899999999999864 Td
+(• Additional References: To give authoritative backing for standards, protocols, or) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 203.8899999999999864 Td
+(technologies influencing requirements.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 179.8899999999999864 Td
+(• System Interfaces and Integrations: Precise details on existing systems and protocols are) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 161.8899999999999864 Td
+(needed for interface design.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 137.8899999999999864 Td
+(• AI Features Detail: Specification of AI capabilities and scope is essential to clarify) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 119.8899999999999864 Td
+(functional and design requirements for AI-driven features.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 95.8899999999999864 Td
+(• User Roles Expansion: To cover all operational roles interacting with the system for) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 77.8899999999999864 Td
+(tailored requirements.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 6 of 7) Tj
+ET
+endstream
+endobj
+15 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 16 0 R
+>>
+endobj
+16 0 obj
+<<
+/Length 4371
+>>
+stream
+0.200025 w
+0 G
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 791.8899999999999864 Td
+(• Operating Environment Details: Information about hardware, OS, network, and software) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 773.8899999999999864 Td
+(environment is essential for compatibility and performance planning.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 749.8899999999999864 Td
+(• Design and Implementation Constraints: Details about technologies, policies, and) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 731.8899999999999864 Td
+(standards that constrain design need specification to avoid conflicts and ensure) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 713.8899999999999864 Td
+(compliance.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 689.8899999999999864 Td
+(• Assumptions and Dependencies: Essential to clarify what external factors affect system) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 671.8899999999999864 Td
+(development and operation, reducing risk of missed conditions.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 647.8899999999999864 Td
+(• System-level Requirements and Security Standards: Needed to enforce compliance with) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 629.8899999999999864 Td
+(organizational or legal security and data protection requirements.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 605.8899999999999864 Td
+(• Interface Protocols and Authentication Systems: To ensure seamless integration,) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 587.8899999999999864 Td
+(verification, and system interoperability.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 563.8899999999999864 Td
+(• Performance Metrics: To allow measurable acceptance criteria for system) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 545.8899999999999864 Td
+(responsiveness and scalability.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 521.8899999999999864 Td
+(• Database Scaling and Capacity: Helps design the data storage solution to meet expected) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 503.8899999999999864 Td
+(volumes and growth.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 479.8899999999999864 Td
+(• Legal and Data Protection Compliance: To avoid legal liabilities and to align design with) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 461.8899999999999864 Td
+(mandatory controls.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 437.8899999999999864 Td
+(• AI Training Dataset Constraints: Needed to maintain model quality and compliance within) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 419.8899999999999864 Td
+(data governance limits.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 395.8899999999999864 Td
+(• Reliability and Availability Targets: Essential to define service levels and validate system) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 377.8899999999999864 Td
+(robustness.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 353.8899999999999864 Td
+(• Security Standards Reference: Specific standards will guide implementation of) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 335.8899999999999864 Td
+(cryptographic and access control features.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 311.8899999999999864 Td
+(• Platform Portability: To determine deployment and distribution requirements applicable for) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 293.8899999999999864 Td
+(the system.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 269.8899999999999864 Td
+(• Additional Verification Methods: To ensure all system facets are validated for compliance) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 251.8899999999999864 Td
+(and fitness-for-purpose.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 227.8899999999999864 Td
+(• Appendix Content: To provide supplementary material supportive of requirements) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 209.8899999999999864 Td
+(understanding; diagrams, glossary, or detailed explanations.) Tj
+ET
+BT
+/F1 12 Tf
+13.7999999999999989 TL
+0.129 g
+65. 185.8899999999999864 Td
+(• Index Content: A comprehensive index supports document navigation and usability.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.588 g
+494.4799999999999613 20. Td
+(Page 7 of 7) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R ]
+/Count 7
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+21 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+22 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+23 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+24 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+25 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+26 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+27 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+28 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+29 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+30 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+31 0 obj
+<<
+/Type /XObject
+/Subtype /Image
+/Width 125
+/Height 150
+/ColorSpace /DeviceRGB
+/BitsPerComponent 8
+/DecodeParms <</Colors 3 /BitsPerComponent 8 /Columns 125>>
+/SMask 32 0 R
+/Length 56250
+>>
+stream
+                                                                                                                                                                                                                                             ‚(ÿ                                                                                                                                                                                                                                                                                                                                                                                    ƒ+ÿ€3ÿ                                                                                                                                                                                                                                                                                                                                                                                 ‚+ÿƒ*ÿ                                                                                                                                                                                                                                                                                                                                                                                 „-ÿ„,ÿ                                                                                                                                                                                                                                                                                                                                                                                 „.ÿƒ-ÿ‚+ÿ                                                                                                                                                                                                                                                                                                                                                                              …0ÿ„/ÿ…/ÿ                                                                                                                                                                                                                                                                                                                                                                           ÿ ÿ„0ÿ„0ÿ„/ÿ                                                                                                                                                                                                                                                                                                                                                                           †1ÿ†2ÿ…2ÿ†1ÿ                                                                                                                                                                                                                                                                                                                                                                           †2ÿ†3ÿ…2ÿ…3ÿ                                                                                                                                                                                                                                                                                                                                                                        ‡4ÿ†4ÿ†4ÿ†4ÿ†3ÿ                                                                                                                                                                                                                                                                                                                                                                     †7ÿ†5ÿ†5ÿ†5ÿ†4ÿ†4ÿ                                                                                                                                                                                                                                                                                                                                                                  ˆ9ÿ‡6ÿ‡7ÿ‡6ÿ‡6ÿ‡6ÿ                                                                                                                                                                                                                                                                                                                                                                  ‡8ÿˆ8ÿ‡7ÿ‡7ÿ‡7ÿ‡7ÿ‡7ÿ                                                                                                                                                                                                                                                                                                                                                               ‰;ÿˆ9ÿˆ9ÿˆ8ÿˆ9ÿˆ8ÿ‰8ÿ€ ÿ                                                                                                                                                                                                                                                                                                                                                            Š9ÿˆ:ÿˆ9ÿˆ:ÿˆ9ÿˆ9ÿˆ9ÿ„9ÿ                                                                                                                                                                                                                                                                                                                                                         €@ÿ‰=ÿ‰;ÿ‰;ÿ‰;ÿ‰;ÿ‰;ÿŠ;ÿŒ:ÿ                                                                                                                                                                                                                                                                                                                                                         †=ÿ‚@ÿƒ@ÿ„?ÿ„>ÿ…>ÿ†=ÿ†=ÿ‡@ÿ                                                                                                                                                                                                                                                                                                                                                         ~Eÿ}Eÿ~DÿDÿCÿ€CÿBÿBÿƒ>ÿ                           9ÿ                                                                                                                                                                                                                                                                                                                           xJÿxIÿyIÿyHÿzHÿzGÿ{Gÿ|Fÿ}Fÿ                        ‚?ÿ‚Aÿ…@ÿ                                                                                                                                                                                                                                                                                                                     pPÿrNÿsOÿsNÿtMÿuMÿvLÿvLÿwKÿyMÿ                     |Gÿ}Fÿ}Fÿ€Gÿ                                                                                                                                                                                                                                                                                                                     jRÿmTÿmRÿnRÿnQÿoQÿoPÿpPÿpOÿtQÿ                  yJÿwKÿwJÿxIÿ                                                                                                                                                                                                                                                                                                                        hYÿgXÿhXÿiWÿiWÿjVÿkVÿkUÿlTÿqUÿ               vNÿqPÿqOÿrPÿrPÿ                                                                                                                                                                                                                                                                                                                     aaÿa\ÿb\ÿc[ÿc[ÿdZÿeZÿeYÿfYÿgYÿ                  lUÿkTÿlTÿmSÿpPÿ                                                                                                                                                                                                                                                                                                                     \aÿ]aÿ^`ÿ_`ÿ__ÿ`_ÿ`_ÿa^ÿa^ÿb\ÿ                  eYÿfZÿgYÿgXÿfYÿ                                                                                                                                                                                                                                                                                                                     XeÿXdÿYdÿYcÿZcÿZbÿ[bÿ[bÿ\aÿ^bÿ               ]]ÿ`^ÿa]ÿb\ÿa\ÿe[ÿ                                                                                                                                                                                                                                                                                                                     TjÿTiÿThÿUhÿUhÿVgÿVgÿWfÿWeÿZgÿ               Zeÿ\bÿ]bÿ]aÿ^aÿ]`ÿ                                                                                                                                                                                                                                                                                                                     OnÿOmÿPmÿPlÿQlÿQkÿRkÿRjÿSiÿQhÿ               XhÿWeÿWeÿXeÿYdÿZcÿ                                                                                                                                                                                                                                                                                                                     KsÿKrÿKqÿLqÿLpÿMpÿMoÿNoÿNnÿQpÿ               UhÿRjÿSjÿTiÿUiÿUhÿUdÿ                                                                                                                                                                                                                                                                                                                  @€ÿFuÿFuÿFtÿGtÿGsÿHsÿIrÿIrÿHqÿ                  NoÿNmÿOmÿOlÿPlÿPkÿ                                                                                                                                                                                                                                                                                                                     BzÿByÿByÿCxÿCxÿDwÿEwÿEvÿFvÿ                  HrÿJrÿJqÿKqÿKpÿLpÿNoÿ                                                                                                                                                                                                                                                                                                                     =}ÿ=|ÿ>|ÿ>{ÿ?{ÿ?zÿ@zÿ@yÿ>{ÿ                  DuÿFuÿFuÿGtÿGtÿGtÿ                                                                                                                                                                                                                                                                                                                     3€ÿ9ÿ9€ÿ:€ÿ:ÿ;ÿ<~ÿ<~ÿ=~ÿ                  @zÿAzÿByÿByÿCxÿCxÿDwÿ                                                                                                                                                                                                                                                                                                                     4…ÿ4„ÿ5ƒÿ5ƒÿ6‚ÿ6‚ÿ7ÿ8ÿ8‚ÿ                  ;}ÿ<}ÿ=|ÿ=|ÿ>{ÿ>{ÿ@{ÿ                                                                                                                                                                                                                                                                                                                     -‡ÿ1ˆÿ1‡ÿ2‡ÿ2‡ÿ3†ÿ3…ÿ4†ÿ                     8ÿ9ÿ9ÿ:€ÿ:€ÿ;ÿ<ÿ                                                                                                                                                                                                                                                                                                                        -‹ÿ-Šÿ-Šÿ.Šÿ.‰ÿ/‰ÿ0ˆÿ                     4„ÿ4„ÿ5„ÿ5ƒÿ6ƒÿ6‚ÿ7‚ÿ6ƒÿ                                                                                                                                                                                                                                                                                                                     )ÿ*ÿ*ÿ+ÿ+ÿ+Œÿ-Œÿ                     /‰ÿ0ˆÿ1ˆÿ1‡ÿ2‡ÿ3†ÿ3†ÿ3†ÿ                                                                                                                                                                                                                                                                                                                     $ÿ%‘ÿ&ÿ&ÿ'ÿ'ÿ(ÿ                     .Šÿ,‹ÿ-‹ÿ-Šÿ.Šÿ.‰ÿ/‰ÿ/ˆÿ/‡ÿ                                                                                                                                                                                                                                                                                                                  ÿ#”ÿ#”ÿ#“ÿ$“ÿ$“ÿ%“ÿ                        )ÿ*ÿ*ÿ+ÿ+ÿ,ÿ,Œÿ,Œÿ/ÿ                                                                                                                                                                                                                                                                                                                  –ÿ—ÿ–ÿ –ÿ •ÿ!•ÿ                        %ÿ&‘ÿ&ÿ'ÿ'ÿ(ÿ(ÿ)ÿ)ÿ                                                                                                                                                                                                                                                                                                                     šÿšÿšÿ™ÿ™ÿ˜ÿ                        $–ÿ#”ÿ$”ÿ$“ÿ%“ÿ%’ÿ%’ÿ&’ÿ&‘ÿ                                                                                                                                                                                                                                                                                                                   Ÿÿœÿœÿ›ÿ›ÿ›ÿ                            —ÿ–ÿ –ÿ –ÿ!•ÿ!•ÿ"”ÿ"”ÿ‹ÿ                                                                                                                                                                                                                                                                                                                  Ÿÿ ÿŸÿŸÿÿÿ                           šÿ™ÿ™ÿ˜ÿ˜ÿ˜ÿ˜ÿ —ÿ                                                                                                                                                                                                                                                                                                                     ¤ÿ¢ÿ¢ÿ¡ÿ¡ÿ                           ¤ÿœÿœÿ›ÿ›ÿšÿšÿšÿ                                                                                                                                                                                                                                                                                                                        §ÿ¥ÿ¥ÿ¥ÿ£ÿ                           Ÿÿ ÿŸÿŸÿÿÿÿ                                                                                                                                                                                                                                                                                                                            ªÿ¨ÿ§ÿ¦ÿ¦ÿ                        £ÿ¢ÿ¡ÿ¡ÿ¡ÿ¡ÿ ÿ                                                                                                                                                                                                                                                                                                                                 ªÿ©ÿ©ÿ	ªÿ                     ¤ÿ¦ÿ¥ÿ¥ÿ¤ÿ¤ÿªÿ                                                                                                                                                                                                                                                                                                                                       	ªÿ	ªÿªÿ                  ¨ÿ¨ÿ§ÿ§ÿ§ÿ§ÿ                                                                                                                                                                                                                                                                                                                                                                     
+ªÿ
+«ÿ
+ªÿªÿ©ÿ                                                                                                                                                                                                                                                                                                                                                                        ¬ÿ¬ÿ¬ÿ®ÿ                                                                                                                                                                                                                                                                                                                                                                        ±ÿ®ÿ¯ÿ                                                                                                                                                                                                                                                                                                                                                                               ±ÿ                                                                                                                                                                                                                                                                                                                                                                           xÿqÿ                                                                                                                                                                                                                                                                                                                                                                        lÿoıpüpıqÿ                                          ZÈú[Êú                                                                                                                                                                                                                                                                                                            € ÿpûoıoıoıoıpıpıqÿ                              @¿ÿYËøZÊúZÊùZÊù[Êù                                                                                                                                                                                                                                                                                                   iÿmümümümünününınüoıoıqÿ                     UÕÿ[Êù[ÉùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                                                                                                                                                                                                                          lÿkılülümümümımünınınınıoıoıqÿ             ÿÿYÊúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊù                                                                                 ƒ.ÿ%ÿ$ÿ$ÿ‚$ÿ~"ÿ                                                                                                                                                                           € ÿhûiûiüjûjûkükûkükülülülülümümümümüqÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                    €(ÿ$ÿ€#ÿ€#ÿ€"ÿ€"ÿ€"ÿ„#ÿ                                                                                                                                                         iÿiühúiüiûjüjûjüjükükükükülülülülümümümımüqÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                       %ÿ$ÿ$ÿ€#ÿ€"ÿ€"ÿ€!ÿ…!ÿ                                                                                                                                                      hûhûhûhûhûiûiûiûiûjûjûjûjûkükûkükülülülülüjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                       ‚%ÿ€$ÿ€$ÿ€#ÿ€"ÿ€!ÿ€!ÿ~!ü                                                                                                                                                      hûhûgûhûhûiûiûiüiûjüjûjüjükükükükülülülülüjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                    €&ÿ%ÿ%ÿ$ÿ#ÿ#ÿ€"ÿ€"ÿ!ÿ                                                                                                                                                      fûfúfúgûgúgûgúhûhûhûhûiûiûiûiûjûjûjüjûkükûjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                 €(ÿ%ÿ%ÿ€$ÿ$ÿ€#ÿ€#ÿ€"ÿ€!ÿ€!ü                                                                                                                                                      fûfûfûgûgûgûgûhûhûhûhûiûiûiüiûjüjüjüjüküküjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                              …,ÿ'ÿ&ÿ&ÿ%ÿ%ÿ$ÿ#ÿ€"ÿ€"ÿ!ÿ                                                                                                                                                      eùeúeúfúfúfûfúgûgúgûgûhûhûhûhûiûiûiûiûjûjûjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                           €3ÿƒ'ÿ‚'ÿ&ÿ%ÿ%ÿ$ÿ€#ÿ€#ÿ€"ÿ€"ÿz)ÿ                                                                                                                                                      eûeûeúfûfûfûfûgûgûgûgûhûhûhûhûiûiûiüiûjüjüjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                        |,ÿƒ)ÿ‚(ÿ‚'ÿ‚&ÿ‚&ÿ%ÿ%ÿ$ÿ$ÿ€#ÿ#ÿ                                                                                                                                                         cùdúdúdúdúeúeúeúeúfúfúfúfúgûgúgûgûhûhûhûhûjø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                     )ÿ‚)ÿ‚(ÿ'ÿ‚'ÿ&ÿ&ÿ%ÿ%ÿ€$ÿ€#ÿ€#ÿ…,ÿ                                                                                                                                                         cùdúdúdúdúeúeúeúeúfûfúfûfûgûgûgûgûhûhûhûhûjÿ            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                  „,ÿ‚*ÿ‚)ÿ‚)ÿ‚(ÿ‚(ÿ‚'ÿ‚&ÿ&ÿ%ÿ$ÿ€$ÿ€$ÿ                                                                                                                                                            bùcúcùcúcúdúdúdúdúeúeúeúeúfúfúfúfúgûgúgûgûjø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                            ƒ.ÿƒ+ÿƒ*ÿƒ*ÿ‚)ÿ‚)ÿ‚(ÿ‚'ÿ'ÿ&ÿ%ÿ%ÿ€$ÿ&ÿ                                                                                                                                                               b ùcúcúcúcúdúdúdúdúeúeúeûeúfûfûfûfûgûgûgûgûjø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                         …/ÿ„,ÿƒ,ÿƒ+ÿƒ+ÿƒ*ÿƒ)ÿ‚(ÿ‚(ÿ‚'ÿ‚'ÿ‚&ÿ‚&ÿ%ÿ                                                                                                                                                                  a ùaùaùbùbùbùbùcúcùcúcúdúdúdúdúeúeúeúeúfúfúcø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                   ƒ/ÿƒ-ÿƒ,ÿƒ,ÿƒ+ÿƒ*ÿƒ*ÿ‚)ÿ‚)ÿ‚(ÿ‚(ÿ'ÿ'ÿ&ÿ€%ÿ                                                                                                                                                                     a ùa úa ùb úbúbúbúcúcúcúcúdúdúdúdúeúeúeûeúfûfûcø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                             †/ÿ„/ÿ„.ÿ„-ÿ„-ÿƒ,ÿ„,ÿƒ+ÿƒ+ÿƒ*ÿƒ*ÿ‚)ÿ‚(ÿ‚(ÿ‚'ÿƒ)ÿ                                                                                                                                                                        _!ù` ù` ùa ùaùaùaùbùbùbúbùcúcúcúcúdúdúdúdúeúeúcø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊú                                       ‡/ÿ„0ÿ„/ÿ„.ÿ„.ÿ„-ÿ„-ÿƒ,ÿƒ,ÿƒ+ÿƒ+ÿ‚*ÿ‚)ÿ‚)ÿ‚(ÿ‚(ÿ….ÿ                                                                                                                                             9€ÿ                           _!ù`"ù`!ùa!ùa!ùa!úa ùb úb úb úbúcúcúcúcúdúdúdúdúeûeúcø            @¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊùZÉùbÄÿ                                    /ÿ†1ÿ…1ÿ…0ÿ…0ÿ„/ÿ…/ÿ„.ÿ„.ÿ„-ÿ„,ÿƒ,ÿƒ+ÿƒ*ÿƒ*ÿƒ)ÿƒ*ÿ                                                                                                                                          3…ÿ;~ÿ<|ÿ9{ÿ                           ^!ø_!ù_!ø_!ù_ ù` ù` ù` ù`ùaùaùaùaùbùbùbùbùcúcùcúdúcø            @¿ÿZÊùZÊùZÊùZÊùYÊùZËù]É÷                                       „4ÿ…1ÿ…2ÿ…1ÿ…1ÿ„0ÿ„0ÿ„/ÿ„.ÿ„.ÿ„-ÿƒ,ÿƒ,ÿƒ+ÿƒ+ÿ‚*ÿ‚*ÿ)ÿ                                                                                                                                    5†ÿ6ƒÿ9€ÿ:€ÿ5„ÿ                                 ^#ù_#ù_"ù_"ù_"ù`"ù`!ù`!ù`!ùa!ùa ùa úa ùb úbùbúbúcúcúcúcúcø            @¿ÿZÊù[ËùYÊùYÌù                                       …7ÿ‡5ÿ†4ÿ†3ÿ†2ÿ†2ÿ…2ÿ…1ÿ…1ÿ…0ÿ„/ÿ…/ÿ„.ÿ„.ÿ„-ÿ„-ÿƒ,ÿ„,ÿƒ,ÿ                                                                                                                                    .‰ÿ3…ÿ8ÿ7‚ÿ7‡ÿ                                       ^#ø^#ø^"ø^"ø^"ø_"ù_!ø_!ù_!ù`!ù` ù` ù` ùa ùaùaùaùbùbùbúbùcø             ÿÿXÎõ                                          4ÿ†4ÿ‡4ÿ†4ÿ†3ÿ†3ÿ…2ÿ…2ÿ…1ÿ…1ÿ…0ÿ…0ÿ„/ÿ„/ÿ„.ÿ„.ÿƒ-ÿ„,ÿƒ+ÿ|,ÿ                                                                                                                              #‹ÿ+Œÿ1ˆÿ4…ÿ5ƒÿ3‡ÿ                                             ^$ø^$ù^#ø^#ù^#ù_#ù_"ù_"ù_"ù`"ù`!ù`!ù`!ùa!úa ùa úa ùb úbúbúbúcø                                                      †6ÿ‡6ÿ‡5ÿ‡5ÿ‡5ÿ‡4ÿ†4ÿ†3ÿ†3ÿ†3ÿ…2ÿ†2ÿ…1ÿ…1ÿ…0ÿ…0ÿ„/ÿ„.ÿ…/ÿ{1ÿ                                                                                                                              "•ÿ)ÿ-‹ÿ0ˆÿ2†ÿ0‡ÿ0‡ÿ                                                [$ø\$ø\#ø]#ø]#ø]#ø]"ø^"ø^"ø^"ø^!ø_!ù_!ø_!ù_ ù` ù` ùa ù`ùaú` ùUÿ                                             ‡7ÿ‡8ÿ‡6ÿ‡6ÿ‡6ÿ†5ÿ†5ÿ†4ÿ†4ÿ†3ÿ†3ÿ…2ÿ…2ÿ…2ÿ…1ÿ…1ÿ…0ÿ„/ÿ„/ÿ„/ÿŠ-ÿ                                                                                                                              !”ÿ%’ÿ+ÿ-‹ÿ.Šÿ0‰ÿ,Œÿ                                                      \%ø\%ø\$ø]$ø]$ø]$ù]#ø^#ù^#ù^#ù^"ù_"ù_"ù_"ù_!ù`"ù_!ø_"ùb'ÿ                                             ˆ:ÿ‰:ÿˆ9ÿˆ8ÿˆ7ÿˆ7ÿ‡7ÿ‡6ÿ‡6ÿ‡5ÿ‡5ÿ‡5ÿ†4ÿ†4ÿ†3ÿ†3ÿ…2ÿ†2ÿ…1ÿ…1ÿ…1ÿƒ2ÿ                                                                                                                              ™ÿ"–ÿ(ÿ)ÿ+ÿ,‹ÿ+Œÿ'ÿ                                                         [%ø[%ø[%ø\%ø\$ø\$ø\$ø]$ø]#ø]#ø]#ø^"ù]"ø_!ø` ù                                                ˆ<ÿ‡;ÿˆ:ÿˆ9ÿˆ9ÿˆ8ÿˆ8ÿ‡7ÿ‡7ÿ‡6ÿ‡6ÿ‡5ÿ‡5ÿ†5ÿ†4ÿ†4ÿ†3ÿ†3ÿ†3ÿ…2ÿ†1ÿ…2ÿ‹7ÿ                                                                                                                                 šÿ#”ÿ&‘ÿ(ÿ)ÿ+ÿ'‘ÿ                                                               [&ø[&ø[&ø\&ø\%ø\%ø\%ø\%ù]$ø\$ù]%ú                                                   „@ÿ…?ÿˆ<ÿ‰;ÿ‰:ÿ‰:ÿ‰9ÿ‰9ÿˆ9ÿˆ9ÿˆ8ÿˆ8ÿˆ7ÿˆ7ÿ‡6ÿ‡6ÿ‡5ÿ‡5ÿ†4ÿ†4ÿ†3ÿ‡3ÿ†3ÿ€3ÿ                                                                                                                                 œÿ˜ÿ"”ÿ$“ÿ%‘ÿ&ÿ(ÿ$’ÿ                                                                  Z&öZ&÷Y&÷[&÷Z&÷[%ù[$ö                                                      {Gÿ~EÿBÿ„?ÿ†=ÿˆ;ÿ‰;ÿˆ:ÿˆ:ÿˆ9ÿˆ9ÿˆ8ÿˆ8ÿ‡7ÿ‡7ÿ‡6ÿ‡6ÿ‡6ÿ‡5ÿ†5ÿ†5ÿ†4ÿ†4ÿ†3ÿ                                                                                                                                    Ÿÿÿ—ÿ!–ÿ"•ÿ$”ÿ%’ÿ%’ÿ!”ÿ                                                                     W(øU"ÿ                                                            sNÿwKÿ|Hÿ~Eÿ€Cÿ‚Bÿ„@ÿ†>ÿ‡<ÿ‰;ÿ‰;ÿ‰:ÿˆ:ÿ‰9ÿˆ9ÿˆ9ÿˆ8ÿˆ8ÿ‡7ÿˆ7ÿ‡6ÿ‡6ÿ‡5ÿ‡6ÿ†7ÿ                                                                                                                                       ¡ÿ›ÿ™ÿ—ÿ –ÿ!•ÿ#”ÿ"”ÿ•ÿ                                                                                                                                 mTÿpPÿsMÿwJÿyIÿ{Gÿ}EÿCÿBÿƒ@ÿ…?ÿ†=ÿ‰;ÿ‰:ÿ‰:ÿˆ9ÿˆ9ÿˆ9ÿˆ8ÿ‡8ÿˆ7ÿ‡7ÿ‡7ÿ‡6ÿ‡7ÿ„5ÿ                                                                                                                                          ¡ÿœÿ›ÿšÿ˜ÿ —ÿ!–ÿ ˜ÿ™ÿ                                                                                                                        f[ÿhYÿkWÿnRÿqPÿsOÿuMÿwKÿyJÿ{Hÿ}Fÿ~DÿCÿ‚Aÿ…@ÿ†>ÿˆ<ÿ‰;ÿ‰;ÿ‰:ÿ‰:ÿˆ9ÿˆ9ÿˆ8ÿˆ8ÿˆ8ÿ‡8ÿ=ÿ                                                                                                                                          ¥ÿ¡ÿÿœÿ›ÿšÿ˜ÿ—ÿ˜ÿ™ÿ                                                                                                               Xdÿ^`ÿa]ÿeZÿhWÿjUÿlTÿmRÿpPÿqOÿtMÿuKÿwJÿyHÿ{Fÿ}DÿCÿAÿƒ@ÿ…>ÿ‡<ÿ‰;ÿ‰:ÿˆ:ÿˆ9ÿˆ9ÿ‰9ÿ‡8ÿŠ<ÿ                                                                                                                                                ¦ÿ¢ÿ ÿÿÿœÿ›ÿ™ÿ™ÿÿ                                                                                                      ShÿVfÿZcÿ^`ÿa^ÿb]ÿd[ÿeZÿhXÿiVÿlUÿmSÿoQÿqPÿsNÿuLÿwKÿyIÿ{Gÿ}EÿDÿBÿƒAÿ…?ÿ‡=ÿ‰;ÿ‰;ÿ‰:ÿ‰;ÿŠ:ÿ9ÿ                                                                                                                                                   ©ÿ¢ÿ¡ÿ ÿÿÿœÿ›ÿ™ÿÿ                                                                                          MsÿMoÿPmÿSjÿWfÿYdÿZcÿ\bÿ^`ÿ`^ÿa]ÿc\ÿdZÿgXÿhWÿkUÿlSÿnRÿpPÿrNÿtLÿvKÿxIÿzHÿ|Fÿ~Dÿ€Bÿ‚Aÿ„?ÿ†=ÿ‡=ÿ†=ÿ=ÿ                                                                                                                                                         ªÿ¤ÿ£ÿ¢ÿ¡ÿŸÿÿÿœÿšÿœÿ                                                                        @€ÿB|ÿCwÿGuÿJrÿNoÿPmÿRkÿSjÿUiÿWgÿYeÿZdÿ\cÿ^aÿ`_ÿa^ÿc]ÿd[ÿfYÿhXÿjVÿlTÿnSÿpQÿrOÿtMÿvLÿxJÿzIÿ|Gÿ~Eÿ€Cÿ‚BÿAÿƒAÿ                                                                                                                                                               	ªÿ¦ÿ¤ÿ£ÿ¢ÿ¡ÿŸÿÿÿ›ÿšÿ™ÿœÿ                                                2‰ÿ4…ÿ7‚ÿ7€ÿ;~ÿ>zÿByÿDvÿFtÿHsÿJqÿKpÿMnÿOmÿQkÿRjÿThÿUgÿWeÿYdÿ[bÿ\aÿ^_ÿ`^ÿb\ÿc[ÿeYÿgXÿiVÿkTÿmSÿoQÿqOÿsMÿuLÿwJÿyIÿzGÿzGÿ{Eÿ€Gÿ                                                                                                                                                                  «ÿ¨ÿ§ÿ¥ÿ¤ÿ£ÿ¢ÿ ÿŸÿÿœÿ›ÿšÿ˜ÿ˜ÿ˜ÿ˜ÿ˜ÿ™ÿ –ÿ ”ÿ"”ÿ'”ÿ'ÿ)ÿ*ÿ-Œÿ/‰ÿ2†ÿ6ƒÿ8ÿ:€ÿ<~ÿ=}ÿ?{ÿAzÿCxÿDwÿFuÿHtÿJrÿKqÿMoÿNnÿPlÿRkÿTiÿUhÿWfÿYeÿ[cÿ\bÿ^`ÿ`_ÿb]ÿc\ÿeZÿgYÿiWÿkUÿmTÿoRÿqPÿrNÿtMÿrNÿuOÿqUÿ                                                                                                                                                                        ®ÿ©ÿ§ÿ§ÿ¥ÿ¤ÿ£ÿ¢ÿ ÿŸÿÿœÿ›ÿšÿ˜ÿ—ÿ –ÿ"•ÿ#“ÿ%’ÿ&ÿ'ÿ)ÿ*ÿ,‹ÿ-Šÿ/‰ÿ1ˆÿ2†ÿ4„ÿ6ƒÿ7‚ÿ9€ÿ;~ÿ<}ÿ>|ÿ@zÿBxÿCwÿEvÿGtÿIrÿJqÿLpÿNnÿOlÿQkÿSjÿThÿVfÿXeÿZdÿ[bÿ]`ÿ__ÿa^ÿb\ÿdZÿfYÿhWÿiUÿlTÿlSÿlSÿoSÿ                                                                                                                                                                                    ¬ÿ©ÿ¨ÿ¨ÿ¦ÿ¥ÿ¤ÿ£ÿ¡ÿ ÿÿÿœÿ›ÿ™ÿ˜ÿ —ÿ"–ÿ#”ÿ%“ÿ&‘ÿ'ÿ)ÿ*ÿ,Œÿ-‹ÿ/Šÿ1‰ÿ2‡ÿ4…ÿ5„ÿ7ƒÿ9ÿ;ÿ<~ÿ>}ÿ@{ÿByÿCxÿEwÿGuÿIsÿJrÿLqÿMoÿOmÿQlÿSkÿTiÿVgÿXfÿZeÿ[cÿ]aÿ_`ÿa_ÿb]ÿd[ÿfZÿfZÿfYÿhXÿ                                             UÕÿ[Ëú[Éù                                                                                                                                       «ÿ
+©ÿ¨ÿ§ÿ¦ÿ¥ÿ¤ÿ¢ÿ¡ÿ ÿÿÿœÿ›ÿ™ÿ˜ÿ–ÿ •ÿ"”ÿ#“ÿ%‘ÿ&ÿ(ÿ)ÿ+Œÿ,‹ÿ.Šÿ/ˆÿ1‡ÿ3…ÿ4„ÿ6‚ÿ8ÿ:ÿ;~ÿ=|ÿ?{ÿ@yÿBxÿDvÿEuÿGsÿIrÿKpÿLoÿNmÿPlÿRjÿSiÿUgÿWfÿYdÿZcÿ\aÿ]`ÿ__ÿ^_ÿ``ÿYYÿ                                                YËøZÊùZÊùZÊùYÊù                                                                                                                                       ¬ÿªÿ©ÿ¨ÿ§ÿ¦ÿ¤ÿ£ÿ¢ÿ¡ÿŸÿÿÿœÿšÿ™ÿ—ÿ –ÿ"•ÿ#”ÿ%’ÿ&‘ÿ(ÿ)ÿ+ÿ,Œÿ.Šÿ/‰ÿ1ˆÿ3†ÿ4…ÿ6ƒÿ8‚ÿ9€ÿ;ÿ=}ÿ>|ÿ@zÿByÿDwÿEvÿGtÿIsÿKqÿLpÿNnÿPmÿRkÿSjÿUhÿWgÿXeÿXeÿXeÿXfÿ                                                   [Èø[ËúZËùZÊùZÊùZÊùZÊùYÊù                                                                                                                                       ®ÿ
+ªÿ©ÿ¨ÿ§ÿ¦ÿ¥ÿ£ÿ¢ÿ¡ÿŸÿÿÿœÿšÿ™ÿ—ÿ –ÿ!•ÿ#”ÿ$’ÿ&‘ÿ'ÿ)ÿ*ÿ+Œÿ-‹ÿ.‰ÿ0ˆÿ2‡ÿ3…ÿ5„ÿ7‚ÿ9ÿ:ÿ<~ÿ=|ÿ?{ÿAyÿCxÿDvÿFuÿHsÿJrÿKpÿMoÿOmÿPmÿOmÿOmÿNjÿUjÿ                                                   [ËûYÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊù                                                                                                                                          ®ÿªÿ©ÿ¨ÿ§ÿ¥ÿ¤ÿ£ÿ¢ÿ ÿŸÿÿÿ›ÿšÿ˜ÿ —ÿ!–ÿ#•ÿ$“ÿ&’ÿ'‘ÿ)ÿ*ÿ+ÿ-‹ÿ.Šÿ0‰ÿ2ˆÿ3†ÿ5…ÿ6ƒÿ8‚ÿ:€ÿ<ÿ=}ÿ?|ÿAzÿCyÿDwÿFvÿGtÿGuÿFtÿHtÿFlÿ                                                               \ÌõZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                                                                             ¬ÿ«ÿ¨ÿ§ÿ¥ÿ¤ÿ£ÿ¢ÿ ÿŸÿÿœÿ›ÿšÿ˜ÿ—ÿ –ÿ!•ÿ#“ÿ$’ÿ&ÿ'ÿ)ÿ*ÿ,‹ÿ-Šÿ.‰ÿ0‡ÿ2†ÿ4„ÿ5ƒÿ7ÿ9€ÿ:ÿ:~ÿ;~ÿ;~ÿ=}ÿ=}ÿ?xÿ                                                            U*ô               WÉøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                                                                                      «ÿ	«ÿ©ÿ§ÿ§ÿ¤ÿ¢ÿŸÿÿœÿ›ÿ™ÿ˜ÿ —ÿ!–ÿ#”ÿ$“ÿ&‘ÿ'ÿ)ÿ*ÿ*ÿ,ÿ,Œÿ,Œÿ-Œÿ.‰ÿ.Šÿ0ˆÿ,ÿ                                                                     ` ÿS+øS+öT-÷T,ö               \ÌúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êù                                                                                                                                                                                 ¡ÿ ÿÿÿÿÿœÿœÿšÿ˜ÿ!›ÿ                                                                                          R1÷R.öR-õS-õS-öS,õS,öS,ö               ZÊûZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÉù                                                                                                                                                                                                                                                                                                M3ÿR/÷S0öR/õR/öR.öS.öS.öS.öS-öS-öS-õ               YÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Éù                                                                                                                                                                                                                                                                                    R.õN1õO0õO0õP0õP/õQ/õQ/õQ/õQ.õQ.õQ.õR.õR-õR-õS-ö               [ËøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êø                                                                                                                                                                                                                                                                     U*ÿM2õN1õO1öO2õO1õO1õP1õP0õP1õP0õQ0õQ0õQ0öQ/õQ/öQ/õR/öR.öR.öR.õ               [ÉùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊø                                                                                                                                                                                                                                                                  M2ôM2ôN2ôM2ôN2õN2ôN2õN1ôO1õO1õO1õO0õP0õP0õP0õP/õQ/õQ/õQ/õQ.õQ.õR/õ               ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Éú                                                                                                                                                                                                                                                               U9ÿM4õM3õN3õM3õN3õN3õN3õN2õO2õO2õO2õO1õP1õP1õP1õP0õQ0õQ0õQ0öQ/õQ/öR/ö               ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Éú                                                                                                                                                                                                                                                               L4ôL4ôL3ôL3ôL3ôM3ôM2ôM2ôM2ôN2ôN2ôN2ôN1ôN1õO1ôO1õO0ôO0õO0õP0õP/õP/õS0ø            €ÿÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÉù                                                                                                                                                                                                                                                               L4ôL5ôL4ôL4ôL4ôM4ôM3ôM3õM3ôN3õN3õN3õN2õN2õN2õO2õO1õO1õO1õP1õP0õP0õ               ZÈøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Ëø                                                                                                                                                                                                                                                            K5óJ5óK5ôK4ôK4ôK4ôL4ôL4ôL4ôL3ôM3ôM3ôM3ôM2ôN2ôN2ôN2õN1ôN1õN1ôO1õO0õO1õ               ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êú                                                                                                                                                                                                                                                         M9òK6õJ6ôK6ôK5ôK5ôK5ôL5ôL5ôL5õL4ôM4õM4ôM4õM3ôN3õN3õN3õN2õN2õN2õO2õO1õO1ô               YÊúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùXÊö                                                                                                                                                                                                                                                      K<ğI7óI6óI6óJ6óJ5óJ5ôJ5óK5ôK5ôK5ôK4ôL4ôL4ôL4ôL3ôL3ôL3ôM3ôM2ôM2ôM2ôN2ôN1ôL3õ               YÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù@¿ÿ                                                                                                                                                                                                                                                   G5óI8ôI7óI7ôI7ôJ7ôJ6ôJ6ôJ6ôK6ôK6ôK6ôK5ôL5ôL5ôL5ôL4ôL4ôL4ôM4õM3ôM3õM3ôN3õN2ô               UÆÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊú                                                                                                                                                                                                                                                   H8óH8óH8óH7óI7óH7óI7óI7óI7óI6óJ6ôJ6óJ6ôJ5óK5ôK5ôK5ôK4ôK4ôL4ôL4ôL3ôL3ôL3ôM3ôL3õ               ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÉø                                                                                                                                                                                                                                             C<ğG9óH9óH9óH9óH8óH9ôH8óI8ôI8ôI8ôI7ôJ7ôJ7ôJ7ôJ6ôK6ôK6ôK6ôK5ôK5ôL5ôL5ôL4ôL4õL4ôM4õM5ó               ZËùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Êø                                                                                                                                                                                                                                       N;ëF9òF:óF9òF9óF9òG9óG8óG8óG8óH8óH7óH7óH7óI7óI7óI7óI6óI6óI6óJ6óJ5óJ5ôJ5óK5ôK4óK4ôK4ôL5ó               `¿ÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Éú                                                                                                                                                                                                                                 E>ñE:óF;òE;óF;óF:óF:óF:óG:óG9óG9óG9óH9óH8óH9óH8óI8ôI8óI8ôI7óI7ôI7ôJ7ôJ6ôJ6ôJ6ôK6ôK5ôK5ôK5ôK4ó               YËùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Ëû                                                                                                                                                                                                                           C=òD<ñD<òD;òE;òE;òE;òE:òE:óE:òF:óF:òF:óF9òG9óG9óG9óG8óH8óH8óH8óH7óH7óI7óI7óI6óI6óI6óJ6ôJ6óJ6ôK5ó                  ZÉùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùIÛÿ                                                                                                                                                                                                               <<ğC>òD>òC=òD=óD=òD=óD<òE<óE<òE<óE;óE;óE;óF;óF;óF;óF:óG:óG:óG:óG9óH9óH9óH9ôH8óH8ôH8óI8ôI7óI7ôI7ôJ7ôJ7ôJ7ôK7ô               XÇ÷ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊú                                                                                                                                                                                                      ==óA>òA?òA=òB>òB=ñB=òB=ñC=òC=òC=òC<òC<òC<òD<òD;òD;òD;òE;òE:òE:òE:òF:òF:òF:óF9òF9óG9óG9óG8óG8óG8óH8óH7óH7óH7óI7óI6óI6ó                  ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYËø                                                                                                                                                                                       IIÿAAò@@ò@@ò@@ñA@òA?òA?òA?òB?òB>òB>òB>òC>òC>òC>òC=òC=òC=òD=òD<òD<óD<òE<óE;òE<óE;óF;óF;óF;óF:óF:óF:óG:óG9óG9óG9óH9óH8óH8óH8óI8ôH7óK9ò               ZËøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù\Éú                                                                                                                                                                        <<ğ?Cò>Cğ?Añ>Añ?Añ?Añ?@ñ?@ñ?@ñ@@ñ@?ñ@@ñ@?ñA?ñA?ñA?òA>ñB>òB>ñB>òB=òC=òB=òC=òC<òC=òC<òD<òD<òD<òD;òE;òE;òE;òE:òF:óF:òF:óF9òF9óF9óG9óG9óG9óG8óH8óH8ò                  ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù                                                                                                                                                         ;Eõ<Cğ=Dñ=Dñ=Dğ=Cñ>Cñ>Cñ>Cñ>Bñ?Bñ?Bñ?Bñ?Añ?Añ?Añ@Aò@Añ@Aò@@òA@òA@òA@òA?òB?òB?òB?òB>òC>òB>òC>òC>òC>òC=òD=óD=òD=óD<òE<óE<óE<óE;óF;óF;óF;óF:óF:óF:óG:óG:óG:óG9óH9óU*ÿ               [ÈúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊù                                                                                                                                                   ;Eğ;Dğ;Dğ;Dğ<Dğ<Dğ<Dğ<Cğ<Cğ=Cğ=Cğ=Bğ=Bñ=Bğ>Bñ>Ağ>Añ>Añ?Añ?@ñ?@ñ?@ñ@@ñ@?ñ@@ñ@?ñ@?ñ@?ñA?ñA>ñA>ñA>ñB>òB=ñB=òB=ñC=òC=òC=òC<òC<òD<òD<òD;òD;òD;òE;òE:òE:òE:òF:óF9òF9óF9òH;ò               UÕÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùUÆÿ                                                                                                                                                ;Dñ;Fğ;Eğ;Eğ;Eğ<Eğ<Eğ<Eñ<Dğ<Dñ=Dñ=Dñ=Cñ=Cñ=Cñ>Cñ>Bñ>Bñ>Bñ?Bñ?Añ?Añ?Añ@Añ?Añ@Añ@@ñ@@ò@@ñA@òA?òA?òA?òB?òB>òB>òB>òC>òC>òC>òC=òC=òC=òD=òD<òD<óD<òE<óE;òE;óE;óF;óF:óF;óG9ñ                  ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊø                                                                                                                                                   9Gğ:Fğ:Fğ:Fğ:Eğ;Eğ;Eğ;Eğ;Dğ<Dğ<Dğ<Dğ<Cğ<Cğ<Cğ=Cñ=Bğ=Bñ=Bğ>Bñ>Bğ>Bñ>Añ?Añ?Añ?Añ?@ñ@@ñ?@ñ@@ñ@?ñ@?ñ@?ñA?ñA?ñA?òA>ñB>òB>ñB>òB=òC=òC=òC=òC<òC<òC<òD<òD;òD;òD;òE;òE;òG<ñ                  [ÈúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊù                                                                                                                                                7Cô9Gğ:Gğ:Gğ:Gğ:Fğ;Fğ;Fğ;Fñ;Eğ<Eñ<Eğ<Eñ<Dğ<Dñ<Dñ=Dñ=Cñ=Cñ=Cñ>Cñ>Cñ>Cñ>Bñ?Bñ?Bñ?Bñ?Añ@Aò?Añ@Aò@@ñ@@ò@@ñA@òA@òA@òA?òB?òB?òB?òB>òC>òC>òC>òC=òC=òC=òD=óD<òD<óD<òD<óC<ò                  [ÈÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZËø                                                                                                                                                   7Gï8Gï9Gï9Fï9Gğ9Fï:Fğ:Fï:Fğ:Eğ:Eğ:Eğ;Eğ;Dğ;Dğ;Dğ<Dğ<Cğ<Cğ<Cğ=Cğ=Cğ=Cğ=Bğ>Bñ=Bğ>Bñ>Añ>Añ>Añ?Añ?@ñ?@ñ?@ñ@@ñ@?ñ@@ñ@?ñA?ñA?ñA?ñA>ñA>ñA>ñB>òB=ñB=òB=òC=òC<òC<òC<òC;ó                  UªÿZËúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÌÿ                                                                                                                                                   8Iğ8Hï9Hğ9Hğ9Hğ9Gğ:Gğ:Gğ:Gğ:Fğ:Fğ:Fğ;Fğ;Eğ;Eğ;Eğ<Eñ<Dğ<Dñ<Dğ=Dñ=Dñ=Dñ=Cñ>Cñ=Cñ>Cñ>Bñ>Bñ>Bñ?Bñ?Añ?Añ?Añ@Añ@Añ@Aò@@ñA@òA@òA@òA?òA?òA?òB?òB>òB>òB>òC>òC=òD=óA<ğ                     ZÉúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Éú                                                                                                                                                   7Gï7Iï7Hï8Hï8Hï8Hï8Gï9Gğ9Gï9Gğ9Fï:Fğ:Fğ:Fğ:Eğ:Eğ:Eğ;Eğ;Eğ;Eğ;Dğ<Dğ<Dğ<Dğ<Cğ=Cñ=Cğ=Cñ=Bğ>Bñ=Bğ>Bñ>Bñ>Bñ>Añ?Añ?Añ?Añ?@ñ@@ñ@@ñ@@ñ@?ñA?ñA?ñA?òA>ñA>òA>ñB>òB>ñDDî                     YÉúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù ÿÿ                                                                                                                                                   7Iï7Jğ7Iï8Iğ8Iğ8Iğ8Hğ9Hğ9Hğ9Hğ9Gğ9Gğ:Gğ:Gğ:Fğ:Fğ:Fğ;Fğ;Fğ;Fğ;Eğ<Eñ<Eğ<Eñ<Dñ=Dñ=Dñ=Dñ=Cñ=Cñ=Cñ>Cñ>Cñ>Cñ>Bñ?Bñ?Bñ?Bñ?Añ@Aò@Añ@Aò@@ñ@@òA@òA@òA?òA?òA?òB@ñ                        ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÈø                                                                                                                                                   7Ií6Iï6Iï6Iï7Iï7Iï7Iï7Hï7Hï7Hï8Hï8Gï8Gï8Gï9Gï9Fï9Fğ9Fï:Fğ:Eï:Eğ:Eğ;Eğ:Eğ;Eğ;Dğ;Dğ;Dğ<Dğ<Cğ<Cğ<Cğ=Cğ=Bğ=Bñ=Bğ>Bñ>Bğ>Bñ>Ağ>Añ>Añ?Añ?@ñ?@ñ?@ñ@@ñ@?ñ@?ò>>ó                        [ÉúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊû                                                                                                                                                      6Kğ6Jï6Jï6Jï7Jï7Jï7Jï7Iï7Iï7Iï8Iğ8Hï8Hğ8Hğ9Hğ9Gğ9Gğ9Gğ:Gğ:Fğ:Fğ:Fğ;Fğ:Fğ;Fğ;Eğ;Eğ;Eğ<Eğ<Dğ<Dñ<Dğ=Dñ=Cñ=Cñ=Cñ>Cñ>Cñ>Cñ>Bñ>Bñ>Bñ?Bñ?Añ?Añ?Añ@Aò?Ağ                           [ÉùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[Éú                                                                                                                                                      7Né5Kï5Kî5Kï5Jî6Jï6Jï6Jï6Iï7Iï7Iï7Iï7Hï7Hï7Hï8Hï8Gï8Hï8Gï9Gğ9Gï9Gğ9Fï:Fğ:Fğ:Fğ:Eğ;Eğ:Eğ;Eğ;Dğ;Eğ;Dğ<Dğ<Dğ<Dğ<Cğ=Cğ=Cğ=Cñ=Bğ>Bñ>Bğ>Bñ>Añ>Bñ?BñCCô                        ]ÑÿYÉùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊú                                                                                                                                                         5Lï5Lï5Lï5Lï5Kï6Kï6Kï6Kï6Jï7Jï7Jï7Jğ7Iï7Iğ7Iï8Iğ8Hï8Iğ8Hğ9Hğ9Hğ9Hğ9Gğ:Gğ:Gğ:Gğ:Fğ;Fğ:Fğ;Fğ;Eğ;Fñ;Eğ<Eñ<Eğ<Eñ<Dğ=Dñ=Dñ=Dñ=Cñ>Cñ>Cñ>Cò=Bğ@@ñ                           WÇùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊù€ÿÿ                                                                                                                                                         3Lí4Lî4Lî4Lî4Kî5Kî5Kî5Kï5Jî5Jï5Jï6Jï6Iï6Iï6Iï7Iï7Hï7Hï7Hï8Hï8Hï8Hï8Gï9Gï8Gï9Gï9Fï9Fğ9Fï:Fğ:Eğ:Eğ:Eğ;Eğ;Eğ;Eğ;Dğ;Dğ<Dğ<Dğ<Cğ=Cğ<BñCCò                              YÉøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÉú                                                                                                                                                            2Nî3Mî4Mï4Mî4Mï4Lï4Lï5Lï5Lï5Kï5Kï5Kï6Kï6Jï6Jï6Jï7Jï7Iï7Iï7Iï8Iğ8Iï8Iğ8Hï8Hğ8Hğ9Hğ9Gğ9Gğ9Gğ:Gğ:Fğ:Fğ:Fğ;Fğ;Fğ;Fğ;Eğ;Eğ<Eñ;Dñ<Fñ                                 ]Åó[ÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊø                                                                                                                                                               3Nî2Mî3Mî3Mî3Mî3Lî4Lî4Lî4Lî4Kî4Kï5Kî5Kï5Jî5Jï5Jï6Jï6Jï6Jï6Iï7Iï7Iï7Iï7Hï8Hï8Hï8Hï8Gï8Hğ8Gï9Gğ9Gï9Gğ9Fï:Fğ:Fğ;Fï;Eï:Fï  ÿ                                    ZÉúZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùXÌú                                                                                                                                                               1Qí2Oî2Nî3Nî3Nî3Nï3Mî4Mï4Mï4Mï4Lï4Lï4Lï5Lï5Kï5Lï5Kï6Kï6Kï6Kï6Jï7Jï7Jï7Jğ7Iï8Iğ7Iï8Iğ8Hğ8Iğ8Hğ9Hğ9Hğ9Hğ9Gğ9Gñ;Gî  ÿ                                       XÊûZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZËùZÃÿ                                                                                                                                                                  1Nî1Nî1Ní2Nî2Nî2Nî2Mî2Mî2Mî3Mî3Lî3Lî3Lî4Lî4Kî4Kî4Kî5Kî5Jî5Kï5Jî6Jï5Jî6Jï6Iï6Iï6Iï7Iï7Hï7Hï7Hï8Iğ8Hï9Iï                                             [ÌùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊú                                                                                                                                                                     3Rë1Oî1Oî1Oî2Oî2Nî2Oî2Nî2Nî2Nî3Nî3Mî3Mï3Mî4Mï4Lî4Lï4Lï5Lï5Lï5Lï5Kï6Kï5Kï6Kï6Jï6Kï7Iï7Iï7Jğ7Ií                                                   [Èú[ËùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÎ÷                                                                                                                                                                        1Pí0Oí1Oî1Oí1Oî1Nî1Oî1Nî2Nî2Nî2Nî2Mî2Mî2Mî3Mî3Mî3Mî3Lî4Lî4Lî5Lï5Lï5Lï5Lí6Lí*@ê                                                         `ÏÿZËøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊùXÌú                                                                                                                                                                           @@ÿ0Qî0Pî1Pî1Pî1Pî1Oî1Oî1Oî2Oî2Oî2Oî2Nî2Nî2Nî3Oï3Nî3Nî4Nî3Nï.Qó                                                                  fÌÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊøZËù                                                                                                                                                                                 /Pì/Pí/Pí0Pî0Oí0Oî0Oí0Oî0Oí1Oî1Oî1Oï2Mí1Pì3Rë                                                                           YÌùZËø[ÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÉùZÊùXËú                                                                                                                                                                                       0Qî/Qî0Qî0Pî1Qî0Oî/Qî3LîUUÿ                                                                                 YÉû[ÊøZÊùZÊøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊù[Ëù                                                                                                                                                                                                                                                                                          €ÿÿYÈùZÉú[ÉøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÉùZÊùUÕÿ                                                                                                                                                                                                                                                                                    WÇùYÊùZÉúZÊøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[ÊùYËøfÌÿ                                                                                                                                                                                                                                                                           ]Ñÿ\ÉúYÊùZËúZÊøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊù[ÊùZÊøYÊûfÌÿ                                                                                                                                                                                                                                                                                 ZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÉùYÊøZÃÿ                                                                                                                                                                                                                                                                                             WÇùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊùYÊùXÉøUÎÿ                                                                                                                                                                                                                                                                                                            ZÊøZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊøZÊù[ÊùZÊù[Éø]Åó                                                                                                                                                                                                                                                                                                                        `ÏÿZÊùZÊùZÊùZÊùZÊùZÊùZÊùZÊùYÊúYÉù[ÊùYÊùZÈúUÕÿ                                                                                                                                                                                                                                                                                                                                          [ËøZÊù[ËùZÊúZÊøXÉøYÌùUÕÿ                                                                                                                                                                                                                                                                                                               
+endstream
+endobj
+32 0 obj
+<<
+/Type /XObject
+/Subtype /Image
+/Width 125
+/Height 150
+/ColorSpace /DeviceGray
+/BitsPerComponent 8
+/DecodeParms <</Predictor 12 /Colors 1 /BitsPerComponent 8 /Columns 125>>
+/Length 18750
+>>
+stream
+                                                                               -                                                                                                                            „
+                                                                                                                           ‰s                                                                                                                           |İ                                                                                                                           ‘ÿ;                                                                                                                          «ÿ‚                                                                                                                         íÿ¬                                                                                                                         ?ÿÿ¿                                                                                                                         ³ÿÿº                                                                                                                        Sÿÿÿš                                                                                                                       *ñÿÿÿ]                                                                                                                      -ğÿÿÿë                                                                                                                       éÿÿÿÿy                                                                                                                     8ìÿÿÿÿÄ                                                                                                                    fÿÿÿÿÿå                                                                                                                   —ÿÿÿÿÿä                                                                                                                   Âÿÿÿÿÿç                                                                                                                    Cèÿÿÿÿÿï)         	                                                                                                         Šÿÿÿÿÿÿñ7        50                                                                                                        Êÿÿÿÿÿÿä(       DÌ·                                                                                                       TôÿÿÿÿÿÿÌ      &´ÿ}                                                                                                        Œÿÿÿÿÿÿÿª	     “ÿíC                                                                                                       Âÿÿÿÿÿÿÿ      Näÿæ                                                                                                        :èÿÿÿÿÿÿÿV      šÿÿí(                                                                                                       hÿÿÿÿÿÿÿï9     !Ñÿÿö5                                                                                                       Œÿÿÿÿÿÿÿê%     0îÿÿÿ`                                                                                                       ¥ÿÿÿÿÿÿÿğ,     1ïÿÿÿ¾                                                                                                       Rÿÿÿÿÿÿÿÿ9     ïÿÿÿ÷!                                                                                                      çÿÿÿÿÿÿÿ_      ½ÿÿÿÿ’                                                                                                       ÿÿÿÿÿÿÿ¨      \ÿÿÿÿÿ'                                                                                                       æÿÿÿÿÿÿÿ      Õÿÿÿÿğ                                                                                                       ÿÿÿÿÿÿÿ      ,ÿÿÿÿÿË                                                                                                       ,ÿÿÿÿÿÿÿ7      hÿÿÿÿÿÜ                                                                                                       "ÿÿÿÿÿÿå       Œÿÿÿÿÿÿ                                                                                                        õÿÿÿÿÿ¶       ÿÿÿÿÿÿP                                                                                                       ¹ÿÿÿÿÿŸ       wÿÿÿÿÿÿĞ                                                                                                       cÿÿÿÿÿš       2ÿÿÿÿÿÿÿf                                                                                                      	êÿÿÿÿÁ        Çÿÿÿÿÿÿò                                                                                                      dÿÿÿÿï        7ÿÿÿÿÿÿÿ¼                                                                                                       ¢ÿÿÿÿM        Uÿÿÿÿÿÿÿ                                                                                                      Ôÿÿÿµ         `ÿÿÿÿÿÿğ                                                                                                      %êÿÿÿ9         ’ÿÿÿÿÿÿ`                                                                                                       -ìÿÿÇ         ëÿÿÿÿÿš                                                                                                         Õÿÿ         €ÿÿÿÿÿŸ                                                                                                         	’ÿÿY        Eÿÿÿÿÿi                                                                                                           -±÷6       8ÿÿÿÿà	                                                                                                             u-      Oÿÿÿÿ:                                                                                                                       „ÿÿê>                                                                                                                        Õÿ²                                                                                                                        >ÃP                                                                                                                                                                                                                                                   	                                                                                                                        (uÂü$              35                                                                                                    BÛÿÿÿÿ$          E”âÿy                                                                                                 [¨ğÿÿÿÿÿÿÿ$       W¦ğÿÿÿÿy                                                                                              (uÂüÿÿÿÿÿÿÿÿÿÿ$    j¸ûÿÿÿÿÿÿÿx                           !¦ÀÀ³a                                                         BÜÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                            &şÿÿÿıÄ                                                   \©ğÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                             ëÿÿÿÿÿõ                                                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                             üÿÿÿÿÿÿ¢                                                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                            “ÿÿÿÿÿÿÿÏ                                                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                           &ıÿÿÿÿÿÿÿÂ                                                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                          óÿÿÿÿÿÿÿÿ‹                                                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                         ğÿÿÿÿÿÿÿÿÿ                                                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                        #ôÿÿÿÿÿÿÿÿÿÍ                                                   ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                       Eùÿÿÿÿÿÿÿÿÿû                                                   ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                      ÿÿÿÿÿÿÿÿÿÿÿT                                                    ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                    !àÿÿÿÿÿÿÿÿÿÿÿ€                                                     ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                   ™ıÿÿÿÿÿÿÿÿÿÿÿ                                                       ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy                 Ríÿÿÿÿÿÿÿÿÿÿÿÿ                                                       ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿÿy               Räÿÿÿÿÿÿÿÿÿÿÿÿık                                                        ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿÿÿøa             Fäÿÿÿÿÿÿÿÿÿÿÿÿÿí,                                                        ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿÿÿÿĞw            1Ùÿÿÿÿÿÿÿÿÿÿÿÿÿÿ±                                               œ:         ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÿÿÿĞz!             ]ÕÿÿÿÿÿÿÿÿÿÿÿÿÿÿñE                                            ?ÇñÙ>           ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$    ÿÖ†(             ¨÷ÿÿÿÿÿÿÿÿÿÿÿÿÿÿş¢                                            påÿïF             ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$                  1ÉşÿÿÿÿÿÿÿÿÿÿÿÿÿÿşÂ#                                          §÷ÿÿ¤               ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ$                  vİÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÊ                                          <Òşÿÿë5                °ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ¾P	               sÓşÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿâ?                                          >Üÿÿÿÿ§                  ±ÿÿÿÿÿÿÿÿÿÿÿÿÿÿâ›S               |ÜşÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÛH                                          Äÿÿÿÿ÷H                   ±ÿÿÿÿÿÿÿÿÿÿï¯k(                k×şÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşÆ.                                           ‹üÿÿÿÿĞ                     °ÿÿÿÿÿÿó·w7                 8ºúÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿú©                                           Hóÿÿÿÿÿ–                      °ÿíÅ¢v8                  ]¶ôÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿò‹                                            Àÿÿÿÿÿı]                       &                    hĞıÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿã]                                             zûÿÿÿÿÿ÷5                                           zÏôÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÑ>                                              Çÿÿÿÿÿÿï                                        F§èÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿò¨                                              3òÿÿÿÿÿÿ÷                                     T¨âıÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşĞH                                                vşÿÿÿÿÿÿı*                                  e´èşÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿå                                                 ´ÿÿÿÿÿÿÿÿÂ                              P˜Ëïÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿò¢                                                   Ôÿÿÿÿÿÿÿÿÿß                        e§ÖôÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşĞJ                                                     Ùÿÿÿÿÿÿÿÿÿÿÿ¼                8»Æßòıÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿê—                                                      ´ÿÿÿÿÿÿÿÿÿÿÿÿÿşç¸|ppppw¢ÅÀÇãõÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşÂz                                                        ,ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşÖ\                                                            ÈÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿôÃe               bQ                                             öÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşã(                Eöÿx                                             ŞÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿôÅk                 F’îÿÿÿÿx                                             Oÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿúà¯e                 ; ôÿÿÿÿÿÿÿx                                              ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿşëÁ€!                     ÿÿÿÿÿÿÿÿÿÿy                                               1ÎıÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿùíÓ«v5                         &ÿÿÿÿÿÿÿÿÿÿy                                                  OµÀÀÛïıÿÿÿÿÿÿÿÿÿÿÿÿÿşöéÕ¼œtK                       GÔş     2ÿÿÿÿÿÿÿÿÿÿy                                                           <appphZK:*                              pºÿÿÿÿæ     >ÿÿÿÿÿÿÿÿÿÿw                                                                                                
+A‹ÔÿÿÿÿÿÿÿÖ     Vÿÿÿÿÿÿÿÿÿÿv                                                                                            2hÑÿÿÿÿÿÿÿÿÿÿÿ¼     pÿÿÿÿÿÿÿÿÿÿs                                                                                       L†¿öÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿœ     Šÿÿÿÿÿÿÿÿÿÿo                                                                                      ¶ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ}     ¤ÿÿÿÿÿÿÿÿÿÿh                                                                                     	öÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿW     Ìÿÿÿÿÿÿÿÿÿÿ_                                                                                     ^ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ%    úÿÿÿÿÿÿÿÿÿÿU                                                                                     Ñÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿï     %ÿÿÿÿÿÿÿÿÿÿÿI                                                                                    jÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ»     Rÿÿÿÿÿÿÿÿÿÿÿ5                                                                                   (õÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿw     ÿÿÿÿÿÿÿÿÿÿÿ                                                                                  Ûÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ2     Ğÿÿÿÿÿÿÿÿÿÿş                                                                                 +àÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿğ     ÿÿÿÿÿÿÿÿÿÿÿé                                                                                 Röÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ–     RÿÿÿÿÿÿÿÿÿÿÿÃ                                                                               "­ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ+     ¡ÿÿÿÿÿÿÿÿÿÿÿ•                                                                             ŠøÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÇ     ôÿÿÿÿÿÿÿÿÿÿÿh                                                                           %òÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿX     Yÿÿÿÿÿÿÿÿÿÿÿÿ;                                                                         P»ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ×      µÿÿÿÿÿÿÿÿÿÿÿø                                                                     _­ôÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ\      ÿÿÿÿÿÿÿÿÿÿÿÿ»                                                                  N‰ÃÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿØ      Ÿÿÿÿÿÿÿÿÿÿÿÿÿu                                                             ;sªâÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿş:     "ıÿÿÿÿÿÿÿÿÿÿÿÿ/                                                        =g’Íÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ      §ÿÿÿÿÿÿÿÿÿÿÿÿå                                                   Dm—ÀéÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÜ     8ÿÿÿÿÿÿÿÿÿÿÿÿÿx                                                 ­òÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿğ'     Üÿÿÿÿÿÿÿÿÿÿÿÿø                                                8ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ÷6      ‹ÿÿÿÿÿÿÿÿÿÿÿÿÿ›                                                 ¦ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿüH      8ÿÿÿÿÿÿÿÿÿÿÿÿÿÿ+                                                ûÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿúL      Üÿÿÿÿÿÿÿÿÿÿÿÿÿœ                                                 ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿöA      ¾ÿÿÿÿÿÿÿÿÿÿÿÿÿï                                                 èÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿâ3       “ÿÿÿÿÿÿÿÿÿÿÿÿÿÿh                                                 ]ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ¶       dÿÿÿÿÿÿÿÿÿÿÿÿÿÿÒ                                                 Íÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿp        Rÿÿÿÿÿÿÿÿÿÿÿÿÿÿò%                                                 8ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÒ)        _ıÿÿÿÿÿÿÿÿÿÿÿÿÿü?                                                  ¦ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ÷z         vÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿh                                                  ûÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿıŸ        «ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ”                                                   ‚ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ÷š$         )Úÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ                                                    éÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿß          möÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ“                                                    \ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿæ’7           ·ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿo                                                     Ïÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿæ”>            cíÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿå7                                                     9ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿà=             :Îÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ¯                                                      ¦ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÛ¥q1               -¬ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿô`                                                       ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿá±}E                 8´ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ§                                                        ‚ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿé½‘e9                   lÎÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÓ7                                                         íÿÿÿÿÿÿÿÿÿÿÿÿÿíÂ—lA                      
+R¤ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÁO                                                           ]ÿÿÿÿÿÿÿÿâÂ›pC                         (l·ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿóŸ1                                                             ÀÒ´–xZ<                           9s­ëÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ±T                                                                                              .c˜Íúÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ÷°[                                                                                            )\Ä÷ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÊ‡E
+                                                                                         /VÀôÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿŞ©t?
+                                                                                           }Õÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿå²{H                                                                                               )ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿå±~K                                                                                                    ™ÿÿÿÿÿÿÿÿÿÿÿÿÿëÇ£}L                                                                                                        öÿÿÿÿÿÿã¿yV3                                                                                                              p×´‘nK(                                                                                                     
+endstream
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 17 0 R
+/F2 18 0 R
+/F3 19 0 R
+/F4 20 0 R
+/F5 21 0 R
+/F6 22 0 R
+/F7 23 0 R
+/F8 24 0 R
+/F9 25 0 R
+/F10 26 0 R
+/F11 27 0 R
+/F12 28 0 R
+/F13 29 0 R
+/F14 30 0 R
+>>
+/XObject <<
+/I0 31 0 R
+>>
+>>
+endobj
+33 0 obj
+<<
+/Producer (jsPDF 2.5.1)
+/CreationDate (D:20250930221844+01'00')
+>>
+endobj
+34 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 35
+0000000000 65535 f 
+0000028782 00000 n 
+0000106094 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000003822 00000 n 
+0000003959 00000 n 
+0000007856 00000 n 
+0000007993 00000 n 
+0000011940 00000 n 
+0000012078 00000 n 
+0000016085 00000 n 
+0000016224 00000 n 
+0000019984 00000 n 
+0000020123 00000 n 
+0000024219 00000 n 
+0000024358 00000 n 
+0000028878 00000 n 
+0000029004 00000 n 
+0000029135 00000 n 
+0000029269 00000 n 
+0000029407 00000 n 
+0000029531 00000 n 
+0000029660 00000 n 
+0000029792 00000 n 
+0000029928 00000 n 
+0000030056 00000 n 
+0000030183 00000 n 
+0000030312 00000 n 
+0000030445 00000 n 
+0000030547 00000 n 
+0000030643 00000 n 
+0000087118 00000 n 
+0000106358 00000 n 
+0000106444 00000 n 
+trailer
+<<
+/Size 35
+/Root 34 0 R
+/Info 33 0 R
+/ID [ <023BA12148F9C5621E80450942EC9868> <023BA12148F9C5621E80450942EC9868> ]
+>>
+startxref
+106548
+%%EOF

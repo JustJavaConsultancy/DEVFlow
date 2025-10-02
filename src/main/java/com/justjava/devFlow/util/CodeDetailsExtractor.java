@@ -1,6 +1,5 @@
 package com.justjava.devFlow.util;
 
-
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -14,6 +13,12 @@ import java.util.regex.Pattern;
 
 @Component
 public class CodeDetailsExtractor {
+
+    private final SpringBootProjectGitHubService projectGitHubService;
+
+    public CodeDetailsExtractor(SpringBootProjectGitHubService projectGitHubService) {
+        this.projectGitHubService = projectGitHubService;
+    }
 
     public static class ExtractedCodeFile {
         private final String filePath;
@@ -40,6 +45,99 @@ public class CodeDetailsExtractor {
         UNKNOWN
     }
 
+    /**
+     * Main method: Extracts code files from codeDetails and pushes them to GitHub
+     */
+    public GitHubPushResult extractAndPushToGitHub(String codeDetails, String repositoryName,
+                                                   String githubUsername, String githubToken,
+                                                   String repositoryDescription, boolean isPrivateRepo)
+            throws CodeExtractionException, GitHubPushException {
+
+        try {
+            System.out.println("🚀 Starting code extraction from codeDetails and pushing to GitHub...");
+
+            // Extract code files
+            List<ExtractedCodeFile> extractedFiles = extractCodeFiles(codeDetails);
+
+            if (extractedFiles.isEmpty()) {
+                throw new CodeExtractionException("No code files were extracted from the codeDetails");
+            }
+
+            System.out.println("✅ Successfully extracted " + extractedFiles.size() + " code files");
+
+            // Convert to GitHub files and push to repository
+            List<SpringBootProjectGitHubService.GitHubFile> githubFiles = convertToGitHubFiles(extractedFiles);
+
+            // Use SpringBootProjectGitHubService to push to GitHub
+            SpringBootProjectGitHubService.GitHubRepositoryResult result =
+                    projectGitHubService.pushFilesToGitHubRepository(
+                            githubFiles, repositoryName, repositoryDescription, isPrivateRepo,
+                            githubUsername, githubToken
+                    );
+
+            return new GitHubPushResult(
+                    result.getRepositoryUrl(),
+                    result.getRepositoryName(),
+                    result.getFilesCount(),
+                    extractedFiles.size(),
+                    getFileTypeBreakdown(extractedFiles)
+            );
+
+        } catch (SpringBootProjectGitHubService.GitHubPushException e) {
+            throw new GitHubPushException("Failed to push code files to GitHub: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new CodeExtractionException("Error during code extraction: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Converts internal ExtractedCodeFile to SpringBootProjectGitHubService.GitHubFile
+     */
+    private List<SpringBootProjectGitHubService.GitHubFile> convertToGitHubFiles(List<ExtractedCodeFile> extractedFiles) {
+        List<SpringBootProjectGitHubService.GitHubFile> githubFiles = new ArrayList<>();
+
+        for (ExtractedCodeFile extractedFile : extractedFiles) {
+            githubFiles.add(new SpringBootProjectGitHubService.GitHubFile(
+                    extractedFile.getFilePath(),
+                    extractedFile.getContent()
+            ));
+        }
+
+        return githubFiles;
+    }
+
+    /**
+     * Gets breakdown of file types for reporting
+     */
+    private FileTypeBreakdown getFileTypeBreakdown(List<ExtractedCodeFile> files) {
+        FileTypeBreakdown breakdown = new FileTypeBreakdown();
+
+        for (ExtractedCodeFile file : files) {
+            switch (file.getFileType()) {
+                case JAVA_MAIN:
+                    breakdown.javaMainFiles++;
+                    break;
+                case JAVA_TEST:
+                    breakdown.javaTestFiles++;
+                    break;
+                case HTML_TEMPLATE:
+                    breakdown.htmlFiles++;
+                    break;
+                case SQL_SCHEMA:
+                    breakdown.sqlFiles++;
+                    break;
+                case YAML_CONFIG:
+                    breakdown.yamlFiles++;
+                    break;
+                default:
+                    breakdown.otherFiles++;
+            }
+        }
+
+        return breakdown;
+    }
+
+    // All existing extraction methods remain exactly the same
     public List<ExtractedCodeFile> extractCodeFiles(String codeDetails) {
         List<ExtractedCodeFile> extractedFiles = new ArrayList<>();
 
@@ -317,7 +415,13 @@ public class CodeDetailsExtractor {
                 .replace("&nbsp;", " ");
     }
 
+    /**
+     * @deprecated Use extractAndPushToGitHub instead for GitHub integration
+     */
+    @Deprecated
     public void writeCodeFiles(String appPath, List<ExtractedCodeFile> extractedFiles) throws IOException {
+        System.out.println("⚠️ Using local filesystem fallback (deprecated)...");
+
         Path rootPath = Paths.get(appPath);
 
         if (!Files.exists(rootPath)) {
@@ -345,5 +449,59 @@ public class CodeDetailsExtractor {
     // Main extraction method that handles the complete codeDetails
     public List<ExtractedCodeFile> extractAllCodeComponents(String codeDetails) {
         return extractCodeFiles(codeDetails);
+    }
+
+    // New result class for GitHub push operations
+    public static class GitHubPushResult {
+        private final String repositoryUrl;
+        private final String repositoryName;
+        private final int filesPushed;
+        private final int filesExtracted;
+        private final FileTypeBreakdown fileTypeBreakdown;
+
+        public GitHubPushResult(String repositoryUrl, String repositoryName,
+                                int filesPushed, int filesExtracted,
+                                FileTypeBreakdown fileTypeBreakdown) {
+            this.repositoryUrl = repositoryUrl;
+            this.repositoryName = repositoryName;
+            this.filesPushed = filesPushed;
+            this.filesExtracted = filesExtracted;
+            this.fileTypeBreakdown = fileTypeBreakdown;
+        }
+
+        public String getRepositoryUrl() { return repositoryUrl; }
+        public String getRepositoryName() { return repositoryName; }
+        public int getFilesPushed() { return filesPushed; }
+        public int getFilesExtracted() { return filesExtracted; }
+        public FileTypeBreakdown getFileTypeBreakdown() { return fileTypeBreakdown; }
+    }
+
+    // File type breakdown for detailed reporting
+    public static class FileTypeBreakdown {
+        public int javaMainFiles = 0;
+        public int javaTestFiles = 0;
+        public int htmlFiles = 0;
+        public int sqlFiles = 0;
+        public int yamlFiles = 0;
+        public int otherFiles = 0;
+
+        @Override
+        public String toString() {
+            return String.format(
+                    "Java Main: %d, Java Test: %d, HTML: %d, SQL: %d, YAML: %d, Other: %d",
+                    javaMainFiles, javaTestFiles, htmlFiles, sqlFiles, yamlFiles, otherFiles
+            );
+        }
+    }
+
+    // Custom exceptions
+    public static class CodeExtractionException extends Exception {
+        public CodeExtractionException(String message) { super(message); }
+        public CodeExtractionException(String message, Throwable cause) { super(message, cause); }
+    }
+
+    public static class GitHubPushException extends Exception {
+        public GitHubPushException(String message) { super(message); }
+        public GitHubPushException(String message, Throwable cause) { super(message, cause); }
     }
 }
