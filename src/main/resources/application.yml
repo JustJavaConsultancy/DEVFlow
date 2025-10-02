@@ -70,6 +70,8 @@ keycloak:
   client-secret: ${KEYCLOAK_CLIENT_SECRET:rJuSSQDWuFvATo2pNlAlj0pTVJAbBNPo}
 app:
   processKey: "softwareEngineeringProcess"
+  github:
+    token: ${APP_GITHUB_TOKEN:http://localhost:9012}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
 message:

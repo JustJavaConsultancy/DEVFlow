@@ -2,6 +2,7 @@ package com.justjava.devFlow.delegate;
 
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.Map;
 @Component
 public class PrepareProjectConfigurationDelegate implements JavaDelegate {
 
+    @Value("${app.github.token}")
+    private String githubToken;
     @Override
     public void execute(DelegateExecution execution) {
         // Get project configuration from process variables or set defaults
@@ -35,7 +38,7 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
 
         // ✅ Get GitHub configuration from process variables
         execution.setVariable("githubUsername", "JustJavaConsultancy");
-        execution.setVariable("githubToken","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");
+        execution.setVariable("githubToken",githubToken);
         execution.setVariable("repositoryDescription", "Spring Boot project: " + execution.getVariable("projectDescription"));
         execution.setVariable("isPrivateRepo", true);
 

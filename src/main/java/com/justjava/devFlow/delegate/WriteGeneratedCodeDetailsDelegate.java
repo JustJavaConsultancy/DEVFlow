@@ -37,7 +37,7 @@ public class WriteGeneratedCodeDetailsDelegate implements JavaDelegate {
 
             System.out.println("📦 Processing story development details for repository: " + repositoryName);
             System.out.println("👤 GitHub user: " + githubUsername);
-            System.out.println("📝 Story development details length: " +
+            System.out.println("Story development details length: " +
                     (storyDevelopmentDetail != null ? storyDevelopmentDetail.length() : 0) + " characters");
 
             // Extract code files from story development details and push to GitHub
@@ -52,10 +52,10 @@ public class WriteGeneratedCodeDetailsDelegate implements JavaDelegate {
                     );
 
             // Log successful extraction with detailed breakdown
-            System.out.println("✅ Successfully extracted " + result.getFilesExtracted() + " code files");
-            System.out.println("✅ Successfully pushed " + result.getFilesPushed() + " files to GitHub");
-            System.out.println("🌐 Repository URL: " + result.getRepositoryUrl());
-            System.out.println("📊 File type breakdown: " + result.getFileTypeBreakdown());
+            System.out.println(" Successfully extracted " + result.getFilesExtracted() + " code files");
+            System.out.println(" Successfully pushed " + result.getFilesPushed() + " files to GitHub");
+            System.out.println(" Repository URL: " + result.getRepositoryUrl());
+            System.out.println(" File type breakdown: " + result.getFileTypeBreakdown());
 
             // Set process variables with comprehensive results
             execution.setVariable("githubRepositoryUrl", result.getRepositoryUrl());
