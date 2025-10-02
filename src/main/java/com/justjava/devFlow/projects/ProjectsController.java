@@ -68,6 +68,42 @@ public class ProjectsController {
 
         return "projects/allProjects";
     }
+
+    @GetMapping("/admin/projects")
+    public String getAllProjects(Model model){
+        List<ProcessInstance> projects = runtimeService
+                .createProcessInstanceQuery()
+                .processDefinitionKey("softwareEngineeringProcess")
+                .includeProcessVariables()
+                .active()
+                .list();
+        projects.forEach(project -> {
+/*            System.out.println(" The Process Instance" +
+                    " Here=ID=="+project.getProcessInstanceId()
+                    +" the start time ==="+project.getStartTime()
+                    +" the variables==="+project.getProcessVariables());*/
+        });
+        List<HistoricProcessInstance> completedProcess =historyService
+                .createHistoricProcessInstanceQuery()
+                .finished()
+                .orderByProcessInstanceEndTime()
+                .desc()
+                .list();
+        List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+                .finished()
+                .orderByTaskCreateTime().desc()
+                .list();
+        List<Task> tasks = taskService
+                .createTaskQuery()
+                .includeProcessVariables()
+                .orderByTaskCreateTime().desc()
+                .list();
+        model.addAttribute("projects",projects);
+        model.addAttribute("completedProject",completedProcess.size());
+        model.addAttribute("activeProject",projects.size());
+        return "projects/adminAllProjects";
+    }
+
     @GetMapping("/project-details/{projectId}")
     public String getProjectDetails(@PathVariable String projectId,  Model model){
         ProcessInstance project=runtimeService

@@ -90,7 +90,11 @@
                 <i class="fas fa-home text-white mr-3"></i>
                 <span class="text-white">Dashboard</span>
             </a>
-            <a th:href="@{/projects}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/projects'} ? ' bg-white bg-opacity-20'">
+            <a th:if="${isAdmin}" th:href="@{/admin/projects}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/admin/projects'} ? ' bg-white bg-opacity-20'">
+                <i class="fas fa-project-diagram text-blue-200 mr-3"></i>
+                <span class="text-blue-100">Projects</span>
+            </a>
+            <a th:if="${!isAdmin}" th:href="@{/projects}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/projects'} ? ' bg-white bg-opacity-20'">
                 <i class="fas fa-project-diagram text-blue-200 mr-3"></i>
                 <span class="text-blue-100">Projects</span>
             </a>

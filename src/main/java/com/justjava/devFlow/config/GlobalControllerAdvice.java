@@ -20,4 +20,8 @@ public class GlobalControllerAdvice {
     public String addUserName(HttpServletRequest request) {
             return (String) authenticationManager.get("name");
     }
+    @ModelAttribute("isAdmin")
+    public boolean isAdmin(HttpServletRequest request) {
+            return authenticationManager.isAdmin();
+        }
 }
