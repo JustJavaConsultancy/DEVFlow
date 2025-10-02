@@ -182,7 +182,7 @@ public class FlowableTaskController {
                 List.of(task.getId()));
 
         System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
-
+    //qweqweqweqwe
         processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
