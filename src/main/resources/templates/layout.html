@@ -46,20 +46,13 @@
             box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
         }
 
-        /* Responsive header improvements (removed fixed styles) */
+        /* Mobile view: remove sidebar entirely and use bottom nav */
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0;
             }
             .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                background: var(--gradient-bg);
-                z-index: 40;
-                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
-            }
-            .sidebar.active {
-                transform: translateX(0);
+                display: none !important;
             }
         }
         @media (min-width: 769px) {
@@ -70,15 +63,50 @@
     </style>
 </head>
 <body class="text-gray-800">
-<!-- Mobile Menu Button -->
-<div class="gradient-bg rounded-xl fixed top-4 left-4 z-50 md:hidden">
-    <button id="mobileMenuBtn" class="glass-effect text-white p-2 rounded-lg">
-        <i class="fas fa-bars"></i>
-    </button>
-</div>
+<!-- Mobile bottom navigation -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+    <div class="glass-effect backdrop-blur bg-white/20 border-t border-white/20 h-16">
+        <ul class="flex justify-between items-center px-6 h-full text-xs text-indigo-600">
+            <li>
+                <a th:href="@{/}" class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-home text-lg text-indigo-600"></i>
+                    <span class="text-indigo-600">Home</span>
+                </a>
+            </li>
+            <li>
+                <a th:if="${isAdmin}" th:href="@{/admin/projects}" class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-project-diagram text-lg text-indigo-600"></i>
+                    <span class="text-indigo-600">Projects</span>
+                </a>
+                <a th:if="${!isAdmin}" th:href="@{/projects}" class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-project-diagram text-lg text-indigo-600"></i>
+                    <span class="text-indigo-600">Projects</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/tasks}" class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-tasks text-lg text-indigo-600"></i>
+                    <span class="text-indigo-600">Tasks</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-cog text-lg text-indigo-600"></i>
+                    <span class="text-indigo-600">Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-user text-lg text-indigo-600"></i>
+                    <span class="text-indigo-600">Profile</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
 <div class="flex min-h-screen">
-    <!-- Sidebar -->
+    <!-- Sidebar (hidden on mobile) -->
     <div id="sidebar" class="glass-effect w-64 min-h-screen p-5 fixed sidebar">
         <div class="flex items-center mb-10">
             <i class="fas fa-code-branch text-white text-2xl mr-3"></i>
@@ -130,8 +158,8 @@
                 <span th:text="${userName}" class="text-blue-800 font-medium text-sm md:text-base">John Doe</span>
             </div>
         </div>
-        <!-- Main Content Area (remove extra top padding) -->
-        <div class="bg-white min-h-screen p-4 md:p-8">
+        <!-- Main Content Area (add bottom padding for mobile nav) -->
+        <div class="bg-white min-h-screen p-4 pb-24 md:pb-8 md:p-8">
             <div layout:fragment="content" id="content"></div>
         </div>
     </div>
@@ -141,25 +169,9 @@
 <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 <script src="https://unpkg.com/hyperscript.org@0.9.14/dist/_hyperscript.min.js"></script>
 <script>
-    // Simple animation for progress bars
+    // Simple animation for progress bars (placeholder)
     document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('sidebar');
-        function toggleSidebar() {
-            sidebar.classList.toggle('active');
-        }
-
-        mobileMenuBtn.addEventListener('click', toggleSidebar);
-
-        // Close sidebar when clicking on a link
-        const sidebarLinks = document.querySelectorAll('.sidebar a, .sidebar div');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    sidebar.classList.remove('active');
-                }
-            });
-        });
+        // No mobile sidebar toggle; using bottom navigation on mobile
     });
 </script>
 </body>
