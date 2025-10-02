@@ -10,6 +10,7 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -149,6 +150,29 @@ public class ProjectsController {
         model.addAttribute("activeProject",projects.size());
         //System.out.println(" The Process Instance Here==="+processInstance.getProcessVariables());
         return "redirect:/projects";
+    }
+    @PostMapping("/richtext")
+    public ResponseEntity<String> receiveRichText(
+            @RequestParam("taskId") String taskId,
+            @RequestParam("requirement") String requirement) {
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (task == null) {
+            HistoricTaskInstance completedTask = historyService
+                    .createHistoricTaskInstanceQuery()
+                    .finished()
+                    .taskId(taskId)
+                    .singleResult();
+            runtimeService.setVariable(completedTask.getProcessInstanceId(), "aiRequirementAnalysis", requirement);
+        }else {
+            runtimeService.setVariable(task.getProcessInstanceId(), "aiRequirementAnalysis", requirement);
+        }
+        // Debug
+        System.out.println("==== Received richtext content for task " + taskId + " ====");
+        System.out.println(requirement);
+        System.out.println("===================================================");
+
+        return ResponseEntity.ok("saved");
     }
 
 }

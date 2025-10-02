@@ -7,80 +7,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Review SRS</title>
+
+  <!-- Provide CSRF tokens when Spring Security is active -->
+  <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+  <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Quill CSS -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
   <style>
-    .document-container {
+    /* Editor container */
+    #editor {
       background: white;
       border-radius: 8px;
       padding: 2rem;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      height: 60vh;
+      height: 80vh;
       overflow-y: auto;
     }
 
-    .document-section {
-      margin-bottom: 2rem;
+    /* Quill editor content */
+    .ql-editor {
+      min-height: 300px;
     }
 
-    .document-section h3 {
-      color: #780aff;
-      border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
-
-    .action-btn {
-      transition: all 0.3s ease;
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .editable {
-      border: 1px dashed transparent;
-      padding: 4px;
-      border-radius: 4px;
-      transition: all 0.2s;
-    }
-
-    .editable:hover {
-      border-color: #780aff;
-      background-color: #f9f5ff;
-    }
-
-    .edit-mode .editable {
-      border-color: #780aff;
-      background-color: #f9f5ff;
-    }
-
-    .edit-mode .editable:focus {
-      outline: none;
-      border: 1px solid #780aff;
-      background-color: white;
-      box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.1);
-    }
-
-    .btn-disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .btn-disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    .gradient-bg {
-      background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
-    }
-
-    /* New styles for the generated content */
-    .document-content h1 {
+    .ql-editor h1 {
       font-size: 1.875rem;
       font-weight: bold;
       color: #1e40af;
@@ -89,7 +42,7 @@
       border-bottom: 2px solid #e2e8f0;
     }
 
-    .document-content h2 {
+    .ql-editor h2 {
       font-size: 1.5rem;
       font-weight: bold;
       color: #780aff;
@@ -99,7 +52,7 @@
       border-bottom: 1px solid #e2e8f0;
     }
 
-    .document-content h3 {
+    .ql-editor h3 {
       font-size: 1.25rem;
       font-weight: 600;
       color: #4b7bec;
@@ -107,7 +60,7 @@
       margin-bottom: 0.75rem;
     }
 
-    .document-content h4 {
+    .ql-editor h4 {
       font-size: 1.1rem;
       font-weight: 600;
       color: #4b5563;
@@ -115,30 +68,30 @@
       margin-bottom: 0.5rem;
     }
 
-    .document-content p {
+    .ql-editor p {
       margin-bottom: 1rem;
       line-height: 1.6;
       color: #374151;
     }
 
-    .document-content ul {
+    .ql-editor ul {
       margin-bottom: 1rem;
       padding-left: 1.5rem;
       list-style-type: disc;
     }
 
-    .document-content ol {
+    .ql-editor ol {
       margin-bottom: 1rem;
       padding-left: 1.5rem;
       list-style-type: decimal;
     }
 
-    .document-content li {
+    .ql-editor li {
       margin-bottom: 0.5rem;
       line-height: 1.5;
     }
 
-    .document-content strong {
+    .ql-editor strong {
       font-weight: 600;
       color: #4b5563;
     }
@@ -163,6 +116,10 @@
       margin: 1rem 0;
       text-align: center;
     }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
+    }
   </style>
 </head>
 <body>
@@ -173,243 +130,474 @@
       <i class="fas fa-file-alt mr-3 text-blue-600"></i>
       Review SRS Document
     </h1>
-    <p th:text="${processVariables.projectName}" class="text-gray-600 mt-2">
-      E-Commerce Platform Project - v2.3
-    </p>
+    <p th:text="${processVariables.projectName}" class="text-gray-600 mt-2">E-Commerce Platform Project - v2.3</p>
   </div>
 
-  <!-- Thymeleaf Form -->
+  <!-- Thymeleaf Form (kept so Complete Review still works server-side) -->
   <form id="srsForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
-    <!-- Action Bar -->
     <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
       <div class="flex items-center">
         <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
         <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Under Review</span>
+        <!-- autosave status -->
+        <span id="autosaveStatus" class="ml-4 text-sm text-gray-600">Not saved</span>
       </div>
 
       <div class="flex space-x-3 mt-3 md:mt-0">
-        <button type="button" id="editToggleBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
-          <i class="fas fa-edit mr-2"></i>
-          Edit
-        </button>
-        <button onclick="downloadAsPDF()" type="button" id="downloadBtn" class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
-          <i class="fas fa-download mr-2"></i>
-          Download
+        <button onclick="downloadAsPDF()" type="button" id="downloadBtn"
+                class="gradient-bg text-white px-4 py-2 rounded-lg flex items-center action-btn">
+          <i class="fas fa-download mr-2"></i> Download
         </button>
       </div>
     </div>
-    <textarea name="requirement" id="editedDocument" hidden></textarea>
 
-    <!-- Document Content -->
-    <div id="documentContent" class="document-container mb-6">
-      <div class="document-content">
-        <!-- This is where the dynamic content will be inserted with proper styling -->
-        <div th:utext="${processVariables.aiRequirementAnalysis}"></div>
-      </div>
-    </div>
+    <!-- Hidden input used for the final form submit -->
+    <input type="hidden" name="requirement" id="editedDocument"/>
+
+    <!-- Quill Editor (editable) -->
+    <div id="editor" th:utext="${processVariables.aiRequirementAnalysis}"></div>
 
     <!-- Complete Button -->
     <div th:if="${!isCompleted}" class="flex justify-center mt-6">
-      <button type="submit" id="submitBtn" class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
+      <button type="submit" id="submitBtn"
+              class="gradient-bg text-white px-6 py-3 rounded-lg flex items-center action-btn">
         <i class="fas fa-check-circle mr-2"></i>
         Complete Review
       </button>
     </div>
   </form>
 
-  <!-- Scripts -->
+  <!-- Hidden SVG logo for PDF generation -->
+  <svg id="pdfLogoSvg" style="display: none;" width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- Replace this with your actual SVG logo content -->
+    <rect width="200" height="100" fill="#4b7bec" rx="10"/>
+    <text x="100" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">LOGO</text>
+    <text x="100" y="80" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12">Your Company</text>
+  </svg>
+
+  <!-- Scripts: htmx (for AJAX), Quill, jsPDF (kept) -->
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <!-- SVG to PNG converter library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/4.0.1/canvg.min.js"></script>
+
   <script>
-    const editToggleBtn = document.getElementById('editToggleBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const srsForm = document.getElementById('srsForm');
-    const documentContent = document.getElementById('documentContent');
-    let isEditMode = false;
-
-    // Function to format the dynamic content with proper classes
-    function formatDynamicContent() {
-      // Wait for the content to be loaded
-      setTimeout(() => {
-        const contentDiv = document.querySelector('.document-content > div');
-        if (!contentDiv) return;
-
-        // Add section classes to top-level divs
-        const topLevelDivs = contentDiv.querySelectorAll('body > div, body > section, .document-content > div > div');
-        topLevelDivs.forEach(div => {
-          if (!div.classList.contains('document-section')) {
-            div.classList.add('document-section');
-          }
-        });
-
-        // Format headings
-        const h3Elements = contentDiv.querySelectorAll('h3');
-        h3Elements.forEach(h3 => {
-          h3.classList.add('text-lg', 'font-semibold');
-        });
-
-        // Format lists
-        const ulElements = contentDiv.querySelectorAll('ul');
-        ulElements.forEach(ul => {
-          ul.classList.add('list-disc', 'pl-5', 'mt-2', 'mb-4');
-        });
-
-        // Make all elements editable
-        const allElements = contentDiv.querySelectorAll('h1, h2, h3, h4, p, ul, ol, li');
-        allElements.forEach(el => {
-          el.classList.add('editable');
-        });
-      }, 100);
-    }
-
-    // Call the formatting function when page loads
-    document.addEventListener('DOMContentLoaded', formatDynamicContent);
-
-    // Also call it after any dynamic content is loaded
-    const observer = new MutationObserver(formatDynamicContent);
-    observer.observe(document.querySelector('.document-content'), { childList: true, subtree: true });
-
-    // Toggle edit mode
-    editToggleBtn.addEventListener('click', function() {
-      isEditMode = !isEditMode;
-      const editableElements = document.querySelectorAll('.editable');
-      if (isEditMode) {
-        documentContent.classList.add('edit-mode');
-        editToggleBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Save';
-        editToggleBtn.classList.remove('gradient-bg');
-        editToggleBtn.classList.add('bg-green-600');
-        editableElements.forEach(el => el.setAttribute('contenteditable', 'true'));
-      } else {
-        documentContent.classList.remove('edit-mode');
-        editToggleBtn.innerHTML = '<i class="fas fa-edit mr-2"></i> Edit';
-        editToggleBtn.classList.remove('bg-green-600');
-        editToggleBtn.classList.add('gradient-bg');
-        editableElements.forEach(el => el.setAttribute('contenteditable', 'false'));
-
-        // Reformat content after editing
-        formatDynamicContent();
+    // Initialize Quill
+    var quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link', 'image', 'code-block'],
+          [{ color: [] }, { background: [] }],
+          ['clean']
+        ]
       }
     });
 
-    // Download functionality
-    async function downloadAsPDF() {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-      const contentDiv = document.getElementById('documentContent');
-
-      // Page setup
-      const margin = 50;
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      let y = margin;
-      const defaultLineHeight = 16;
-
-      // Add Logo + Company Name
-      const logoUrl = "/images/justjavaLogo.svg"; // static folder
-      const logo = await loadImage(logoUrl);
-      pdf.addImage(logo, "PNG", margin, 20, 40, 40);
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(18);
-      pdf.setTextColor(33, 33, 33);
-      pdf.text("", margin + 50, 45);
-      y = 90;
-
-      function checkPageBreak(extra = 0) {
-        if (y + extra > pageHeight - margin) {
-          pdf.addPage();
-          y = margin;
-        }
-      }
-
-      function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
-        pdf.setFont("helvetica", bold ? "bold" : "normal");
-        pdf.setFontSize(fontSize);
-        const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
-        if (extraGap > 0) y += extraGap;
-        lines.forEach(line => {
-          checkPageBreak(spacing);
-          pdf.text(line, margin + indent, y);
-          y += spacing;
+    // --- CSRF integration for htmx (works if Spring Security provides _csrf) ---
+    (function setupHtmxCsrf() {
+      const metaToken = document.querySelector('meta[name="_csrf"]');
+      const metaHeader = document.querySelector('meta[name="_csrf_header"]');
+      if (metaToken && metaHeader && window.htmx) {
+        const csrfToken = metaToken.getAttribute('content');
+        const csrfHeader = metaHeader.getAttribute('content');
+        // Add the CSRF header to every htmx request:
+        document.addEventListener('htmx:configRequest', function (evt) {
+          evt.detail.headers[csrfHeader] = csrfToken;
         });
-        y += 4;
       }
+    })();
 
-      function processNode(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-          if (node.textContent.trim()) addText(node.textContent.trim(), 12);
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const tag = node.tagName.toLowerCase();
-          if (tag === "h1") addText(node.textContent.trim(), 22, true, 0, 28, 12);
-          else if (tag === "h2") addText(node.textContent.trim(), 18, true, 0, 24, 10);
-          else if (tag === "h3") addText(node.textContent.trim(), 15, true, 0, 20, 8);
-          else if (tag === "p") addText(node.textContent.trim(), 12, false, 0, 18, 6);
-          else if (tag === "li") addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
-          else if (tag === "ul" || tag === "ol") {
-            y += 4; node.childNodes.forEach(child => processNode(child)); y += 6;
-          }
-          else if (tag === "table") {
-            const rows = [];
-            node.querySelectorAll("tr").forEach(tr => {
-              const row = [];
-              tr.querySelectorAll("td, th").forEach(td => row.push(td.innerText.trim()));
-              rows.push(row);
-            });
-            if (rows.length > 0) {
-              y += 10; checkPageBreak(40);
-              pdf.autoTable({
-                head: [rows[0]],
-                body: rows.slice(1),
-                startY: y,
-                margin: { left: margin, right: margin },
-                styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
-                headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
-              });
-              y = pdf.lastAutoTable.finalY + 20;
-            }
-          } else {
-            node.childNodes.forEach(child => processNode(child));
-          }
-        }
-      }
+    // Debounced autosave using htmx.ajax on Quill changes
+    const autosaveStatus = document.getElementById('autosaveStatus');
+    let saveTimeout = null;
+    const AUTOSAVE_DEBOUNCE_MS = 800; // reduce spamming by debouncing
 
-      // Traverse content
-      contentDiv.childNodes.forEach(node => processNode(node));
+    function autosaveContent() {
+      const html = quill.root.innerHTML || '';
+      autosaveStatus.textContent = 'Saving...';
 
-      // Footer with page numbers
-      const pageCount = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(10);
-        pdf.setTextColor(150);
-        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
-      }
-
-      pdf.save("srs-document.pdf");
-    }
-
-    function loadImage(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width; canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          resolve(canvas.toDataURL("image/png"));
-        };
-        img.src = url;
+      // use htmx.ajax to POST form-encoded data { requirement: html } to your endpoint
+      // endpoint: POST /api/richtext
+      htmx.ajax('POST', /* url */ '/richtext', {
+        values: {
+          requirement: html,
+          taskId: '[[${taskId}]]'
+        },
+        swap: 'none' // we don't want to swap any content back into the page
       });
     }
 
-    // Form submission handler
-    srsForm.addEventListener('submit', function(e) {
-      const editedContent = document.querySelector('.document-content').innerHTML;
-      document.getElementById('editedDocument').value = editedContent;
+    // debounce wrapper
+    quill.on('text-change', function () {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(autosaveContent, AUTOSAVE_DEBOUNCE_MS);
+    });
+
+    // Listen to htmx completion events to update status
+    document.addEventListener('htmx:afterRequest', function (evt) {
+      try {
+        const xhr = evt.detail.xhr;
+        if (xhr && xhr.responseURL && xhr.responseURL.includes('/richtext')) {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const t = new Date();
+            autosaveStatus.textContent = 'Auto Saved — ' + t.toLocaleTimeString();
+          } else {
+            autosaveStatus.textContent = 'Save failed (status ' + xhr.status + ')';
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+
+    // On main form submit, copy HTML into hidden input (keeps your original behaviour)
+    const srsForm = document.getElementById('srsForm');
+    const submitBtn = document.getElementById('submitBtn');
+    srsForm.addEventListener('submit', function (e) {
+      document.getElementById('editedDocument').value = quill.root.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.classList.add('btn-disabled');
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
     });
+
+    // Function to convert SVG to data URL
+    function svgToDataURL(svgElement) {
+      return new Promise((resolve, reject) => {
+        try {
+          // Get SVG as string
+          const svgString = new XMLSerializer().serializeToString(svgElement);
+
+          // Create canvas for rendering
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Set canvas dimensions
+          const width = svgElement.getAttribute('width') || 200;
+          const height = svgElement.getAttribute('height') || 100;
+          canvas.width = width;
+          canvas.height = height;
+
+          // Create blob from SVG
+          const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
+
+          const img = new Image();
+          img.onload = function() {
+            // Draw image on canvas
+            ctx.drawImage(img, 0, 0, width, height);
+            URL.revokeObjectURL(url);
+
+            // Get data URL
+            const dataURL = canvas.toDataURL('image/png');
+            resolve(dataURL);
+          };
+
+          img.onerror = function() {
+            URL.revokeObjectURL(url);
+            reject(new Error('Failed to load SVG image'));
+          };
+
+          img.src = url;
+        } catch (error) {
+          reject(error);
+        }
+      });
+    }
+
+    // Enhanced PDF export with SVG logo and removed borders
+    async function downloadAsPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        unit: 'pt',
+        format: 'a4',
+        compress: true
+      });
+
+      const margin = 40;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const contentWidth = pageWidth - (2 * margin);
+      let y = margin;
+
+      // Add SVG logo to top right corner
+      const logoSvg = document.getElementById('pdfLogoSvg');
+      if (logoSvg) {
+        try {
+          const logoDataURL = await svgToDataURL(logoSvg);
+          const logoWidth = 60;
+          const logoHeight = 30;
+          const logoX = pageWidth - margin - logoWidth;
+          const logoY = margin;
+
+          pdf.addImage(logoDataURL, 'PNG', logoX, logoY, logoWidth, logoHeight);
+        } catch (error) {
+          console.warn('SVG logo could not be loaded:', error);
+        }
+      }
+
+      // Add document header (moved down to accommodate logo)
+      y += 40; // Extra space for logo
+
+      const projectName = document.querySelector('p.text-gray-600').textContent;
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(16);
+      pdf.setTextColor(30, 64, 175); // Blue color
+      pdf.text("SRS Document", margin, y);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(projectName, margin, y + 20);
+
+      y += 50;
+
+      // Get the HTML content from the editor
+      const htmlContent = quill.root.innerHTML;
+
+      // Create a temporary div to process the content
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+
+      // Function to check if we need a page break
+      function checkPageBreak(heightNeeded = 0) {
+        if (y + heightNeeded > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+          // Add logo to new page
+          if (logoSvg) {
+            svgToDataURL(logoSvg).then(logoDataURL => {
+              const logoWidth = 60;
+              const logoHeight = 30;
+              const logoX = pageWidth - margin - logoWidth;
+              pdf.addImage(logoDataURL, 'PNG', logoX, margin, logoWidth, logoHeight);
+            }).catch(error => {
+              console.warn('Could not add logo to new page');
+            });
+          }
+          return true;
+        }
+        return false;
+      }
+
+      // Function to add text with proper formatting (borders removed)
+      function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
+        pdf.setFont("helvetica", isBold ? "bold" : "normal");
+        pdf.setFontSize(fontSize);
+        pdf.setTextColor(...color);
+
+        const lines = pdf.splitTextToSize(text, contentWidth - indent);
+        const lineSpacing = fontSize * lineHeight;
+
+        // Check if we need a page break before adding this text
+        checkPageBreak(lines.length * lineSpacing);
+
+        lines.forEach((line, index) => {
+          // Check if we need a page break for each line
+          if (y + lineSpacing > pageHeight - margin) {
+            pdf.addPage();
+            y = margin;
+          }
+
+          pdf.text(line, margin + indent, y);
+          y += lineSpacing;
+        });
+
+        // Add a small gap after the text block
+        y += 5;
+      }
+
+      // Process each node in the content
+      function processNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (node.textContent.trim()) {
+            // Check if parent is bold
+            const parent = node.parentElement;
+            const isBold = parent && (
+                    parent.tagName === 'STRONG' ||
+                    parent.tagName === 'B' ||
+                    parent.style.fontWeight === 'bold'
+            );
+            addText(node.textContent.trim(), 12, isBold);
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toLowerCase();
+          const textContent = node.textContent.trim();
+
+          if (!textContent) return;
+
+          switch(tag) {
+            case "h1":
+              addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
+              // Removed border line under h1
+              y += 10;
+              break;
+
+            case "h2":
+              addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
+              // Removed border line under h2
+              y += 8;
+              break;
+
+            case "h3":
+              addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
+              y += 8;
+              break;
+
+            case "h4":
+              addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
+              y += 6;
+              break;
+
+            case "p":
+              addText(textContent, 12, false);
+              break;
+
+            case "li":
+              const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
+              const prefix = isOrdered ?
+                      (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
+              addText(prefix + textContent, 12, false, 20);
+              break;
+
+            case "ul":
+            case "ol":
+              y += 8;
+              Array.from(node.children).forEach(child => processNode(child));
+              y += 8;
+              break;
+
+            case "strong":
+            case "b":
+              Array.from(node.childNodes).forEach(child => {
+                if (child.nodeType === Node.TEXT_NODE) {
+                  addText(child.textContent.trim(), 12, true);
+                } else {
+                  processNode(child);
+                }
+              });
+              break;
+
+            case "table":
+              processTable(node);
+              break;
+
+            case "div":
+              if (node.classList.contains('component-box')) {
+                processComponentBox(node);
+              } else if (node.classList.contains('architecture-diagram')) {
+                processArchitectureDiagram(node);
+              } else {
+                Array.from(node.childNodes).forEach(processNode);
+              }
+              break;
+
+            default:
+              Array.from(node.childNodes).forEach(processNode);
+          }
+        }
+      }
+
+      // Process tables (with simplified styling - borders removed)
+      function processTable(table) {
+        const rows = [];
+        table.querySelectorAll("tr").forEach(tr => {
+          const row = [];
+          tr.querySelectorAll("td, th").forEach(cell => {
+            row.push({
+              content: cell.innerText.trim(),
+              isHeader: cell.tagName === 'TH'
+            });
+          });
+          rows.push(row);
+        });
+
+        if (rows.length > 0) {
+          checkPageBreak(100); // Reserve space for table
+
+          const columnWidths = Array(rows[0].length).fill(contentWidth / rows[0].length);
+          const startY = y;
+
+          // Draw table header (simplified - no background color)
+          const headerRow = rows[0];
+          const rowHeight = 25;
+
+          // Draw header text (no background)
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(10);
+          pdf.setTextColor(55, 65, 81); // Regular text color instead of white
+
+          headerRow.forEach((cell, index) => {
+            const x = margin + (index * columnWidths[index]);
+            const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
+            pdf.text(cellContent, x + 5, y + 15);
+          });
+
+          y += rowHeight;
+
+          // Draw table rows (simplified - no alternating colors)
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(10);
+          pdf.setTextColor(55, 65, 81);
+
+          for (let i = 1; i < rows.length; i++) {
+            checkPageBreak(rowHeight);
+
+            const row = rows[i];
+            row.forEach((cell, index) => {
+              const x = margin + (index * columnWidths[index]);
+              const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
+              pdf.text(cellContent, x + 5, y + 15);
+            });
+
+            y += rowHeight;
+          }
+
+          // Removed table borders
+          y += 20;
+        }
+      }
+
+      // Process component boxes (borders removed)
+      function processComponentBox(box) {
+        checkPageBreak(40);
+
+        // Removed background and border
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(11);
+        pdf.setTextColor(55, 65, 81);
+
+        const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
+        pdf.text(text, margin + 10, y + 18);
+
+        y += 40;
+      }
+
+      // Process architecture diagrams (borders removed)
+      function processArchitectureDiagram(diagram) {
+        checkPageBreak(100);
+
+        // Removed background and border
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(12);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
+
+        y += 100;
+      }
+
+      // Process all content nodes
+      Array.from(tempDiv.childNodes).forEach(processNode);
+
+      // Save the PDF
+      pdf.save("srs-document.pdf");
+
+    }
   </script>
 </div>
 </body>
