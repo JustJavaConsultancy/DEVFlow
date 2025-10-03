@@ -89,7 +89,7 @@ sendgrid:
 app:
   processKey: "softwareEngineeringProcess"
   github:
-    token: ${APP_GITHUB_TOKEN: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}
+    token: ${APP_GITHUB_TOKEN}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
   base-url: ${APP_BASE_URL:http://localhost:9022}
