@@ -310,6 +310,11 @@
             font-size: 0.875rem;
             margin-top: 0.5rem;
         }
+
+        /* Hidden user stories container */
+        #userStoriesContainer {
+            display: none;
+        }
     </style>
 </head>
 <body class="text-gray-800 grid-container">
@@ -654,6 +659,22 @@
                         </button>
                     </div>
 
+                    <!-- User Stories -->
+                    <div th:if="${project.processVariables?.['userStories']}"
+                         class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
+                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-file-pdf text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="hidden" id="userStoriesSpec" th:value="${project.processVariables?.['userStories']}">
+                            <div class="font-medium">User Stories.pdf</div>
+                        </div>
+                        <button onclick="downloadUserStories()"
+                                class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -720,6 +741,11 @@
     </div>
 </div>
 
+<!-- Hidden user stories container for PDF generation -->
+<div id="userStoriesContainer" style="display: none;">
+    <div th:if="${project.processVariables?.['userStories']}" th:utext="${project.processVariables?.['userStories']}"></div>
+</div>
+
 <!-- Hidden logo for PDF generation -->
 <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
 
@@ -742,18 +768,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     // Email validation and invite functionality
-  const inviteEmailInput = document.getElementById('inviteEmail');
-  const sendInviteBtn = document.getElementById('sendInviteBtn');
-  const emailError = document.getElementById('emailError');
-  const emailSuccess = document.getElementById('emailSuccess');
-  const validationIcon = document.getElementById('validationIcon');
+const inviteEmailInput = document.getElementById('inviteEmail');
+const sendInviteBtn = document.getElementById('sendInviteBtn');
+const emailError = document.getElementById('emailError');
+const emailSuccess = document.getElementById('emailSuccess');
+const validationIcon = document.getElementById('validationIcon');
 
-  function validateEmail(email) {
+function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  }
+}
 
-  function showError() {
+function showError() {
     emailError.classList.remove('hidden');
     emailSuccess.classList.add('hidden');
     inviteEmailInput.classList.add('input-error', 'shake');
@@ -766,9 +792,9 @@
     setTimeout(() => {
         inviteEmailInput.classList.remove('shake');
     }, 500);
-  }
+}
 
-  function showSuccess() {
+function showSuccess() {
     emailError.classList.add('hidden');
     emailSuccess.classList.remove('hidden');
     inviteEmailInput.classList.remove('input-error');
@@ -776,9 +802,9 @@
     validationIcon.classList.remove('hidden');
     validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
     sendInviteBtn.disabled = false;
-  }
+}
 
-  function validateInput() {
+function validateInput() {
     const email = inviteEmailInput.value.trim();
 
     if (email === '') {
@@ -804,17 +830,17 @@
     validationIcon.classList.remove('hidden');
     validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
     sendInviteBtn.disabled = false;
-  }
+}
 
-  // Validate on input
-  inviteEmailInput.addEventListener('input', validateInput);
+// Validate on input
+inviteEmailInput.addEventListener('input', validateInput);
 
-  // Also validate on Enter key press
-  inviteEmailInput.addEventListener('keypress', function(e) {
+// Also validate on Enter key press
+inviteEmailInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         sendInviteBtn.click();
     }
-  });
+});
 
         // Set current date
         const currentDate = new Date();
@@ -1177,6 +1203,13 @@
     function downloadArchitectureSpec() {
         const content = document.getElementById('architectureSpec').value;
         downloadAsPDF(content, "solution-architecture.pdf");
+    }
+
+    // Function to download user stories
+    function downloadUserStories() {
+        const userStoriesContainer = document.getElementById('userStoriesContainer');
+        const content = userStoriesContainer.innerHTML;
+        downloadAsPDF(content, "user-stories.pdf");
     }
 </script>
 </body>
