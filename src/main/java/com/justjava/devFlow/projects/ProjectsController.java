@@ -1,6 +1,8 @@
 package com.justjava.devFlow.projects;
 
 import com.justjava.devFlow.aau.AuthenticationManager;
+import com.justjava.devFlow.keycloak.KeycloakService;
+import com.justjava.devFlow.util.EmailUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -11,13 +13,12 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,9 @@ public class ProjectsController {
     private TaskService taskService;
 
     @Autowired
+    KeycloakService keycloakService;
+
+    @Autowired
     RuntimeService runtimeService;
 
     @Autowired
@@ -35,6 +39,13 @@ public class ProjectsController {
 
     @Autowired
     HistoryService  historyService;
+
+    @Value("${app.base-url}")
+    String baseUrl;
+
+    @Value("${flowable.mail.server.username}")
+    String fromEmail;
+
     @GetMapping("/projects")
     public String getProjects(Model model){
 
@@ -117,7 +128,8 @@ public class ProjectsController {
                 .includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
-        System.out.println(project.getId());
+
+        model.addAttribute("projectId", projectId);
         model.addAttribute("project",project);
         model.addAttribute("tasks", tasks);
         return "projects/projectDetails";
@@ -153,8 +165,6 @@ public class ProjectsController {
 
     @PostMapping("/project/start")
     public String startProject(@RequestParam Map<String,Object>  startVariables,Model model){
-
-
         System.out.println(" The Sent Parameter Here==="+startVariables);
 
         String businessKey= String.valueOf(authenticationManager.get("sub")) ;
@@ -227,4 +237,39 @@ public class ProjectsController {
         return ResponseEntity.ok("saved");
     }
 
+    @PostMapping("/project/invite")
+    public String inviteTeamMember(@RequestParam Map<String,Object>  inviteDetails){
+        String businessKey= String.valueOf(authenticationManager.get("sub")) ;
+        String email = (String) inviteDetails.get("email");
+        String password = "1234";
+        String projectId = (String) inviteDetails.get("projectId");
+        String webUrl = baseUrl + "/project-progress/" + projectId;
+//        String webUrl = "https://devflow-2-production.up.railway.app" + "/project-progress/" + projectId;
+
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", email);
+        params.put("username", email);
+        params.put("status", true);
+
+//        Email Structure
+        String subject = "";
+
+        List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
+        if (userByEmail.isEmpty()){
+            keycloakService.createUser(params);
+            subject = "Invite Message from JustJava";
+        } else{
+            return "redirect:/"+ "project-details/" + projectId;
+        }
+
+        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
+        runtimeService.createProcessInstanceBuilder()
+                .processDefinitionKey("emailing")
+                .businessKey(businessKey)
+                .variables(emailData)
+                .start();
+
+        return "redirect:/"+ "project-details/" + projectId;
+    }
 }
