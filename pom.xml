@@ -101,6 +101,12 @@
 			<artifactId>flowable-spring-boot-starter</artifactId>
 			<version>7.1.0</version>
 		</dependency>
+		<!--        send grid for emails-->
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>5.0.0-rc.1</version>
+		</dependency>
 
 		<!-- Nashorn JavaScript Engine (JDK 8-14) -->
 		<dependency>

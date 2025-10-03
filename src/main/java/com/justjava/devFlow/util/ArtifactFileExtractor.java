@@ -115,6 +115,9 @@ public class ArtifactFileExtractor {
         // Extract YAML configuration files
         extractedFiles.addAll(extractYamlFiles(artifact));
 
+        // New architecture-doc extraction
+        extractedFiles.addAll(extractFromArchitectureDoc(artifact));
+
         System.out.println("Successfully extracted " + extractedFiles.size() + " files from artifact");
 
         // Debug: Print extracted file paths
@@ -382,4 +385,95 @@ public class ArtifactFileExtractor {
         public GitHubPushException(String message) { super(message); }
         public GitHubPushException(String message, Throwable cause) { super(message, cause); }
     }
+
+
+
+
+    // New addition to manage Mistral
+    // Add inside ArtifactFileExtractor
+
+    /**
+     * Extract files from IEEE/ISO/IEC architecture-style Markdown deliverables.
+     */
+    public List<ExtractedFile> extractFromArchitectureDoc(String artifact) {
+        List<ExtractedFile> files = new ArrayList<>();
+
+        // Regex for ### heading with filename in backticks
+        Pattern headingPattern = Pattern.compile(
+                "###\\s+.*?\\(`([^`]+)`\\)\\s*\\n+([\\s\\S]*?)(?=###|$)",
+                Pattern.DOTALL
+        );
+        Matcher matcher = headingPattern.matcher(artifact);
+
+        while (matcher.find()) {
+            String fileName = matcher.group(1).trim();
+            String sectionBody = matcher.group(2).trim();
+
+            // Extract fenced code block if present
+            Pattern codeBlockPattern = Pattern.compile("(?:(?:java|yaml|html)?\\s*\\n)?([\\s\\S]*)", Pattern.DOTALL);
+            Matcher cbMatcher = codeBlockPattern.matcher(sectionBody);
+            String content = sectionBody;
+            if (cbMatcher.find()) {
+                content = cbMatcher.group(1).trim();
+            }
+
+            // Map filename to correct project path
+            String filePath = mapToProjectPath(fileName);
+
+            // Detect file type
+            FileType fileType = detectFileType(fileName);
+
+            if (isValidFileContent(content, fileType)) {
+                files.add(new ExtractedFile(filePath, content, fileType));
+                System.out.println("Extracted from architecture doc: " + filePath);
+            }
+        }
+
+        // Also handle "// File: …" or "# File: …" markers
+        Pattern fileMarkerPattern = Pattern.compile(
+                "(?://|#)\\s*File:\\s*([^\\n]+)\\n([\\s\\S]*?)(?=(?://|#)\\s*File:|###|$)",
+                Pattern.DOTALL
+        );
+        Matcher fm = fileMarkerPattern.matcher(artifact);
+        while (fm.find()) {
+            String filePath = fm.group(1).trim();
+            String content = fm.group(2).trim();
+            FileType fileType = detectFileType(filePath);
+
+            if (isValidFileContent(content, fileType)) {
+                files.add(new ExtractedFile(filePath, content, fileType));
+                System.out.println("Extracted from file marker: " + filePath);
+            }
+        }
+
+        return files;
+    }
+
+    private String mapToProjectPath(String fileName) {
+        if (fileName.equalsIgnoreCase("layout.html") || fileName.equalsIgnoreCase("home.html")) {
+            return "src/main/resources/templates/" + fileName;
+        }
+        if (fileName.equalsIgnoreCase("application.yml")) {
+            return "src/main/resources/application.yml";
+        }
+        // fallback: just return fileName
+        return fileName;
+    }
+
+    private FileType detectFileType(String fileName) {
+        if (fileName.endsWith(".html")) return FileType.HTML_TEMPLATE;
+        if (fileName.endsWith(".java")) return FileType.JAVA_CLASS;
+        if (fileName.endsWith(".yml") || fileName.endsWith(".yaml")) return FileType.YAML_CONFIG;
+        return FileType.UNKNOWN;
+    }
+
+    private boolean isValidFileContent(String content, FileType type) {
+        switch (type) {
+            case HTML_TEMPLATE: return isValidHtmlContent(content);
+            case JAVA_CLASS: return isValidJavaContent(content);
+            case YAML_CONFIG: return isValidYamlContent(content);
+            default: return content != null && !content.isBlank();
+        }
+    }
+
 }

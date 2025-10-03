@@ -3,6 +3,7 @@ package com.justjava.devFlow.tasks;
 import com.justjava.devFlow.delegate.WriteGeneratedArtifactsDelegate;
 import com.justjava.devFlow.util.ArtifactFileExtractor;
 import com.justjava.devFlow.util.CodeDetailsExtractor;
+import com.justjava.devFlow.util.SpringBootProjectGitHubService;
 import ognl.ObjectElementsAccessor;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.RuntimeService;
@@ -22,6 +23,8 @@ import java.util.*;
 @RequestMapping("/tasks")
 public class FlowableTaskController {
 
+    @Autowired
+    SpringBootProjectGitHubService springBootProjectGitHubService;
     @Autowired
     CodeDetailsExtractor codeDetailsExtractor;
 
@@ -289,6 +292,14 @@ public class FlowableTaskController {
                     (Integer) processVariables.get("progress"):0;
 
 
+/*            springBootProjectGitHubService.downloadAndPushToGitHub("tech.justjava",
+                    "JDocManager",
+                    "21",
+                    "3.5.5",
+                    "web,data-jpa,thymeleaf,oauth2-client,lombok,devtools,validation,security",
+                    "JustJavaConsultancy",
+                    "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",
+                    "Testing once again",true);*/
             //runtimeService.
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
             taskService.complete(taskId, variables);

@@ -24,9 +24,15 @@ public class WriteGeneratedArtifactsDelegate implements JavaDelegate {
         try {
             System.out.println("🚀 Starting artifact extraction and GitHub push process...");
 
+
             // Retrieve process variables
             String artifact = (String) execution.getVariable("artifact");
             String repositoryName = (String) execution.getVariable("repositoryName");
+
+            if(repositoryName==null){
+                repositoryName = String.valueOf(execution.getVariable("projectName"));
+                execution.setVariable("repositoryName", repositoryName);
+            }
             String githubUsername = (String) execution.getVariable("githubUsername");
             String githubToken = (String) execution.getVariable("githubToken");
             String repositoryDescription = (String) execution.getVariable("repositoryDescription");

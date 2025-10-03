@@ -80,10 +80,16 @@ keycloak:
   client-id: ${KEYCLOAK_CLIENT_ID:softwareEngineer}
   client-secret: ${KEYCLOAK_CLIENT_SECRET:rJuSSQDWuFvATo2pNlAlj0pTVJAbBNPo}
   grant_type: ${KEYCLOAK_GRANT_TYPE:client_credentials}
+
+sendgrid:
+  api-key: ${SENDGRID_API_KEY}
+  from-email: ${SENDGRID_FROM_EMAIL:ooreoluwaibitowa@gmail.com}
+  template-id: ${SENDGRID_TEMPLATE_ID:d-c0d9e670f2eb404b9a0f0f804fb8eff7}
+
 app:
   processKey: "softwareEngineeringProcess"
   github:
-    token: ${APP_GITHUB_TOKEN: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}
+    token: ${APP_GITHUB_TOKEN}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
   base-url: ${APP_BASE_URL:http://localhost:9022}

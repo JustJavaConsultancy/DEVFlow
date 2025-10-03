@@ -3,6 +3,7 @@ package com.justjava.devFlow.projects;
 import com.justjava.devFlow.aau.AuthenticationManager;
 import com.justjava.devFlow.keycloak.KeycloakService;
 import com.justjava.devFlow.util.EmailUtil;
+import com.justjava.devFlow.util.SendGridService;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -40,6 +41,9 @@ public class ProjectsController {
     @Autowired
     HistoryService  historyService;
 
+    @Autowired
+    SendGridService sendGridService;
+
     @Value("${app.base-url}")
     String baseUrl;
 
@@ -49,6 +53,7 @@ public class ProjectsController {
     @GetMapping("/projects")
     public String getProjects(Model model){
 
+        System.out.println(" Calling a projects controller");
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
                 .processDefinitionKey("softwareEngineeringProcess")
@@ -63,7 +68,7 @@ public class ProjectsController {
                     " Here=ID=="+project.getProcessInstanceId()
                     //+" the start time ==="+project.getStartTime()
                     //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
-                    + " the artifact===" +project.getProcessVariables().get("artifact"));
+                    + " the artifact===" +project.getProcessVariables().get("developmentProgress"));
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
@@ -89,10 +94,11 @@ public class ProjectsController {
                 .active()
                 .list();
         projects.forEach(project -> {
-/*            System.out.println(" The Process Instance" +
+            System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
-                    +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables());*/
+                    //+" the start time ==="+project.getStartTime()
+                    //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
+                    + " the artifact===" +project.getProcessVariables().get("developmentProgress"));
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
@@ -263,12 +269,13 @@ public class ProjectsController {
             return "redirect:/"+ "project-details/" + projectId;
         }
 
-        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
-        runtimeService.createProcessInstanceBuilder()
-                .processDefinitionKey("emailing")
-                .businessKey(businessKey)
-                .variables(emailData)
-                .start();
+        sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+//        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
+//        runtimeService.createProcessInstanceBuilder()
+//                .processDefinitionKey("emailing")
+//                .businessKey(businessKey)
+//                .variables(emailData)
+//                .start();
 
         return "redirect:/"+ "project-details/" + projectId;
     }
