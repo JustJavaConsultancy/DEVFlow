@@ -83,7 +83,7 @@ keycloak:
 app:
   processKey: "softwareEngineeringProcess"
   github:
-    token: ${APP_GITHUB_TOKEN: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}
+    token: ${APP_GITHUB_TOKEN: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}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
   base-url: ${APP_BASE_URL:http://localhost:9022}
