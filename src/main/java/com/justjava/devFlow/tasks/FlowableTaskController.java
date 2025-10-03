@@ -7,6 +7,7 @@ import ognl.ObjectElementsAccessor;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.HistoryService;
+import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,7 +180,9 @@ public class FlowableTaskController {
         // Load process variables
         Map<String, Object> processVariables = runtimeService.getVariables(task.getExecutionId(),
                 List.of(task.getId()));
-        //System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
+
+        System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
+    //qweqweqweqwe
         processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);

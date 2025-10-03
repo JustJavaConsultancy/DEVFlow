@@ -214,10 +214,6 @@ public class ProjectsController {
         }else {
             runtimeService.setVariable(task.getProcessInstanceId(), "aiRequirementAnalysis", requirement);
         }
-        // Debug
-        System.out.println("==== Received richtext content for task " + taskId + " ====");
-        System.out.println(requirement);
-        System.out.println("===================================================");
 
         return ResponseEntity.ok("saved");
     }
@@ -237,10 +233,6 @@ public class ProjectsController {
         }else {
             runtimeService.setVariable(task.getProcessInstanceId(), "architecture", requirement);
         }
-        // Debug
-        System.out.println("==== Received richtext content for task " + taskId + " ====");
-        System.out.println(requirement);
-        System.out.println("===================================================");
 
         return ResponseEntity.ok("saved");
     }

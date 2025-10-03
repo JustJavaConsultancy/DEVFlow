@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Add jsPDF library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -309,6 +309,11 @@
             color: #10b981;
             font-size: 0.875rem;
             margin-top: 0.5rem;
+        }
+
+        /* Hidden user stories container */
+        #userStoriesContainer {
+            display: none;
         }
     </style>
 </head>
@@ -654,6 +659,22 @@
                         </button>
                     </div>
 
+                    <!-- User Stories -->
+                    <div th:if="${project.processVariables?.['userStories']}"
+                         class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
+                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-file-pdf text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="hidden" id="userStoriesSpec" th:value="${project.processVariables?.['userStories']}">
+                            <div class="font-medium">User Stories.pdf</div>
+                        </div>
+                        <button onclick="downloadUserStories()"
+                                class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -720,8 +741,13 @@
     </div>
 </div>
 
-<!-- Hidden content div for PDF generation -->
-<div id="documentContent" style="display: none;"></div>
+<!-- Hidden user stories container for PDF generation -->
+<div id="userStoriesContainer" style="display: none;">
+    <div th:if="${project.processVariables?.['userStories']}" th:utext="${project.processVariables?.['userStories']}"></div>
+</div>
+
+<!-- Hidden logo for PDF generation -->
+<img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
 
 <!-- Footer -->
 <footer class="bg-gray-800 text-white py-6 mt-12">
@@ -847,118 +873,324 @@ inviteEmailInput.addEventListener('keypress', function(e) {
 
     });
 
-    // Download functionality
+    // Enhanced PDF export with logo and improved formatting
     async function downloadAsPDF(content, filename) {
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-        const contentDiv = document.getElementById('documentContent');
+        const pdf = new jsPDF({
+            unit: 'pt',
+            format: 'a4',
+            compress: true
+        });
 
-        // Set the content for PDF generation
-        contentDiv.innerHTML = content;
-
-        // Page setup
-        const margin = 50;
+        const margin = 40;
         const pageHeight = pdf.internal.pageSize.getHeight();
         const pageWidth = pdf.internal.pageSize.getWidth();
+        const contentWidth = pageWidth - (2 * margin);
         let y = margin;
-        const defaultLineHeight = 16;
 
-        // Add Logo + Company Name
-        const logoUrl = "/images/justjavaLogo.svg"; // static folder
-        const logo = await loadImage(logoUrl);
-        pdf.addImage(logo, "PNG", margin, 20, 40, 40);
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(18);
-        pdf.setTextColor(33, 33, 33);
-        pdf.text("", margin + 50, 45);
-        y = 90;
+        // Add logo to top right corner
+        const logo = document.getElementById('pdfLogo');
+        if (logo && logo.src) {
+            try {
+                // Create a canvas to handle the logo
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
 
-        function checkPageBreak(extra = 0) {
-            if (y + extra > pageHeight - margin) {
-                pdf.addPage();
-                y = margin;
+                img.onload = function() {
+                    // Set logo dimensions
+                    const logoWidth = 30;
+                    const logoHeight = 50;
+                    const logoX = pageWidth - margin - logoWidth;
+                    const logoY = margin;
+
+                    // Add logo to PDF
+                    pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
+
+                    // Continue with document content after logo is loaded
+                    addDocumentContent();
+                };
+
+                img.onerror = function() {
+                    console.warn('Logo could not be loaded, proceeding without logo');
+                    addDocumentContent();
+                };
+
+                img.src = logo.src;
+
+            } catch (error) {
+                console.warn('Error loading logo:', error);
+                addDocumentContent();
             }
+        } else {
+            addDocumentContent();
         }
 
-        function addText(text, fontSize = 12, bold = false, indent = 0, spacing = defaultLineHeight, extraGap = 0) {
-            pdf.setFont("helvetica", bold ? "bold" : "normal");
-            pdf.setFontSize(fontSize);
-            const lines = pdf.splitTextToSize(text, pageWidth - 2 * margin - indent);
-            if (extraGap > 0) y += extraGap;
-            lines.forEach(line => {
-                checkPageBreak(spacing);
-                pdf.text(line, margin + indent, y);
-                y += spacing;
-            });
-            y += 4;
-        }
+        function addDocumentContent() {
+            // Add document header (moved down to accommodate logo)
+            y += 40; // Extra space for logo
 
-        function processNode(node) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                if (node.textContent.trim()) addText(node.textContent.trim(), 12);
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-                const tag = node.tagName.toLowerCase();
-                if (tag === "h1") addText(node.textContent.trim(), 22, true, 0, 28, 12);
-                else if (tag === "h2") addText(node.textContent.trim(), 18, true, 0, 24, 10);
-                else if (tag === "h3") addText(node.textContent.trim(), 15, true, 0, 20, 8);
-                else if (tag === "p") addText(node.textContent.trim(), 12, false, 0, 18, 6);
-                else if (tag === "li") addText("• " + node.textContent.trim(), 12, false, 15, 18, 2);
-                else if (tag === "ul" || tag === "ol") {
-                    y += 4; node.childNodes.forEach(child => processNode(child)); y += 6;
-                }
-                else if (tag === "table") {
-                    const rows = [];
-                    node.querySelectorAll("tr").forEach(tr => {
-                        const row = [];
-                        tr.querySelectorAll("td, th").forEach(td => row.push(td.innerText.trim()));
-                        rows.push(row);
-                    });
-                    if (rows.length > 0) {
-                        y += 10; checkPageBreak(40);
-                        pdf.autoTable({
-                            head: [rows[0]],
-                            body: rows.slice(1),
-                            startY: y,
-                            margin: { left: margin, right: margin },
-                            styles: { font: "helvetica", fontSize: 10, cellPadding: 5 },
-                            headStyles: { fillColor: [66, 133, 244], textColor: 255, halign: "center" }
-                        });
-                        y = pdf.lastAutoTable.finalY + 20;
+            // Get project name from the page
+            const projectName = document.querySelector('h2.text-2xl')?.textContent || 'Project Document';
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(16);
+            pdf.setTextColor(30, 64, 175); // Blue color
+            pdf.text(filename.replace('.pdf', ''), margin, y);
+
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(12);
+            pdf.setTextColor(100, 100, 100);
+            pdf.text(projectName, margin, y + 20);
+
+            y += 50;
+
+            // Create a temporary div to process the content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+
+            // Function to check if we need a page break
+            function checkPageBreak(heightNeeded = 0) {
+                if (y + heightNeeded > pageHeight - margin) {
+                    pdf.addPage();
+                    y = margin;
+                    // Add logo to new page
+                    const logo = document.getElementById('pdfLogo');
+                    if (logo && logo.src) {
+                        try {
+                            const img = new Image();
+                            img.onload = function() {
+                                const logoWidth = 30;
+                                const logoHeight = 50;
+                                const logoX = pageWidth - margin - logoWidth;
+                                pdf.addImage(img, 'PNG', logoX, margin, logoWidth, logoHeight);
+                            };
+                            img.src = logo.src;
+                        } catch (error) {
+                            console.warn('Could not add logo to new page');
+                        }
                     }
-                } else {
-                    node.childNodes.forEach(child => processNode(child));
+                    return true;
+                }
+                return false;
+            }
+
+            // Function to add text with proper formatting
+            function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
+                pdf.setFont("helvetica", isBold ? "bold" : "normal");
+                pdf.setFontSize(fontSize);
+                pdf.setTextColor(...color);
+
+                const lines = pdf.splitTextToSize(text, contentWidth - indent);
+                const lineSpacing = fontSize * lineHeight;
+
+                // Check if we need a page break before adding this text
+                checkPageBreak(lines.length * lineSpacing);
+
+                lines.forEach((line, index) => {
+                    // Check if we need a page break for each line
+                    if (y + lineSpacing > pageHeight - margin) {
+                        pdf.addPage();
+                        y = margin;
+                    }
+
+                    pdf.text(line, margin + indent, y);
+                    y += lineSpacing;
+                });
+
+                // Add a small gap after the text block
+                y += 5;
+            }
+
+            // Process each node in the content
+            function processNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    if (node.textContent.trim()) {
+                        // Check if parent is bold
+                        const parent = node.parentElement;
+                        const isBold = parent && (
+                                parent.tagName === 'STRONG' ||
+                                parent.tagName === 'B' ||
+                                parent.style.fontWeight === 'bold'
+                        );
+                        addText(node.textContent.trim(), 12, isBold);
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.tagName.toLowerCase();
+                    const textContent = node.textContent.trim();
+
+                    if (!textContent) return;
+
+                    switch(tag) {
+                        case "h1":
+                            addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
+                            y += 10;
+                            break;
+
+                        case "h2":
+                            addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
+                            y += 8;
+                            break;
+
+                        case "h3":
+                            addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
+                            y += 8;
+                            break;
+
+                        case "h4":
+                            addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
+                            y += 6;
+                            break;
+
+                        case "p":
+                            addText(textContent, 12, false);
+                            break;
+
+                        case "li":
+                            const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
+                            const prefix = isOrdered ?
+                                    (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
+                            addText(prefix + textContent, 12, false, 20);
+                            break;
+
+                        case "ul":
+                        case "ol":
+                            y += 8;
+                            Array.from(node.children).forEach(child => processNode(child));
+                            y += 8;
+                            break;
+
+                        case "strong":
+                        case "b":
+                            Array.from(node.childNodes).forEach(child => {
+                                if (child.nodeType === Node.TEXT_NODE) {
+                                    addText(child.textContent.trim(), 12, true);
+                                } else {
+                                    processNode(child);
+                                }
+                            });
+                            break;
+
+                        case "table":
+                            processTable(node);
+                            break;
+
+                        case "div":
+                            if (node.classList.contains('component-box')) {
+                                processComponentBox(node);
+                            } else if (node.classList.contains('architecture-diagram')) {
+                                processArchitectureDiagram(node);
+                            } else {
+                                Array.from(node.childNodes).forEach(processNode);
+                            }
+                            break;
+
+                        default:
+                            Array.from(node.childNodes).forEach(processNode);
+                    }
                 }
             }
+
+            // Process tables with simplified styling
+            function processTable(table) {
+                const rows = [];
+                table.querySelectorAll("tr").forEach(tr => {
+                    const row = [];
+                    tr.querySelectorAll("td, th").forEach(cell => {
+                        row.push({
+                            content: cell.innerText.trim(),
+                            isHeader: cell.tagName === 'TH'
+                        });
+                    });
+                    rows.push(row);
+                });
+
+                if (rows.length > 0) {
+                    checkPageBreak(100); // Reserve space for table
+
+                    const columnWidths = Array(rows[0].length).fill(contentWidth / rows[0].length);
+                    const startY = y;
+
+                    // Draw table header (simplified - no background color)
+                    const headerRow = rows[0];
+                    const rowHeight = 25;
+
+                    // Draw header text (no background)
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(55, 65, 81); // Regular text color instead of white
+
+                    headerRow.forEach((cell, index) => {
+                        const x = margin + (index * columnWidths[index]);
+                        const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
+                        pdf.text(cellContent, x + 5, y + 15);
+                    });
+
+                    y += rowHeight;
+
+                    // Draw table rows (simplified - no alternating colors)
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(55, 65, 81);
+
+                    for (let i = 1; i < rows.length; i++) {
+                        checkPageBreak(rowHeight);
+
+                        const row = rows[i];
+                        row.forEach((cell, index) => {
+                            const x = margin + (index * columnWidths[index]);
+                            const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
+                            pdf.text(cellContent, x + 5, y + 15);
+                        });
+
+                        y += rowHeight;
+                    }
+
+                    y += 20;
+                }
+            }
+
+            // Process component boxes
+            function processComponentBox(box) {
+                checkPageBreak(40);
+
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(11);
+                pdf.setTextColor(55, 65, 81);
+
+                const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
+                pdf.text(text, margin + 10, y + 18);
+
+                y += 40;
+            }
+
+            // Process architecture diagrams
+            function processArchitectureDiagram(diagram) {
+                checkPageBreak(100);
+
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(12);
+                pdf.setTextColor(100, 100, 100);
+                pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
+
+                y += 100;
+            }
+
+            // Process all content nodes
+            Array.from(tempDiv.childNodes).forEach(processNode);
+
+            // Add page numbers to footer
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(10);
+                pdf.setTextColor(150);
+                pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
+            }
+
+            // Save the PDF
+            pdf.save(filename);
         }
-
-        // Traverse content
-        contentDiv.childNodes.forEach(node => processNode(node));
-
-        // Footer with page numbers
-        const pageCount = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            pdf.setPage(i);
-            pdf.setFontSize(10);
-            pdf.setTextColor(150);
-            pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
-        }
-
-        pdf.save(filename);
-    }
-
-    function loadImage(url) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = img.width; canvas.height = img.height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
-                resolve(canvas.toDataURL("image/png"));
-            };
-            img.src = url;
-        });
     }
 
     // Function to download requirement specification
@@ -971,6 +1203,13 @@ inviteEmailInput.addEventListener('keypress', function(e) {
     function downloadArchitectureSpec() {
         const content = document.getElementById('architectureSpec').value;
         downloadAsPDF(content, "solution-architecture.pdf");
+    }
+
+    // Function to download user stories
+    function downloadUserStories() {
+        const userStoriesContainer = document.getElementById('userStoriesContainer');
+        const content = userStoriesContainer.innerHTML;
+        downloadAsPDF(content, "user-stories.pdf");
     }
 </script>
 </body>
