@@ -3,6 +3,7 @@ package com.justjava.devFlow.projects;
 import com.justjava.devFlow.aau.AuthenticationManager;
 import com.justjava.devFlow.keycloak.KeycloakService;
 import com.justjava.devFlow.util.EmailUtil;
+import com.justjava.devFlow.util.SendGridService;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -39,6 +40,9 @@ public class ProjectsController {
 
     @Autowired
     HistoryService  historyService;
+
+    @Autowired
+    SendGridService sendGridService;
 
     @Value("${app.base-url}")
     String baseUrl;
@@ -265,12 +269,13 @@ public class ProjectsController {
             return "redirect:/"+ "project-details/" + projectId;
         }
 
-        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
-        runtimeService.createProcessInstanceBuilder()
-                .processDefinitionKey("emailing")
-                .businessKey(businessKey)
-                .variables(emailData)
-                .start();
+        sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+//        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
+//        runtimeService.createProcessInstanceBuilder()
+//                .processDefinitionKey("emailing")
+//                .businessKey(businessKey)
+//                .variables(emailData)
+//                .start();
 
         return "redirect:/"+ "project-details/" + projectId;
     }
