@@ -4,6 +4,7 @@ import com.justjava.devFlow.aau.AuthenticationManager;
 import com.justjava.devFlow.keycloak.KeycloakService;
 import com.justjava.devFlow.util.EmailUtil;
 import com.justjava.devFlow.util.SendGridService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -244,7 +245,9 @@ public class ProjectsController {
     }
 
     @PostMapping("/project/invite")
-    public String inviteTeamMember(@RequestParam Map<String,Object>  inviteDetails){
+    public String inviteTeamMember(@RequestParam Map<String,Object>  inviteDetails, HttpServletRequest request){
+        // Get the page the request came from
+        String referer = request.getHeader("Referer");
         String businessKey= String.valueOf(authenticationManager.get("sub")) ;
         String email = (String) inviteDetails.get("email");
         String password = "1234";
@@ -266,9 +269,8 @@ public class ProjectsController {
             keycloakService.createUser(params);
             subject = "Invite Message from JustJava";
         } else{
-            return "redirect:/"+ "project-details/" + projectId;
+            return "redirect:" + (referer != null ? referer : "/");
         }
-
         sendGridService.sendTemplateEmail(email, subject, password, webUrl);
 //        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
 //        runtimeService.createProcessInstanceBuilder()
@@ -276,7 +278,6 @@ public class ProjectsController {
 //                .businessKey(businessKey)
 //                .variables(emailData)
 //                .start();
-
-        return "redirect:/"+ "project-details/" + projectId;
+        return "redirect:" + (referer != null ? referer : "/");
     }
 }
