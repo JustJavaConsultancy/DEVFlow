@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"     
+<html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
@@ -96,6 +96,28 @@
       color: #4b5563;
     }
 
+    /* Table styling */
+    .ql-editor table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+    }
+
+    .ql-editor table td,
+    .ql-editor table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .ql-editor table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    .ql-editor table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
     /* Component box for architecture diagrams */
     .component-box {
       display: inline-block;
@@ -177,18 +199,33 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <script>
-    // Initialize Quill
+    // Initialize Quill with table module
     var quill = new Quill('#editor', {
       theme: 'snow',
       modules: {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['link', 'image', 'code-block'],
-          [{ color: [] }, { background: [] }],
-          ['clean']
-        ]
+        toolbar: {
+          container: [
+            [{ header: [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image', 'code-block'],
+            [{ color: [] }, { background: [] }],
+            // Adding table functionality
+            [{ 'table': 'insert-table' }, { 'table': 'delete-table' }, { 'table': 'insert-row-above' }, { 'table': 'insert-row-below' }, { 'table': 'delete-row' }, { 'table': 'insert-column-left' }, { 'table': 'insert-column-right' }, { 'table': 'delete-column' }],
+            ['clean']
+          ],
+          handlers: {
+            // Custom table handler to insert a basic table
+            'table': function(value) {
+              if (value === 'insert-table') {
+                const table = quill.getModule('table');
+                table.insertTable(3, 3); // Insert a 3x3 table by default
+              }
+            }
+          }
+        },
+        // Enable table module
+        table: true
       }
     });
 
