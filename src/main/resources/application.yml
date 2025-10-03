@@ -71,7 +71,7 @@ flowable:
       host: smtp.gmail.com
       port: 587
       username: ${MAIL_USERNAME:oguntolavictor181@gmail.com}
-      password: ${MAIL_APP_PASSWORD:rrvgkoncobwpwudg}   # App password, not account password
+      password: ${MAIL_APP_PASSWORD}   # App password, not account password
       use-tls: true
 springdoc:
   pathsToMatch: /api/**
