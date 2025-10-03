@@ -310,11 +310,6 @@
             font-size: 0.875rem;
             margin-top: 0.5rem;
         }
-
-        /* Hidden user stories container */
-        #userStoriesContainer {
-            display: none;
-        }
     </style>
 </head>
 <body class="text-gray-800 grid-container">
@@ -658,21 +653,42 @@
                             <i class="fas fa-download"></i>
                         </button>
                     </div>
-
                     <!-- User Stories -->
-                    <div th:if="${project.processVariables?.['userStories']}"
+                    <div th:if="${project.processVariables['stories'] != null
+                    and project.processVariables['stories']['user_stories'] != null
+                    and !#lists.isEmpty(project.processVariables['stories']['user_stories'])}"
                          class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
                         <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
                             <i class="fas fa-file-pdf text-purple-600"></i>
                         </div>
                         <div class="flex-1">
-                            <input type="hidden" id="userStoriesSpec" th:value="${project.processVariables?.['userStories']}">
+                            <div style="display:none"
+                                 th:each="story, iterStat : *{project.processVariables['stories']['user_stories']}"
+                                 class="user-story-card priority-high bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+                            </div>
+                            <div class="flex justify-between items-start mb-3">
+                                    <span th:if="${story.priority == 'Must have'}" class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">High Priority</span>
+                                    <span th:if="${story.priority == 'Should have'}" class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Medium Priority</span>
+                                    <span th:if="${story.priority == 'Could have'}" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Low Priority</span>
+                                    <span th:if="${story.priority == 'Won’t have'}"
+                                          class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">Not Planned</span>
+                                    <span th:text="${story.id}" class="text-xs text-gray-500">US-101</span>
+                                </div>
+                                <p th:text="${story.story}" class="text-gray-600 text-sm mb-4">As a new visitor, I want to create an account so that I can make purchases and save my preferences.</p>
+
+                                <div class="mb-4">
+                                    <h4 class="font-medium text-sm text-blue-700 mb-1">Acceptance Criteria:</h4>
+                                    <ul class="text-xs text-gray-600 list-disc pl-5 space-y-1">
+                                        <li th:each="criteria : ${story.acceptance_criteria}" th:text="${criteria}"></li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="font-medium">User Stories.pdf</div>
-                        </div>
                         <button onclick="downloadUserStories()"
                                 class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
                             <i class="fas fa-download"></i>
                         </button>
+                        </div>
                     </div>
 
                 </div>
@@ -741,11 +757,6 @@
     </div>
 </div>
 
-<!-- Hidden user stories container for PDF generation -->
-<div id="userStoriesContainer" style="display: none;">
-    <div th:if="${project.processVariables?.['userStories']}" th:utext="${project.processVariables?.['userStories']}"></div>
-</div>
-
 <!-- Hidden logo for PDF generation -->
 <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
 
@@ -768,18 +779,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     // Email validation and invite functionality
-const inviteEmailInput = document.getElementById('inviteEmail');
-const sendInviteBtn = document.getElementById('sendInviteBtn');
-const emailError = document.getElementById('emailError');
-const emailSuccess = document.getElementById('emailSuccess');
-const validationIcon = document.getElementById('validationIcon');
+  const inviteEmailInput = document.getElementById('inviteEmail');
+  const sendInviteBtn = document.getElementById('sendInviteBtn');
+  const emailError = document.getElementById('emailError');
+  const emailSuccess = document.getElementById('emailSuccess');
+  const validationIcon = document.getElementById('validationIcon');
 
-function validateEmail(email) {
+  function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-}
+  }
 
-function showError() {
+  function showError() {
     emailError.classList.remove('hidden');
     emailSuccess.classList.add('hidden');
     inviteEmailInput.classList.add('input-error', 'shake');
@@ -792,9 +803,9 @@ function showError() {
     setTimeout(() => {
         inviteEmailInput.classList.remove('shake');
     }, 500);
-}
+  }
 
-function showSuccess() {
+  function showSuccess() {
     emailError.classList.add('hidden');
     emailSuccess.classList.remove('hidden');
     inviteEmailInput.classList.remove('input-error');
@@ -802,9 +813,9 @@ function showSuccess() {
     validationIcon.classList.remove('hidden');
     validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
     sendInviteBtn.disabled = false;
-}
+  }
 
-function validateInput() {
+  function validateInput() {
     const email = inviteEmailInput.value.trim();
 
     if (email === '') {
@@ -830,17 +841,17 @@ function validateInput() {
     validationIcon.classList.remove('hidden');
     validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
     sendInviteBtn.disabled = false;
-}
+  }
 
-// Validate on input
-inviteEmailInput.addEventListener('input', validateInput);
+  // Validate on input
+  inviteEmailInput.addEventListener('input', validateInput);
 
-// Also validate on Enter key press
-inviteEmailInput.addEventListener('keypress', function(e) {
+  // Also validate on Enter key press
+  inviteEmailInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         sendInviteBtn.click();
     }
-});
+  });
 
         // Set current date
         const currentDate = new Date();
@@ -1203,13 +1214,6 @@ inviteEmailInput.addEventListener('keypress', function(e) {
     function downloadArchitectureSpec() {
         const content = document.getElementById('architectureSpec').value;
         downloadAsPDF(content, "solution-architecture.pdf");
-    }
-
-    // Function to download user stories
-    function downloadUserStories() {
-        const userStoriesContainer = document.getElementById('userStoriesContainer');
-        const content = userStoriesContainer.innerHTML;
-        downloadAsPDF(content, "user-stories.pdf");
     }
 </script>
 </body>
