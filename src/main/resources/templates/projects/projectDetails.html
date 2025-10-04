@@ -11,118 +11,139 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .modal {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    transform: scale(0.9);
-    opacity: 0;
-    visibility: hidden;
-}
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: scale(0.9);
+      opacity: 0;
+      visibility: hidden;
+    }
 
-.modal.active {
-    transform: scale(1);
-    opacity: 1;
-    visibility: visible;
-}
+    .modal.active {
+      transform: scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
 
-.input-focus:focus {
-    border-color: #780aff;
-    box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
-}
+    .input-focus:focus {
+      border-color: #780aff;
+      box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
+    }
 
-.requirements-container {
-    max-height: 120px;
-    overflow: hidden;
-    transition: max-height 0.5s ease;
-}
+    .requirements-container {
+      max-height: 120px;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
 
-.requirements-container.expanded {
-    max-height: 1000px;
-}
+    .requirements-container.expanded {
+      max-height: 1000px;
+    }
 
-.show-more-btn {
-    color: #780aff;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
+    .show-more-btn {
+      color: #780aff;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
 
-.show-more-btn:hover {
-    text-decoration: underline;
-}
+    .show-more-btn:hover {
+      text-decoration: underline;
+    }
+
     .invite-section {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(229, 231, 235, 0.8);
-            transition: all 0.3s ease;
-        }
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+      transition: all 0.3s ease;
+    }
 
-        .invite-section:hover {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
+    .invite-section:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
 
-        .invite-input {
-            background: rgba(249, 250, 251, 0.8);
-            border: 1px solid rgba(209, 213, 219, 0.6);
-            transition: all 0.3s ease;
-            width: 100%;
-        }
+    .invite-input {
+      background: rgba(249, 250, 251, 0.8);
+      border: 1px solid rgba(209, 213, 219, 0.6);
+      transition: all 0.3s ease;
+      width: 100%;
+    }
 
-        .invite-input:focus {
-            background: white;
-            border-color: rgba(79, 70, 229, 0.4);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
+    .invite-input:focus {
+      background: white;
+      border-color: rgba(79, 70, 229, 0.4);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
 
-        .invite-btn {
-            background: rgba(79, 70, 229, 0.9);
-            color: white;
-            transition: all 0.3s ease;
-        }
+    .invite-btn {
+      background: rgba(79, 70, 229, 0.9);
+      color: white;
+      transition: all 0.3s ease;
+    }
 
-        .invite-btn:hover {
-            background: rgba(79, 70, 229, 1);
-            transform: translateY(-1px);
-        }
+    .invite-btn:hover {
+      background: rgba(79, 70, 229, 1);
+      transform: translateY(-1px);
+    }
 
-        .invite-btn:disabled {
-            background: rgba(156, 163, 175, 0.5);
-            cursor: not-allowed;
-            transform: none;
-        }
+    .invite-btn:disabled {
+      background: rgba(156, 163, 175, 0.5);
+      cursor: not-allowed;
+      transform: none;
+    }
 
-        .validation-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.875rem;
-        }
+    .validation-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.875rem;
+    }
 
-        .input-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .input-error {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+    }
 
-        .input-valid {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
+    .input-error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
 
-        .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
+    .input-valid {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
 
-        .success-message {
-            color: #10b981;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+
+    .success-message {
+      color: #10b981;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Validation styles */
+    .input-valid { border-color: #10b981 !important; }
+    .input-invalid { border-color: #ef4444 !important; }
+    .validation-message { font-size: 0.75rem; margin-top: 0.25rem; display: flex; align-items: center; }
+    .validation-error { color: #ef4444; }
+    .validation-success { color: #10b981; }
+    .validation-icon { margin-right: 0.25rem; }
+
+    /* Animation for shake effect */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
   </style>
 </head>
 <body>
@@ -142,8 +163,8 @@
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl md:text-3xl font-bold text-blue-800" th:text="${project.processVariables['projectName']}">E-Commerce Platform</h1>
         <span th:if="${project.processVariables['progress'] < 4}" class="bg-yellow-100 text-yellow-700 text-xs px-2 md:px-3 py-1 rounded-full">Documentation</span>
-<span th:if="${project.processVariables['progress'] == 4}" class="bg-blue-100 text-blue-700 text-xs px-2 md:px-3 py-1 rounded-full">Development</span>
-<span th:if="${project.processVariables['progress'] > 4}" class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Testing</span>
+        <span th:if="${project.processVariables['progress'] == 4}" class="bg-blue-100 text-blue-700 text-xs px-2 md:px-3 py-1 rounded-full">Development</span>
+        <span th:if="${project.processVariables['progress'] > 4}" class="bg-green-100 text-green-700 text-xs px-2 md:px-3 py-1 rounded-full">Testing</span>
       </div>
 
       <p class="text-gray-600 mb-6" th:text="${project.processVariables['projectDescription']}">
@@ -221,10 +242,10 @@
       <div class="flex items-center mb-4">
         <!-- Profile Circle with Client Initial -->
         <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-    <span th:text="${#strings.substring(project.processVariables['clientName'],0,1)}"
-          class="text-blue-800 font-bold text-2xl">
-      S
-    </span>
+          <span th:text="${#strings.substring(project.processVariables['clientName'],0,1)}"
+                class="text-blue-800 font-bold text-2xl">
+            S
+          </span>
         </div>
 
         <!-- Client Name and Company -->
@@ -273,8 +294,8 @@
       <div class="mt-6 pt-4 border-t border-gray-200">
         <h3 class="font-medium text-blue-800 mb-2">Client Requirements</h3>
         <div id="requirements-container" class="requirements-container">
-          <ul class="list-disc pl-5 text-sm text-gray-600 space-y-1">
-
+          <ul class="list-disc pl-5 text-sm text-gray-600 space-y-1" id="requirements-list">
+            <!-- Requirements will be populated by JavaScript -->
           </ul>
         </div>
         <div id="show-more-btn" class="show-more-btn mt-2">Show more</div>
@@ -302,6 +323,49 @@
 
     </div>
   </div>
+
+  <!-- Project URL Section -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 md:p-6 card-hover shadow-sm mb-8">
+    <h2 class="text-xl font-bold text-blue-800 mb-4">Project URL</h2>
+
+    <p class="text-gray-600 mb-6">
+      Add the live URL for your project to make it accessible to team members and clients.
+      This will be displayed on the project dashboard and shared with stakeholders.
+    </p>
+
+    <form th:action="@{~/project/save-url}" method="post" id="url-form">
+      <div class="w-full">
+        <label for="project-url" class="block text-sm font-medium text-gray-700 mb-2">
+          Project URL
+        </label>
+        <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-link text-gray-400"></i>
+            </span>
+            <input type="url"
+                   id="project-url"
+                   name="projectUrl"
+                   th:value="${project.processVariables['projectURL'] ?: ''}"
+                   placeholder="https://www.example.com"
+                   class="pl-10 w-full border border-gray-300 rounded-lg py-3 px-4 input-focus focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+          </div>
+          <input type="hidden" name="projectId" th:value="${projectId}">
+          <button id="save-url-btn"
+                  type="submit"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center whitespace-nowrap disabled:bg-blue-400 disabled:cursor-not-allowed"
+                  disabled>
+            <i class="fas fa-save mr-2"></i> Save URL
+          </button>
+        </div>
+        <div id="url-validation-message" class="validation-message mt-2"></div>
+        <p class="text-xs text-gray-500 mt-2">
+          Enter the full URL including <code>https://</code>
+        </p>
+      </div>
+    </form>
+  </div>
+
   <!-- Invite Section - Positioned outside the grid -->
   <div class="invite-section rounded-xl p-4 mb-8 card-hover">
     <div class="flex flex-col md:flex-row items-center justify-between">
@@ -314,7 +378,7 @@
           <p class="text-sm text-gray-600">Share this project with other stakeholders</p>
         </div>
       </div>
-      <form class="flex flex-col sm:flex-row w-full md:w-2/3" th:action="@{~/project/invite}"
+      <form id="inviteForm" class="flex flex-col sm:flex-row w-full md:w-2/3" th:action="@{~/project/invite}"
             th:object="${formData}" method="post">
         <div class="flex-1 mb-2 sm:mb-0 sm:mr-2">
           <div class="input-wrapper">
@@ -350,6 +414,7 @@
       <i class="fas fa-trash mr-2"></i> Delete Project
     </button>
   </div>
+
   <!-- Delete Confirmation Modal -->
   <div id="delete-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl p-6 md:p-8 max-w-md w-full mx-4">
@@ -368,159 +433,202 @@
         <button id="cancel-delete" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg">
           Cancel
         </button>
-        <button id="confirm-delete" class="bg-red-600 text-white px-4 py-2 rounded-lg">
-          Delete Project
-        </button>
+        <form id="delete-project-form" th:action="@{~/project/delete}" method="post">
+          <input type="hidden" name="projectId" th:value="${projectId}">
+          <button id="confirm-delete" type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg">
+            Delete Project
+          </button>
+        </form>
       </div>
+    </div>
   </div>
 
   <script>
-    // Simple animation for progress bars
     document.addEventListener('DOMContentLoaded', function() {
-    // Email validation and invite functionality
-const inviteEmailInput = document.getElementById('inviteEmail');
-const sendInviteBtn = document.getElementById('sendInviteBtn');
-const emailError = document.getElementById('emailError');
-const emailSuccess = document.getElementById('emailSuccess');
-const validationIcon = document.getElementById('validationIcon');
+      // Email validation and invite functionality
+      const inviteEmailInput = document.getElementById('inviteEmail');
+      const sendInviteBtn = document.getElementById('sendInviteBtn');
+      const emailError = document.getElementById('emailError');
+      const emailSuccess = document.getElementById('emailSuccess');
+      const validationIcon = document.getElementById('validationIcon');
 
-function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+      // URL validation elements
+      const urlInput = document.getElementById('project-url');
+      const saveButton = document.getElementById('save-url-btn');
+      const validationMessage = document.getElementById('url-validation-message');
+      const urlForm = document.getElementById('url-form');
 
-function showError() {
-    emailError.classList.remove('hidden');
-    emailSuccess.classList.add('hidden');
-    inviteEmailInput.classList.add('input-error', 'shake');
-    inviteEmailInput.classList.remove('input-valid');
-    validationIcon.classList.remove('hidden');
-    validationIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i>';
-    sendInviteBtn.disabled = true;
 
-    // Remove shake animation after it completes
-    setTimeout(() => {
-        inviteEmailInput.classList.remove('shake');
-    }, 500);
-}
+      // URL validation function
+      function isValidURL(string) {
+        try {
+          const url = new URL(string);
+          // Check if protocol is http or https
+          return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch (_) {
+          return false;
+        }
+      }
 
-function showSuccess() {
-    emailError.classList.add('hidden');
-    emailSuccess.classList.remove('hidden');
-    inviteEmailInput.classList.remove('input-error');
-    inviteEmailInput.classList.add('input-valid');
-    validationIcon.classList.remove('hidden');
-    validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
-    sendInviteBtn.disabled = false;
-}
+      // Validate URL in real-time
+      urlInput.addEventListener('input', function() {
+        const url = urlInput.value.trim();
 
-function validateInput() {
-    const email = inviteEmailInput.value.trim();
+        // Clear previous validation state
+        urlInput.classList.remove('input-valid', 'input-invalid');
+        validationMessage.textContent = '';
+        validationMessage.className = 'validation-message';
 
-    if (email === '') {
-        // Empty input
-        emailError.classList.add('hidden');
-        inviteEmailInput.classList.remove('input-error', 'input-valid');
-        validationIcon.classList.add('hidden');
+        // If empty, show no validation and disable button
+        if (!url) {
+          saveButton.disabled = true;
+          return;
+        }
+
+        // Validate URL
+        if (isValidURL(url)) {
+          // Valid URL
+          urlInput.classList.add('input-valid');
+          validationMessage.innerHTML = '<i class="fas fa-check-circle validation-icon"></i> Valid URL format';
+          validationMessage.classList.add('validation-success');
+          saveButton.disabled = false;
+        } else {
+          // Invalid URL
+          urlInput.classList.add('input-invalid');
+          validationMessage.innerHTML = '<i class="fas fa-exclamation-circle validation-icon"></i> Please enter a valid URL (e.g., https://example.com)';
+          validationMessage.classList.add('validation-error');
+          saveButton.disabled = true;
+        }
+      });
+
+      // Initialize URL validation if there's already a value
+      if (urlInput.value.trim()) {
+        urlInput.dispatchEvent(new Event('input'));
+      }
+
+      // Email validation functions
+      function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+document.getElementById('inviteForm').addEventListener('submit', function(e) {
+            sendInviteBtn.disabled = true;
+            sendInviteBtn.classList.add('btn-disabled');
+            sendInviteBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Inviting...';
+        });
+
+      function showError() {
+        emailError.classList.remove('hidden');
+        emailSuccess.classList.add('hidden');
+        inviteEmailInput.classList.add('input-error', 'shake');
+        inviteEmailInput.classList.remove('input-valid');
+        validationIcon.classList.remove('hidden');
+        validationIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i>';
         sendInviteBtn.disabled = true;
-        return;
-    }
 
-    if (!validateEmail(email)) {
-        // Invalid email
-        showError();
-        return;
-    }
+        // Remove shake animation after it completes
+        setTimeout(() => {
+          inviteEmailInput.classList.remove('shake');
+        }, 500);
+      }
 
-    // Valid email
-    emailError.classList.add('hidden');
-    emailSuccess.classList.add('hidden');
-    inviteEmailInput.classList.remove('input-error');
-    inviteEmailInput.classList.add('input-valid');
-    validationIcon.classList.remove('hidden');
-    validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
-    sendInviteBtn.disabled = false;
-}
+      function showSuccess() {
+        emailError.classList.add('hidden');
+        emailSuccess.classList.remove('hidden');
+        inviteEmailInput.classList.remove('input-error');
+        inviteEmailInput.classList.add('input-valid');
+        validationIcon.classList.remove('hidden');
+        validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+        sendInviteBtn.disabled = false;
+      }
 
-// Validate on input
-inviteEmailInput.addEventListener('input', validateInput);
+      function validateInput() {
+        const email = inviteEmailInput.value.trim();
 
-// Also validate on Enter key press
-// inviteEmailInput.addEventListener('keypress', function(e) {
-//    if (e.key === 'Enter') {
-//        sendInviteBtn.click();
-//    }
-// });
+        if (email === '') {
+          // Empty input
+          emailError.classList.add('hidden');
+          inviteEmailInput.classList.remove('input-error', 'input-valid');
+          validationIcon.classList.add('hidden');
+          sendInviteBtn.disabled = true;
+          return;
+        }
 
-        const progressBars = document.querySelectorAll('.progress-transition');
+        if (!validateEmail(email)) {
+          // Invalid email
+          showError();
+          return;
+        }
 
-        // Reset widths for animation
-        progressBars.forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0';
+        // Valid email
+        emailError.classList.add('hidden');
+        emailSuccess.classList.add('hidden');
+        inviteEmailInput.classList.remove('input-error');
+        inviteEmailInput.classList.add('input-valid');
+        validationIcon.classList.remove('hidden');
+        validationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+        sendInviteBtn.disabled = false;
+      }
 
-            // Animate after a short delay
-            setTimeout(() => {
-                bar.style.width = width;
-            }, 500);
+      // Validate on input
+      inviteEmailInput.addEventListener('input', validateInput);
+
+      // Progress bars animation
+      const progressBars = document.querySelectorAll('.progress-transition');
+
+      // Reset widths for animation
+      progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+
+        // Animate after a short delay
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 500);
+      });
+
+      // Add hover effect to cards
+      const cards = document.querySelectorAll('.card-hover');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.classList.add('shadow-lg');
         });
 
-        // Add hover effect to cards
-        const cards = document.querySelectorAll('.card-hover');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.classList.add('shadow-lg');
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.classList.remove('shadow-lg');
-            });
+        card.addEventListener('mouseleave', () => {
+          card.classList.remove('shadow-lg');
         });
+      });
 
-        // Expandable requirements functionality
-        const requirementsContainer = document.getElementById('requirements-container');
-        const showMoreBtn = document.getElementById('show-more-btn');
 
-        showMoreBtn.addEventListener('click', function() {
-            requirementsContainer.classList.toggle('expanded');
+      // Delete confirmation modal functionality
+      const deleteProjectBtn = document.getElementById('delete-project-btn');
+      const deleteModal = document.getElementById('delete-modal');
+      const cancelDelete = document.getElementById('cancel-delete');
+      const confirmDelete = document.getElementById('confirm-delete');
+      const deleteProjectForm = document.getElementById('delete-project-form');
 
-            if (requirementsContainer.classList.contains('expanded')) {
-                showMoreBtn.textContent = 'Show less';
-            } else {
-                showMoreBtn.textContent = 'Show more';
-            }
-        });
+      deleteProjectBtn.addEventListener('click', function() {
+        deleteModal.classList.add('active');
+      });
 
-        // Delete confirmation modal functionality
-        const deleteProjectBtn = document.getElementById('delete-project-btn');
-        const deleteModal = document.getElementById('delete-modal');
-        const cancelDelete = document.getElementById('cancel-delete');
-        const confirmDelete = document.getElementById('confirm-delete');
-        const deleteProjectForm = document.getElementById('delete-project-form');
+      cancelDelete.addEventListener('click', function() {
+        deleteModal.classList.remove('active');
+      });
 
-        deleteProjectBtn.addEventListener('click', function() {
-            deleteModal.classList.add('active');
-        });
+      // Disable submit button on form submission
+      deleteProjectForm.addEventListener('submit', function(e) {
+        confirmDelete.disabled = true;
+        confirmDelete.textContent = 'Deleting...';
+      });
 
-        cancelDelete.addEventListener('click', function() {
-            deleteModal.classList.remove('active');
-        });
-
-        // Disable submit button on form submission
-        deleteProjectForm.addEventListener('submit', function(e) {
-            confirmDelete.disabled = true;
-            confirmDelete.textContent = 'Deleting...';
-        });
-
-        // Close modal when clicking outside
-        deleteModal.addEventListener('click', function(e) {
-            if (e.target === deleteModal) {
-                deleteModal.classList.remove('active');
-            }
-        });
+      // Close modal when clicking outside
+      deleteModal.addEventListener('click', function(e) {
+        if (e.target === deleteModal) {
+          deleteModal.classList.remove('active');
+        }
+      });
     });
   </script>
-</div>
 </div>
 </body>
 </html>
