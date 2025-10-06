@@ -41,7 +41,7 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
 
 
         // ✅ Get GitHub configuration from process variables
-        execution.setVariable("githubUsername", "JustJavaConsultancy");
+        execution.setVariable("githubUsername", githubUsername);
         execution.setVariable("githubToken",githubToken);
         execution.setVariable("repositoryDescription", "Spring Boot project: " + execution.getVariable("projectDescription"));
         execution.setVariable("isPrivateRepo", true);
