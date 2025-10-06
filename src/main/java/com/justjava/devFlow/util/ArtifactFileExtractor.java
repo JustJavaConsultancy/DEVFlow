@@ -3,7 +3,6 @@ package com.justjava.devFlow.util;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +18,10 @@ public class ArtifactFileExtractor {
     public ArtifactFileExtractor(SpringBootProjectGitHubService projectGitHubService) {
         this.projectGitHubService = projectGitHubService;
     }
+
+    // ======================================================
+    // 📦 Model Classes
+    // ======================================================
 
     public static class ExtractedFile {
         private final String filePath;
@@ -43,34 +46,31 @@ public class ArtifactFileExtractor {
         UNKNOWN
     }
 
-    // ==============================================================
-    // ✅ NEW LOGIC STARTS HERE — Replaces old multi-pattern chaos
-    // ==============================================================
+    // ======================================================
+    // 🚀 Enhanced Unified Extraction Logic
+    // ======================================================
 
     /**
-     * Extracts files from artifact and pushes them to GitHub repository
+     * Extracts files from artifact text and pushes them to GitHub.
      */
-    public GitHubPushResult extractAndPushToGitHub(String artifact, String repositoryName,
-                                                   String githubUsername, String githubToken,
-                                                   String repositoryDescription, boolean isPrivateRepo)
+    public GitHubPushResult extractAndPushToGitHub(
+            String artifact, String repositoryName, String githubUsername,
+            String githubToken, String repositoryDescription, boolean isPrivateRepo)
             throws FileExtractionException, GitHubPushException {
 
         try {
-            System.out.println("Starting file extraction from artifact and pushing to GitHub...");
+            System.out.println("🚀 Starting extraction + GitHub push process...");
 
-            // ✅ Unified extraction logic (new)
             List<ExtractedFile> extractedFiles = extractFilesFromUnifiedFormat(artifact);
 
             if (extractedFiles.isEmpty()) {
                 throw new FileExtractionException("No files were extracted from the artifact");
             }
 
-            System.out.println("Extracted " + extractedFiles.size() + " files, now pushing to GitHub...");
+            System.out.println("✅ Extracted " + extractedFiles.size() + " files. Now pushing to GitHub...");
 
-            // Convert ExtractedFile to GitHubFile
             List<SpringBootProjectGitHubService.GitHubFile> githubFiles = convertToGitHubFiles(extractedFiles);
 
-            // Push to GitHub via service
             SpringBootProjectGitHubService.GitHubRepositoryResult result =
                     projectGitHubService.pushFilesToGitHubRepository(
                             githubFiles, repositoryName, repositoryDescription, isPrivateRepo,
@@ -92,68 +92,81 @@ public class ArtifactFileExtractor {
     }
 
     /**
-     * ✅ Simplified, unified extraction logic based on **File Path:** patterns
-     * Works with markdown / AI-generated content.
+     * Enhanced extraction logic supporting:
+     * - **File Path:** `path`
+     * - <!-- src/... -->
+     * - # src/...
+     * - Inline `src/main/...`
      */
     public List<ExtractedFile> extractFilesFromUnifiedFormat(String artifact) {
         List<ExtractedFile> extractedFiles = new ArrayList<>();
+        System.out.println("🔍 Scanning artifact for file markers...");
 
-        System.out.println("Starting unified extraction of files using explicit file path markers...");
+        // Matches various path formats
+        Pattern pathPattern = Pattern.compile(
+                "(?:\\*\\*File Path:\\*\\*\\s*`([^`]+)`|" +    // **File Path:** `...`
+                        "<!--\\s*([\\w./\\-]+)\\s*-->|" +             // <!-- src/... -->
+                        "#\\s*([\\w./\\-]+)|" +                       // # src/...
+                        "^(src/[\\w./\\-]+))",                        // Plain src/...
+                Pattern.MULTILINE
+        );
 
-        Pattern filePathPattern = Pattern.compile("\\*\\*File Path:\\*\\*\\s*`([^`]+)`", Pattern.MULTILINE);
-        Matcher matcher = filePathPattern.matcher(artifact);
-
-        List<Integer> pathIndices = new ArrayList<>();
-        List<String> paths = new ArrayList<>();
+        Matcher matcher = pathPattern.matcher(artifact);
+        List<FileMarker> markers = new ArrayList<>();
 
         while (matcher.find()) {
-            paths.add(matcher.group(1).trim());
-            pathIndices.add(matcher.start());
-        }
-
-        for (int i = 0; i < paths.size(); i++) {
-            String currentPath = paths.get(i);
-            int startIndex = pathIndices.get(i);
-            int endIndex = (i + 1 < pathIndices.size()) ? pathIndices.get(i + 1) : artifact.length();
-            String fileSection = artifact.substring(startIndex, endIndex);
-
-            String content = extractFileContent(fileSection);
-            FileType fileType = determineFileType(currentPath);
-
-            if (content != null && !content.isEmpty()) {
-                extractedFiles.add(new ExtractedFile(currentPath, content, fileType));
-                System.out.println("✅ Extracted: " + currentPath + " (" + fileType + ")");
+            String path = Optional.ofNullable(matcher.group(1))
+                    .orElse(Optional.ofNullable(matcher.group(2))
+                            .orElse(Optional.ofNullable(matcher.group(3))
+                                    .orElse(matcher.group(4))));
+            if (path != null) {
+                markers.add(new FileMarker(path.trim(), matcher.start()));
             }
         }
 
-        System.out.println("Total extracted files: " + extractedFiles.size());
+        for (int i = 0; i < markers.size(); i++) {
+            FileMarker current = markers.get(i);
+            int start = current.index;
+            int end = (i + 1 < markers.size()) ? markers.get(i + 1).index : artifact.length();
+
+            String section = artifact.substring(start, end);
+            String content = extractFileContent(section);
+            FileType type = determineFileType(current.path);
+
+            if (content != null && !content.isBlank()) {
+                extractedFiles.add(new ExtractedFile(current.path, content, type));
+                System.out.println("✅ Extracted: " + current.path + " (" + type + ")");
+            }
+        }
+
+        System.out.println("📦 Total files extracted: " + extractedFiles.size());
         return extractedFiles;
     }
 
+    private record FileMarker(String path, int index) {}
+
     /**
-     * Extracts the actual file content between code fences or text blocks.
+     * Extract file content (between code fences or directly under marker)
      */
     private String extractFileContent(String section) {
-        // Common code fences like ```java, ```html, ```yaml
-        Pattern codeBlockPattern = Pattern.compile("(?s)```[a-zA-Z]*\\s*([\\s\\S]+?)```");
-        Matcher blockMatcher = codeBlockPattern.matcher(section);
-
-        if (blockMatcher.find()) {
-            return blockMatcher.group(1).trim();
+        // Code fence block (```java, ```html, etc.)
+        Pattern codeFence = Pattern.compile("(?s)```[a-zA-Z]*\\s*([\\s\\S]+?)```");
+        Matcher fenceMatcher = codeFence.matcher(section);
+        if (fenceMatcher.find()) {
+            return fenceMatcher.group(1).trim();
         }
 
-        // Fallback: try everything after “File Path” if no fences found
-        int start = section.indexOf("**File Path:**");
-        if (start != -1) {
-            return section.substring(start).replaceAll("(?s)^.*?```[a-zA-Z]*\\s*", "")
-                    .replaceAll("```$", "").trim();
+        // Otherwise extract everything after first newline
+        String[] lines = section.split("\\r?\\n", 2);
+        if (lines.length > 1) {
+            return lines[1].trim();
         }
 
         return null;
     }
 
     /**
-     * Determine file type by extension
+     * Determine file type based on extension
      */
     private FileType determineFileType(String filePath) {
         if (filePath.endsWith(".java")) return FileType.JAVA_CLASS;
@@ -162,20 +175,21 @@ public class ArtifactFileExtractor {
         return FileType.UNKNOWN;
     }
 
-    // ==============================================================
-    // ✅ Everything below remains intact from your original bean
-    // ==============================================================
+    // ======================================================
+    // 🧩 Helper Converters
+    // ======================================================
 
     private List<SpringBootProjectGitHubService.GitHubFile> convertToGitHubFiles(List<ExtractedFile> extractedFiles) {
         List<SpringBootProjectGitHubService.GitHubFile> githubFiles = new ArrayList<>();
-        for (ExtractedFile extractedFile : extractedFiles) {
-            githubFiles.add(new SpringBootProjectGitHubService.GitHubFile(
-                    extractedFile.getFilePath(),
-                    extractedFile.getContent()
-            ));
+        for (ExtractedFile ef : extractedFiles) {
+            githubFiles.add(new SpringBootProjectGitHubService.GitHubFile(ef.getFilePath(), ef.getContent()));
         }
         return githubFiles;
     }
+
+    // ======================================================
+    // 📊 Result & Exceptions
+    // ======================================================
 
     public static class GitHubPushResult {
         private final String repositoryUrl;

@@ -70,7 +70,7 @@ public class ProjectsController {
                     " Here=ID=="+project.getProcessInstanceId()
                     //+" the start time ==="+project.getStartTime()
                     //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
-                    + " the artifact===" +project.getProcessVariables().get("developmentProgress"));
+                    + " the artifact===" +project.getProcessVariables().get("artifact"));
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
