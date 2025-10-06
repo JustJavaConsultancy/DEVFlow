@@ -89,6 +89,7 @@ sendgrid:
 app:
   processKey: "softwareEngineeringProcess"
   github:
+    username: ${APP_GITHUB_USERNAME:JustJavaConsultancy}
     token: ${APP_GITHUB_TOKEN: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}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
