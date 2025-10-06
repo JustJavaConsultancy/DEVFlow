@@ -9,6 +9,8 @@
   <title>Project Details</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Add HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <style>
     .modal {
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -78,6 +80,7 @@
       background: rgba(79, 70, 229, 0.9);
       color: white;
       transition: all 0.3s ease;
+      min-width: 120px; /* Fixed width to prevent size changes */
     }
 
     .invite-btn:hover {
@@ -143,6 +146,79 @@
 
     .shake {
       animation: shake 0.5s ease-in-out;
+    }
+
+    /* HTMX loading states */
+    .htmx-request .btn-loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .htmx-request .spinner {
+      display: inline-block;
+    }
+
+    .spinner {
+      display: none;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Message fade out animation */
+    .message-fade-out {
+      animation: fadeOut 0.5s ease-in-out forwards;
+      animation-delay: 3s;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* Invite result container styling */
+    #invite-result {
+      position: relative;
+      width: 100%;
+      z-index: 10;
+      margin-top: 0.5rem;
+    }
+
+    /* Invite message styles */
+    .invite-message {
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease-out;
+      display: flex;
+      align-items: center;
+    }
+
+    .invite-success {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .invite-error {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -378,33 +454,48 @@
           <p class="text-sm text-gray-600">Share this project with other stakeholders</p>
         </div>
       </div>
-      <form id="inviteForm" class="flex flex-col sm:flex-row w-full md:w-2/3" th:action="@{~/project/invite}"
-            th:object="${formData}" method="post">
-        <div class="flex-1 mb-2 sm:mb-0 sm:mr-2">
-          <div class="input-wrapper">
-            <input
-                    type="email"
-                    name="email"
-                    id="inviteEmail"
-                    placeholder="Enter email address"
-                    class="invite-input w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none"
-            >
-            <div id="validationIcon" class="validation-icon hidden"></div>
+
+      <!-- Updated form with HTMX -->
+      <div class="w-full md:w-2/3">
+        <form id="inviteForm"
+              class="flex flex-col sm:flex-row w-full"
+              hx-post="/project/invite"
+              hx-target="#invite-result"
+              hx-swap="innerHTML"
+              hx-trigger="submit"
+              hx-indicator="#invite-spinner">
+          <div class="flex-1 mb-2 sm:mb-0 sm:mr-2 relative">
+            <div class="input-wrapper">
+              <input
+                      type="email"
+                      name="email"
+                      id="inviteEmail"
+                      placeholder="Enter email address"
+                      class="invite-input w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none"
+                      required
+              >
+              <div id="validationIcon" class="validation-icon hidden"></div>
+            </div>
+            <input type="hidden" name="projectId" th:value="${projectId}" />
+            <!-- CSRF Token -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           </div>
-          <input type="text" name="projectId" th:value="${projectId}" hidden="hidden" />
-          <div id="emailError" class="error-message hidden">
-            Please enter a valid email address
-          </div>
-          <div id="emailSuccess" class="success-message hidden">
-            Invitation sent successfully!
-          </div>
-        </div>
-        <button id="sendInviteBtn"
-                class="invite-btn font-medium py-2 px-6 rounded-lg flex
-                items-center justify-center whitespace-nowrap" disabled>
-          <i class="fas fa-paper-plane mr-2"></i> Send Invite
-        </button>
-      </form>
+          <button id="sendInviteBtn"
+                  class="invite-btn font-medium py-2 px-6 rounded-lg flex
+                  items-center justify-center whitespace-nowrap btn-loading"
+                  type="submit"
+                  disabled>
+            <i class="fas fa-paper-plane mr-2"></i>
+            <span class="spinner" id="invite-spinner">
+              <i class="fas fa-spinner"></i>
+            </span>
+            <span class="btn-text">Send Invite</span>
+          </button>
+        </form>
+
+        <!-- Result container for HTMX response - Now positioned below the form -->
+        <div id="invite-result"></div>
+      </div>
     </div>
   </div>
 
@@ -435,6 +526,8 @@
         </button>
         <form id="delete-project-form" th:action="@{~/project/delete}" method="post">
           <input type="hidden" name="projectId" th:value="${projectId}">
+          <!-- CSRF Token -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <button id="confirm-delete" type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg">
             Delete Project
           </button>
@@ -448,16 +541,15 @@
       // Email validation and invite functionality
       const inviteEmailInput = document.getElementById('inviteEmail');
       const sendInviteBtn = document.getElementById('sendInviteBtn');
-      const emailError = document.getElementById('emailError');
-      const emailSuccess = document.getElementById('emailSuccess');
       const validationIcon = document.getElementById('validationIcon');
+      const inviteForm = document.getElementById('inviteForm');
+      const inviteResult = document.getElementById('invite-result');
 
       // URL validation elements
       const urlInput = document.getElementById('project-url');
       const saveButton = document.getElementById('save-url-btn');
       const validationMessage = document.getElementById('url-validation-message');
       const urlForm = document.getElementById('url-form');
-
 
       // URL validation function
       function isValidURL(string) {
@@ -511,15 +603,8 @@
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
       }
-document.getElementById('inviteForm').addEventListener('submit', function(e) {
-            sendInviteBtn.disabled = true;
-            sendInviteBtn.classList.add('btn-disabled');
-            sendInviteBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Inviting...';
-        });
 
       function showError() {
-        emailError.classList.remove('hidden');
-        emailSuccess.classList.add('hidden');
         inviteEmailInput.classList.add('input-error', 'shake');
         inviteEmailInput.classList.remove('input-valid');
         validationIcon.classList.remove('hidden');
@@ -533,8 +618,6 @@ document.getElementById('inviteForm').addEventListener('submit', function(e) {
       }
 
       function showSuccess() {
-        emailError.classList.add('hidden');
-        emailSuccess.classList.remove('hidden');
         inviteEmailInput.classList.remove('input-error');
         inviteEmailInput.classList.add('input-valid');
         validationIcon.classList.remove('hidden');
@@ -547,7 +630,6 @@ document.getElementById('inviteForm').addEventListener('submit', function(e) {
 
         if (email === '') {
           // Empty input
-          emailError.classList.add('hidden');
           inviteEmailInput.classList.remove('input-error', 'input-valid');
           validationIcon.classList.add('hidden');
           sendInviteBtn.disabled = true;
@@ -561,8 +643,6 @@ document.getElementById('inviteForm').addEventListener('submit', function(e) {
         }
 
         // Valid email
-        emailError.classList.add('hidden');
-        emailSuccess.classList.add('hidden');
         inviteEmailInput.classList.remove('input-error');
         inviteEmailInput.classList.add('input-valid');
         validationIcon.classList.remove('hidden');
@@ -572,6 +652,21 @@ document.getElementById('inviteForm').addEventListener('submit', function(e) {
 
       // Validate on input
       inviteEmailInput.addEventListener('input', validateInput);
+
+      // Function to auto-dismiss messages
+      function autoDismissMessage(element) {
+        if (element) {
+          // Add fade-out animation class
+          element.classList.add('message-fade-out');
+
+          // Remove element after animation completes
+          setTimeout(() => {
+            if (element.parentNode) {
+              element.parentNode.removeChild(element);
+            }
+          }, 3500); // 3.5 seconds total (3s delay + 0.5s animation)
+        }
+      }
 
       // Progress bars animation
       const progressBars = document.querySelectorAll('.progress-transition');
@@ -599,7 +694,6 @@ document.getElementById('inviteForm').addEventListener('submit', function(e) {
         });
       });
 
-
       // Delete confirmation modal functionality
       const deleteProjectBtn = document.getElementById('delete-project-btn');
       const deleteModal = document.getElementById('delete-modal');
@@ -625,6 +719,58 @@ document.getElementById('inviteForm').addEventListener('submit', function(e) {
       deleteModal.addEventListener('click', function(e) {
         if (e.target === deleteModal) {
           deleteModal.classList.remove('active');
+        }
+      });
+
+      // HTMX event listeners for invite form
+      document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        if (evt.detail.elt.id === 'inviteForm') {
+          // Disable the send invite button
+          sendInviteBtn.disabled = true;
+          sendInviteBtn.querySelector('.btn-text').textContent = 'Sending...';
+          sendInviteBtn.classList.add('opacity-70');
+
+          // Clear previous results
+          inviteResult.innerHTML = '';
+        }
+      });
+
+      document.body.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.detail.elt.id === 'inviteForm') {
+          // Re-enable the button after request completes
+          sendInviteBtn.disabled = false;
+          sendInviteBtn.classList.remove('opacity-70');
+          sendInviteBtn.querySelector('.btn-text').textContent = 'Send Invite';
+
+          if (evt.detail.successful) {
+            // Clear form on success
+            inviteEmailInput.value = '';
+            inviteEmailInput.classList.remove('input-valid');
+            validationIcon.classList.add('hidden');
+            sendInviteBtn.disabled = true;
+
+            // Auto-dismiss success message
+            const successMessage = inviteResult.querySelector('.invite-message');
+            autoDismissMessage(successMessage);
+          } else {
+            // Auto-dismiss error message
+            const errorMessage = inviteResult.querySelector('.invite-message');
+            autoDismissMessage(errorMessage);
+          }
+        }
+      });
+
+      // Handle HTMX response to add auto-dismiss functionality
+      document.body.addEventListener('htmx:beforeSwap', function(evt) {
+        if (evt.detail.target.id === 'invite-result') {
+          // Add auto-dismiss class to any message in the response
+          const responseDoc = new DOMParser().parseFromString(evt.detail.xhr.responseText, 'text/html');
+          const message = responseDoc.querySelector('.invite-message');
+
+          if (message) {
+            // Add the auto-dismiss class to the response
+            message.classList.add('message-fade-out');
+          }
         }
       });
     });

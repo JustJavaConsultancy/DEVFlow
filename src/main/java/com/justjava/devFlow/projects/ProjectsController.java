@@ -5,6 +5,7 @@ import com.justjava.devFlow.keycloak.KeycloakService;
 import com.justjava.devFlow.util.EmailUtil;
 import com.justjava.devFlow.util.SendGridService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -268,8 +269,11 @@ public class ProjectsController {
     }
 
     @PostMapping("/project/invite")
-    public String inviteTeamMember(@RequestParam Map<String,Object> inviteDetails, HttpServletRequest request){
-        String referer = request.getHeader("Referer");
+    @ResponseBody
+    public String inviteTeamMember(@RequestParam Map<String,Object> inviteDetails,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) {
+
         String businessKey = String.valueOf(authenticationManager.get("sub"));
         String email = (String) inviteDetails.get("email");
         String password = "1234";
@@ -284,39 +288,54 @@ public class ProjectsController {
         // Email Structure
         String subject = "";
 
-        List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
-        if (userByEmail.isEmpty()){
-            keycloakService.createUser(params);
-            subject = "Invite Message from JustJava";
-        } else {
-            // User exists but hasn't been invited to this project yet
-            subject = "Project Invitation from JustJava";
+        try {
+            List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
+            if (userByEmail.isEmpty()){
+                keycloakService.createUser(params);
+                subject = "Invite Message from JustJava";
+            } else {
+                // User exists but hasn't been invited to this project yet
+                subject = "Project Invitation from JustJava";
+            }
+
+            // Get existing invited emails from process variable
+            List<String> invitedEmails = new ArrayList<>();
+            Object existingEmails = runtimeService.getVariable(projectId, "invitedEmails");
+
+            if (existingEmails instanceof List) {
+                // Cast and add all existing emails
+                invitedEmails = new ArrayList<>((List<String>) existingEmails);
+            } else if (existingEmails instanceof String) {
+                // Handle case where it might be stored as a single string
+                invitedEmails.add((String) existingEmails);
+            }
+
+            // Check if email has already been invited
+            if (invitedEmails.contains(email)) {
+                sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+                return "<div class='success-message'>" +
+                        "<i class='fas fa-check-circle mr-2'></i>" +
+                        "Invitation sent successfully to " + email + " (already invited)" +
+                        "</div>";
+            } else {
+                // Add the new email to the list
+                invitedEmails.add(email);
+
+                // Store the updated list in process variable
+                runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
+                sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+
+                return "<div class='success-message'>" +
+                        "<i class='fas fa-check-circle mr-2'></i>" +
+                        "Invitation sent successfully to " + email +
+                        "</div>";
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "<div class='error-message'>" +
+                    "<i class='fas fa-exclamation-circle mr-2'></i>" +
+                    "Failed to send invitation: " + e.getMessage() +
+                    "</div>";
         }
-        // Get existing invited emails from process variable
-        List<String> invitedEmails = new ArrayList<>();
-        Object existingEmails = runtimeService.getVariable(projectId, "invitedEmails");
-
-        if (existingEmails instanceof List) {
-            // Cast and add all existing emails
-            invitedEmails = new ArrayList<>((List<String>) existingEmails);
-        } else if (existingEmails instanceof String) {
-            // Handle case where it might be stored as a single string
-            invitedEmails.add((String) existingEmails);
-        }
-
-        // Check if email has already been invited
-        if (invitedEmails.contains(email)) {
-            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
-        }else {
-
-
-            // Add the new email to the list
-            invitedEmails.add(email);
-
-            // Store the updated list in process variable
-            runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
-            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
-        }
-        return "redirect:" + (referer != null ? referer : "/");
     }
 }
