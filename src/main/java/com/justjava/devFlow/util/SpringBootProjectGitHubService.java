@@ -42,6 +42,7 @@ public class SpringBootProjectGitHubService {
             String githubToken, String repositoryDescription, boolean isPrivateRepo)
             throws ProjectDownloadException, GitHubPushException {
 
+        artifactId = artifactId.replaceAll("\\s+","");
         if(repositoryDescription!=null&&repositoryDescription.length()>=350)
             repositoryDescription = repositoryDescription.substring(0,300);
         //repositoryDescription = repositoryDescription != null ? repositoryDescription.substring(0,300) : "Spring Boot project: " + artifactId;

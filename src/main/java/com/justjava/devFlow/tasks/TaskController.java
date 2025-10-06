@@ -64,12 +64,13 @@ public class TaskController {
         return "tasks/projectTasks";
     }
     @GetMapping("/tasks/revert-confirm/{taskId}")
-    public String getRevertConfirmation(@PathVariable Long taskId, Model model) {
-        Task task = taskService.createTaskQuery().taskId(taskId.toString()).singleResult();
+    public String getRevertConfirmation(@PathVariable String taskId, Model model) {
+        HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery().finished().taskId(taskId).singleResult();
+        System.out.println("The task " + task);
 
 
         model.addAttribute("task", task);
-        return "fragments/revert-confirm-modal :: revertConfirmModal";
+        return "/tasks/revert-confirm-modal :: revertConfirmModal";
     }
     @GetMapping("/reviewSRS")
     public String reviewSRS(){

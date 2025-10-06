@@ -161,22 +161,22 @@ public class WriteGeneratedArtifactsDelegate implements JavaDelegate {
             }
 
             // Extract files using the existing method
-            var extractedFiles = artifactFileExtractor.extractFiles(artifact);
+/*            var extractedFiles = artifactFileExtractor.extractFiles(artifact);
 
             // Debug extracted files
             extractedFiles.forEach(file -> {
                 System.out.println("📄 Extracted file: " + file.getFilePath());
                 System.out.println("📏 Content length: " + file.getContent().length() + " characters");
-            });
+            });*/
 
             // Write to local filesystem (deprecated)
-            artifactFileExtractor.writeFiles(appPath, extractedFiles);
+            //artifactFileExtractor.writeFiles(appPath, extractedFiles);
 
-            execution.setVariable("filesExtracted", extractedFiles.size());
+            //execution.setVariable("filesExtracted", extractedFiles.size());
             execution.setVariable("extractionStatus", "SUCCESS");
             execution.setVariable("appPath", appPath);
 
-            System.out.println("✅ Successfully extracted " + extractedFiles.size() + " files to " + appPath);
+            //System.out.println("✅ Successfully extracted " + extractedFiles.size() + " files to " + appPath);
 
         } catch (Exception e) {
             handleError(execution, "Error during local filesystem processing: " + e.getMessage(), e);
