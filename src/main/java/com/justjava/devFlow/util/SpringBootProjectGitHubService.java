@@ -42,6 +42,19 @@ public class SpringBootProjectGitHubService {
             String githubToken, String repositoryDescription, boolean isPrivateRepo)
             throws ProjectDownloadException, GitHubPushException {
 
+        artifactId = artifactId.replaceAll("\\s+","");
+        if(repositoryDescription!=null&&repositoryDescription.length()>=350)
+            repositoryDescription = repositoryDescription.substring(0,300);
+        //repositoryDescription = repositoryDescription != null ? repositoryDescription.substring(0,300) : "Spring Boot project: " + artifactId;
+        System.out.println(" The groupId==="+groupId
+                +" the artifactId==="+artifactId
+                +" the javaVersion==="+javaVersion
+                +" the springBootVersion==="+springBootVersion
+                +" the dependencies==="+dependencies
+                +" the githubUsername==="+githubUsername
+                +" the githubToken==="+githubToken
+                +" the repositoryDescription==="+repositoryDescription+
+                " the isPrivateRepo==="+isPrivateRepo);
         try {
             // Step 1: Download Spring Boot project WITHOUT baseDir parameter
             byte[] zipData = downloadSpringBootProject(

@@ -9,6 +9,7 @@
   <title>Tasks</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <style>
     .task-priority-high { border-left: 4px solid #e53e3e; }
     .task-priority-medium { border-left: 4px solid #dd6b20; }
@@ -22,9 +23,86 @@
     .completed-task {
       opacity: 0.8;
       background-color: #f9fafb;
+      position: relative;
+      cursor: pointer;
     }
     .completed-task h3 { text-decoration: line-through; color: #9ca3af !important; }
     .completed-task p { color: #9ca3af !important; }
+
+    .revert-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 10;
+    }
+
+    .completed-task:hover .revert-btn {
+      opacity: 1;
+    }
+
+    .revert-btn:hover {
+      background-color: #2563eb;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -48,7 +126,7 @@
     <!-- Show only tasks with state CREATED -->
     <div th:each="task : ${tasks}" th:if="${task.state == 'created'}"
          class="bg-white border border-gray-200 rounded-xl p-5 card-hover shadow-sm"
-         >
+    >
 
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
         <div>
@@ -56,7 +134,7 @@
               th:text="${task.name}">Task Name</h3>
           <div class="flex items-center flex-wrap gap-2">
             <span class="text-xs px-2 py-1 task-status-inprogress rounded-full"
-                  >In Progress</span>
+            >In Progress</span>
           </div>
         </div>
 
@@ -67,13 +145,13 @@
       </div>
 
       <p class="text-gray-600 text-sm mb-4"
-         >This is the task currently in progress. It requires immediate attention and active work to move the project forward. Review the details and complete the pending steps to ensure the task is finished on time</p>
+      >This is the task currently in progress. It requires immediate attention and active work to move the project forward. Review the details and complete the pending steps to ensure the task is finished on time</p>
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center">
           <div class="mr-4">
             <span class="text-xs text-gray-500 block">Progress:</span>
             <span class="text-xs text-gray-500"
-                  >Not Started</span>
+            >Not Started</span>
           </div>
         </div>
 
@@ -94,37 +172,50 @@
     </h2>
 
     <div class="grid grid-cols-1 gap-4">
-      <a th:href="@{/tasks/viewCompleted/{taskId}(taskId=${task.id})}" th:each="task : ${completedTasks}"
+      <div th:each="task : ${completedTasks}"
            class="completed-task border border-gray-200 rounded-xl p-4 card-hover shadow-sm">
 
+        <!-- Revert Button -->
+        <button class="revert-btn"
+                th:hx-get="@{/tasks/revert-confirm/{taskId}(taskId=${task.id})}"
+                hx-target="#modal-container"
+                hx-swap="innerHTML">
+          <i class="fas fa-undo-alt"></i> Revert
+        </button>
 
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
-          <div>
-            <h3 class="font-bold text-base md:text-lg mb-1"
-                th:text="${task.name}">Completed Task</h3>
-            <div class="flex items-center flex-wrap gap-2">
-              <span class="text-xs px-2 py-1 task-status-completed rounded-full">Completed</span>
+        <!-- Task Content -->
+        <a th:href="@{/tasks/viewCompleted/{taskId}(taskId=${task.id})}" class="block">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
+            <div>
+              <h3 class="font-bold text-base md:text-lg mb-1"
+                  th:text="${task.name}">Completed Task</h3>
+              <div class="flex items-center flex-wrap gap-2">
+                <span class="text-xs px-2 py-1 task-status-completed rounded-full">Completed</span>
+              </div>
+            </div>
+            <div class="flex items-center mt-2 md:mt-0">
+              <span class="text-sm text-gray-400">Completed: --</span>
             </div>
           </div>
-          <div class="flex items-center mt-2 md:mt-0">
-            <span class="text-sm text-gray-400">Completed: --</span>
-          </div>
-        </div>
 
-        <p class="text-gray-600 text-sm mb-4">
-          This task has been successfully completed. All requirements were met, and the deliverables are finalized.
-          No further action is required.
-        </p>
+          <p class="text-gray-600 text-sm mb-4">
+            This task has been successfully completed. All requirements were met, and the deliverables are finalized.
+            No further action is required.
+          </p>
 
-        <div class="flex justify-between items-center">
-          <div class="flex items-center">
-            <i class="fas fa-code-branch text-gray-400"></i>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fas fa-code-branch text-gray-400"></i>
+            </div>
+            <div class="text-xs text-gray-400" th:text="${'Created Date: ' + task.createTime}">Created: --</div>
           </div>
-          <div class="text-xs text-gray-400" th:text="${'Created Date: ' + task.createTime}">Created: --</div>
-        </div>
-      </a>
+        </a>
+      </div>
     </div>
   </div>
+
+  <!-- Modal Container -->
+  <div id="modal-container"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -134,6 +225,13 @@
         const width = bar.style.width;
         bar.style.width = '0';
         setTimeout(() => bar.style.width = width, 500);
+      });
+
+      // Close modal when clicking outside
+      document.addEventListener('click', function(e) {
+        if (e.target.id === 'modal-overlay') {
+          document.getElementById('modal-container').innerHTML = '';
+        }
       });
     });
   </script>

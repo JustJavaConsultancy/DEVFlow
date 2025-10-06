@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="revertConfirmModal">
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <h3 class="text-lg font-bold mb-4">Revert Task</h3>
+      <p>Are you sure you want to revert the task "<span th:text="${task.name}"></span>"?
+        It will be moved back to "In Progress" status.</p>
+
+      <div class="modal-actions">
+        <form th:action="@{/tasks/moveTaskTo/{taskId}(taskId=${task.id})}" method="get">
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-undo-alt mr-1"></i> Yes, Revert Task
+          </button>
+        </form>
+        <button class="btn-secondary" onclick="document.getElementById('modal-container').innerHTML = ''">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

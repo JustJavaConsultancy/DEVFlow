@@ -4,6 +4,7 @@ import com.justjava.devFlow.aau.AuthenticationManager;
 import com.justjava.devFlow.keycloak.KeycloakService;
 import com.justjava.devFlow.util.EmailUtil;
 import com.justjava.devFlow.util.SendGridService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class ProjectsController {
     @GetMapping("/projects")
     public String getProjects(Model model){
 
+        System.out.println(" Calling a projects controller");
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
                 .processDefinitionKey("softwareEngineeringProcess")
@@ -67,7 +70,7 @@ public class ProjectsController {
                     " Here=ID=="+project.getProcessInstanceId()
                     //+" the start time ==="+project.getStartTime()
                     //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
-                    + " the artifact===" +project.getProcessVariables().get("artifact"));
+                    + " the artifact===" +project.getProcessVariables().get("developmentProgress"));
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
@@ -93,10 +96,12 @@ public class ProjectsController {
                 .active()
                 .list();
         projects.forEach(project -> {
-/*            System.out.println(" The Process Instance" +
+            System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
-                    +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables());*/
+                    //+" the start time ==="+project.getStartTime()
+                    //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
+                    + "\n\n\n\n\n\n\n\n\n\n\n\n\n the artifact===" +project.getProcessVariables().get("artifact")
+            +"\n\n\n\n\n\n\n\n\n\n\n\n\n");
         });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
@@ -159,6 +164,16 @@ public class ProjectsController {
                 .orderByTaskCreateTime().desc()
                 .list();
         int percentage = (int) Math.round((completedTasks.size() / 7.0) * 100);
+        Object emails = runtimeService.getVariable(projectId, "invitedEmails");
+        List<String> invitedEmails = new ArrayList<>();
+
+        if (emails instanceof List<?>) {
+            invitedEmails = (List<String>) emails;
+        } else if (emails instanceof String) {
+            invitedEmails.add((String) emails);
+        }
+
+        model.addAttribute("invitedEmails", invitedEmails);
         model.addAttribute("completedTasks",completedTasks);
         model.addAttribute("project",project);
         model.addAttribute("tasks", tasks);
@@ -241,40 +256,68 @@ public class ProjectsController {
         return ResponseEntity.ok("saved");
     }
 
+    @PostMapping("/project/save-url")
+    public String saveProjectURL(@RequestParam Map<String,Object> urlDetails, HttpServletRequest request){
+        String processInstanceId = (String) urlDetails.get("projectId");
+        String repoUrl = (String) urlDetails.get("projectUrl");
+        System.out.println(" The URL Details Here === " + urlDetails);
+        runtimeService.setVariable(processInstanceId, "projectURL", repoUrl);
+
+        // Get the page the request came from
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/");
+    }
+
     @PostMapping("/project/invite")
-    public String inviteTeamMember(@RequestParam Map<String,Object>  inviteDetails){
-        String businessKey= String.valueOf(authenticationManager.get("sub")) ;
+    public String inviteTeamMember(@RequestParam Map<String,Object> inviteDetails, HttpServletRequest request){
+        String referer = request.getHeader("Referer");
+        String businessKey = String.valueOf(authenticationManager.get("sub"));
         String email = (String) inviteDetails.get("email");
         String password = "1234";
         String projectId = (String) inviteDetails.get("projectId");
         String webUrl = baseUrl + "/project-progress/" + projectId;
-//        String webUrl = "https://devflow-2-production.up.railway.app" + "/project-progress/" + projectId;
-
 
         Map<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("username", email);
         params.put("status", true);
 
-//        Email Structure
+        // Email Structure
         String subject = "";
 
         List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
         if (userByEmail.isEmpty()){
             keycloakService.createUser(params);
             subject = "Invite Message from JustJava";
-        } else{
-            return "redirect:/"+ "project-details/" + projectId;
+        } else {
+            // User exists but hasn't been invited to this project yet
+            subject = "Project Invitation from JustJava";
+        }
+        // Get existing invited emails from process variable
+        List<String> invitedEmails = new ArrayList<>();
+        Object existingEmails = runtimeService.getVariable(projectId, "invitedEmails");
+
+        if (existingEmails instanceof List) {
+            // Cast and add all existing emails
+            invitedEmails = new ArrayList<>((List<String>) existingEmails);
+        } else if (existingEmails instanceof String) {
+            // Handle case where it might be stored as a single string
+            invitedEmails.add((String) existingEmails);
         }
 
-        sendGridService.sendTemplateEmail(email, subject, password, webUrl);
-//        Map<String, Object> emailData = EmailUtil.buildEmailData(email, fromEmail, subject, password, webUrl);
-//        runtimeService.createProcessInstanceBuilder()
-//                .processDefinitionKey("emailing")
-//                .businessKey(businessKey)
-//                .variables(emailData)
-//                .start();
+        // Check if email has already been invited
+        if (invitedEmails.contains(email)) {
+            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+        }else {
 
-        return "redirect:/"+ "project-details/" + projectId;
+
+            // Add the new email to the list
+            invitedEmails.add(email);
+
+            // Store the updated list in process variable
+            runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
+            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+        }
+        return "redirect:" + (referer != null ? referer : "/");
     }
 }

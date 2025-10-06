@@ -24,9 +24,15 @@ public class WriteGeneratedArtifactsDelegate implements JavaDelegate {
         try {
             System.out.println("🚀 Starting artifact extraction and GitHub push process...");
 
+
             // Retrieve process variables
             String artifact = (String) execution.getVariable("artifact");
             String repositoryName = (String) execution.getVariable("repositoryName");
+
+            if(repositoryName==null){
+                repositoryName = String.valueOf(execution.getVariable("projectName"));
+                execution.setVariable("repositoryName", repositoryName);
+            }
             String githubUsername = (String) execution.getVariable("githubUsername");
             String githubToken = (String) execution.getVariable("githubToken");
             String repositoryDescription = (String) execution.getVariable("repositoryDescription");
@@ -155,22 +161,22 @@ public class WriteGeneratedArtifactsDelegate implements JavaDelegate {
             }
 
             // Extract files using the existing method
-            var extractedFiles = artifactFileExtractor.extractFiles(artifact);
+/*            var extractedFiles = artifactFileExtractor.extractFiles(artifact);
 
             // Debug extracted files
             extractedFiles.forEach(file -> {
                 System.out.println("📄 Extracted file: " + file.getFilePath());
                 System.out.println("📏 Content length: " + file.getContent().length() + " characters");
-            });
+            });*/
 
             // Write to local filesystem (deprecated)
-            artifactFileExtractor.writeFiles(appPath, extractedFiles);
+            //artifactFileExtractor.writeFiles(appPath, extractedFiles);
 
-            execution.setVariable("filesExtracted", extractedFiles.size());
+            //execution.setVariable("filesExtracted", extractedFiles.size());
             execution.setVariable("extractionStatus", "SUCCESS");
             execution.setVariable("appPath", appPath);
 
-            System.out.println("✅ Successfully extracted " + extractedFiles.size() + " files to " + appPath);
+            //System.out.println("✅ Successfully extracted " + extractedFiles.size() + " files to " + appPath);
 
         } catch (Exception e) {
             handleError(execution, "Error during local filesystem processing: " + e.getMessage(), e);

@@ -261,6 +261,43 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        /* Strategic upload button placement */
+        .upload-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .upload-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.75rem;
+        }
+        .upload-section-description {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-bottom: 1rem;
+        }
+
+        /* Cursor instruction styles */
+        .cursor-instruction {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #0369a1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cursor-instruction i {
+            color: #780aff;
+        }
     </style>
 </head>
 <body>
@@ -278,6 +315,22 @@
     <form th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post"
           id="requirementForm"
           class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+
+        <!-- Strategic Upload Section - Placed before the editor for better UX -->
+        <div class="upload-section">
+            <h3 class="upload-section-title">
+                <i class="fas fa-file-import mr-2 text-blue-600"></i>
+                Import Requirements from PDF
+            </h3>
+            <p class="upload-section-description">
+                Upload a PDF document to automatically extract and format requirements. This will insert the content into the editor below.
+            </p>
+            <button type="button" class="pdf-upload-btn highlight-upload" id="uploadPdfBtn">
+                <i class="fas fa-file-pdf"></i>
+                Upload PDF Document
+            </button>
+        </div>
+
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-medium mb-2">
                 Requirement Description
@@ -319,12 +372,6 @@
                     <button type="button" class="toolbar-btn" data-command="removeFormat"><i class="fas fa-eraser"></i></button>
                     <button type="button" class="toolbar-btn" data-command="hiliteColor" data-value="#fffd80"><i class="fas fa-highlighter"></i></button>
                 </div>
-                <div class="toolbar-group">
-                    <button type="button" class="pdf-upload-btn highlight-upload" id="uploadPdfBtn" title="Upload PDF">
-                        <i class="fas fa-file-pdf"></i>
-                        Upload PDF
-                    </button>
-                </div>
             </div>
 
             <!-- Editable area with placeholder -->
@@ -365,6 +412,12 @@
                     <p class="upload-text">Click to browse or drag and drop a PDF file</p>
                     <button class="btn btn-secondary">Select PDF</button>
                     <input type="file" id="pdfFileInput" class="file-input" accept=".pdf">
+                </div>
+
+                <!-- Cursor instruction for user -->
+                <div class="cursor-instruction">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <span><strong>Important:</strong> Make sure to click and place your cursor in the rich text editor first, before clicking the "Upload PDF Document" button </span>
                 </div>
 
                 <div class="error-message" id="errorMessage">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"     
+<html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
@@ -19,18 +19,26 @@
 
   <style>
     /* Editor container */
+    .editor-wrapper {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
     #editor {
       background: white;
       border-radius: 8px;
       padding: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      height: 80vh;
+      height: 72vh;
       overflow-y: auto;
     }
 
     /* Quill editor content */
     .ql-editor {
       min-height: 300px;
+      max-height: 100%;
+      overflow-y: auto;
     }
 
     .ql-editor h1 {
@@ -96,6 +104,26 @@
       color: #4b5563;
     }
 
+    /* Table styling inside Quill editor */
+    .ql-editor table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+    }
+
+    .ql-editor td,
+    .ql-editor th {
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 0.75rem;
+      vertical-align: top;
+    }
+
+    .ql-editor th {
+      background-color: #f3f4f6;
+      font-weight: 600;
+      text-align: left;
+    }
+
     /* Component box for architecture diagrams */
     .component-box {
       display: inline-block;
@@ -120,6 +148,9 @@
     .gradient-bg {
       background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
     }
+
+    /* small UI niceties */
+    .insert-table-btn i.fa-table { font-size: 14px; }
   </style>
 </head>
 <body>
@@ -154,8 +185,48 @@
     <!-- Hidden input used for the final form submit -->
     <input type="hidden" name="requirement" id="editedDocument"/>
 
-    <!-- Quill Editor (editable) -->
-    <div id="editor" th:utext="${processVariables.aiRequirementAnalysis}"></div>
+    <!-- Quill Toolbar (custom HTML toolbar - custom table button is plain button, NOT ql- prefixed) -->
+    <div class="editor-wrapper mb-4">
+      <div id="toolbar" class="ql-toolbar ql-snow">
+        <span class="ql-formats">
+          <select class="ql-header" title="Heading">
+            <option value="1">H1</option>
+            <option value="2">H2</option>
+            <option value="3">H3</option>
+            <option selected>Normal</option>
+          </select>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-bold" title="Bold"></button>
+          <button class="ql-italic" title="Italic"></button>
+          <button class="ql-underline" title="Underline"></button>
+          <button class="ql-strike" title="Strike"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-list" value="ordered" title="Ordered list"></button>
+          <button class="ql-list" value="bullet" title="Bullet list"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-link" title="Link"></button>
+          <button class="ql-image" title="Image"></button>
+          <button class="ql-code-block" title="Code block"></button>
+        </span>
+        <span class="ql-formats">
+          <select class="ql-color" title="Text color"></select>
+          <select class="ql-background" title="Background color"></select>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-clean" title="Remove formatting"></button>
+          <!-- NOTICE: This is a plain button (no 'ql-' prefix). Quill won't try to attach a format that doesn't exist. -->
+          <button type="button" id="insertTableBtn" class="insert-table-btn" title="Insert table" aria-label="Insert table">
+            <i class="fa fa-table"></i>
+          </button>
+        </span>
+      </div>
+
+      <!-- Quill Editor (editable) -->
+      <div id="editor" th:utext="${processVariables.aiRequirementAnalysis}"></div>
+    </div>
 
     <!-- Complete Button -->
     <div th:if="${!isCompleted}" class="flex justify-center mt-6">
@@ -177,20 +248,66 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <script>
-    // Initialize Quill
+    // Initialize Quill using the toolbar container (our custom toolbar)
     var quill = new Quill('#editor', {
       theme: 'snow',
       modules: {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['link', 'image', 'code-block'],
-          [{ color: [] }, { background: [] }],
-          ['clean']
-        ]
+        toolbar: '#toolbar'
       }
     });
+
+    // Custom table insertion using a plain button (prevents Quill from complaining
+    // about a nonexistent 'table' format). This inserts a simple table HTML block.
+    (function registerInsertTableButton() {
+      const btn = document.getElementById('insertTableBtn');
+      if (!btn) return;
+
+      btn.addEventListener('click', function () {
+        // Prompt user for table dimensions (simple and quick)
+        let rows = parseInt(prompt('Enter number of rows (minimum 1):', '3'), 10);
+        if (!rows || rows < 1) return;
+        let cols = parseInt(prompt('Enter number of columns (minimum 1):', '3'), 10);
+        if (!cols || cols < 1) return;
+
+        const includeHeader = confirm('Include a header row? (OK = Yes, Cancel = No)');
+
+        // Build table HTML
+        const pieces = [];
+        pieces.push('<table class="quill-table" style="width:100%;border-collapse:collapse;">');
+        if (includeHeader) {
+          pieces.push('<thead><tr>');
+          for (let c = 0; c < cols; c++) {
+            pieces.push('<th style="border:1px solid #e5e7eb;padding:8px;text-align:left;"></th>');
+          }
+          pieces.push('</tr></thead>');
+        }
+        pieces.push('<tbody>');
+        for (let r = 0; r < rows; r++) {
+          pieces.push('<tr>');
+          for (let c = 0; c < cols; c++) {
+            pieces.push('<td style="border:1px solid #e5e7eb;padding:8px;"></td>');
+          }
+          pieces.push('</tr>');
+        }
+        pieces.push('</tbody></table>');
+        pieces.push('<p><br></p>'); // ensure a paragraph after the table so the cursor can move out
+
+        const tableHtml = pieces.join('');
+
+        // Insert at current selection or at the end
+        const range = quill.getSelection(true);
+        const index = (range && typeof range.index === 'number') ? range.index : quill.getLength();
+        quill.clipboard.dangerouslyPasteHTML(index, tableHtml);
+
+        // Move cursor to first cell by placing it just after the inserted table (basic)
+        // Note: precise placement inside the cell is non-trivial without a table module.
+        quill.setSelection(index + 1, 0);
+        // Trigger an autosave immediately after insertion
+        if (typeof autosaveContent === 'function') {
+          autosaveContent();
+        }
+      });
+    })();
 
     // --- CSRF integration for htmx (works if Spring Security provides _csrf) ---
     (function setupHtmxCsrf() {
@@ -406,7 +523,7 @@
             const tag = node.tagName.toLowerCase();
             const textContent = node.textContent.trim();
 
-            if (!textContent) return;
+            if (!textContent && tag !== 'table') return;
 
             switch(tag) {
               case "h1":
