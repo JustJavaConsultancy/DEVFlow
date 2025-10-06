@@ -177,7 +177,7 @@
 
         <!-- Revert Button -->
         <button class="revert-btn"
-                hx-get="@{/tasks/revert-confirm/{taskId}(taskId=${task.id})}"
+                th:hx-get="@{/tasks/revert-confirm/{taskId}(taskId=${task.id})}"
                 hx-target="#modal-container"
                 hx-swap="innerHTML">
           <i class="fas fa-undo-alt"></i> Revert

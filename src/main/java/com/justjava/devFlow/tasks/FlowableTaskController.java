@@ -145,6 +145,7 @@ public class FlowableTaskController {
                 .taskId(taskId)
                 .singleResult();
 
+        System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
         if (task == null) {
             throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
@@ -159,6 +160,9 @@ public class FlowableTaskController {
                 break;
             case "formtask_43":
                 currentTask = "tasks/reviewUserStories";
+                break;
+            case "formtask_51":
+                currentTask = "tasks/reviewLayoutCode";
                 break;
             case "formtask_11":
                 currentTask = "tasks/reviewSolutionArchitecture";
@@ -184,15 +188,42 @@ public class FlowableTaskController {
         Map<String, Object> processVariables = runtimeService.getVariables(task.getExecutionId(),
                 List.of(task.getId()));
 
-        System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
+        Map<String, Object> taskVariables = (Map<String, Object>) runtimeService.getVariable(task.getExecutionId(),taskId);
+        System.out.println(" The variable pulled out =====\n\n\n\n\n\n\n\n\n\n"+taskVariables);
+        //System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
     //qweqweqweqwe
         processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
         //model.addAttribute("taskVariables", taskVariables);
-        model.addAttribute("processVariables",processVariables );
+        model.addAttribute("processVariables",taskVariables );
         model.addAttribute("isCompleted", true);
         return currentTask;
+    }
+    @GetMapping("/moveTaskTo/{taskId}")
+    public String moveTaskTo(@PathVariable String taskId, Model model) {
+        HistoricTaskInstance task = historyService
+                .createHistoricTaskInstanceQuery()
+                .finished()
+                .taskId(taskId)
+                .singleResult();
+
+
+        System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found with id: " + taskId);
+        }
+        Task activeTask = taskService.createTaskQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .active()
+                .singleResult();
+        runtimeService.createChangeActivityStateBuilder()
+                .processInstanceId(task.getProcessInstanceId())
+                .moveActivityIdTo(activeTask.getTaskDefinitionKey(), task.getTaskDefinitionKey())
+                .processVariable("change", activeTask.getTaskDefinitionKey() +"  to " +
+                        task.getTaskDefinitionKey()+ " rollback")
+                .changeState();
+        return "redirect:/tasks/"+task.getProcessInstanceId();
     }
 
     // Edit task form - generic form handler
@@ -262,7 +293,7 @@ public class FlowableTaskController {
             // Convert form parameters to proper types
             Map<String, Object> variables = convertFormParamsToVariables(formParams);
             // Complete the task with form data
-            runtimeService.setVariable(task.getExecutionId(),task.getId(),variables);
+
 
             String storyDevelopmentDetail = (String) runtimeService.getVariable(task.getProcessInstanceId(),"storyDevelopmentDetail");
             String appPath = (String) runtimeService.getVariable(task.getProcessInstanceId(),"appPath");
@@ -302,6 +333,7 @@ public class FlowableTaskController {
                     "Testing once again",true);*/
             //runtimeService.
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
+            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
             taskService.complete(taskId, variables);
 
 
