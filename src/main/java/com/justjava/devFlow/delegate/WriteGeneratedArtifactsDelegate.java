@@ -33,6 +33,8 @@ public class WriteGeneratedArtifactsDelegate implements JavaDelegate {
                 repositoryName = String.valueOf(execution.getVariable("projectName"));
                 execution.setVariable("repositoryName", repositoryName);
             }
+
+            repositoryName = repositoryName.replaceAll("\\s","");
             String githubUsername = (String) execution.getVariable("githubUsername");
             String githubToken = (String) execution.getVariable("githubToken");
             String repositoryDescription = (String) execution.getVariable("repositoryDescription");
