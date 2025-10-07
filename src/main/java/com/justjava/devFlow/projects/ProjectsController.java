@@ -339,4 +339,56 @@ public class ProjectsController {
                     "</div>";
         }
     }
+    @PostMapping("/client/project/invite")
+    public String inviteTeamMember(@RequestParam Map<String,Object> inviteDetails, HttpServletRequest request){
+        String referer = request.getHeader("Referer");
+        String businessKey = String.valueOf(authenticationManager.get("sub"));
+        String email = (String) inviteDetails.get("email");
+        String password = "1234";
+        String projectId = (String) inviteDetails.get("projectId");
+        String webUrl = baseUrl + "/project-progress/" + projectId;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", email);
+        params.put("username", email);
+        params.put("status", true);
+
+        // Email Structure
+        String subject = "";
+
+        List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
+        if (userByEmail.isEmpty()){
+            keycloakService.createUser(params);
+            subject = "Invite Message from JustJava";
+        } else {
+            // User exists but hasn't been invited to this project yet
+            subject = "Project Invitation from JustJava";
+        }
+        // Get existing invited emails from process variable
+        List<String> invitedEmails = new ArrayList<>();
+        Object existingEmails = runtimeService.getVariable(projectId, "invitedEmails");
+
+        if (existingEmails instanceof List) {
+            // Cast and add all existing emails
+            invitedEmails = new ArrayList<>((List<String>) existingEmails);
+        } else if (existingEmails instanceof String) {
+            // Handle case where it might be stored as a single string
+            invitedEmails.add((String) existingEmails);
+        }
+
+        // Check if email has already been invited
+        if (invitedEmails.contains(email)) {
+            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+        }else {
+
+
+            // Add the new email to the list
+            invitedEmails.add(email);
+
+            // Store the updated list in process variable
+            runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
+            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+        }
+        return "redirect:" + (referer != null ? referer : "/");
+    }
 }
