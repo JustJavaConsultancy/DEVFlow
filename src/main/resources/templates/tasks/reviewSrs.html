@@ -19,26 +19,18 @@
 
   <style>
     /* Editor container */
-    .editor-wrapper {
-      background: white;
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    }
-
     #editor {
       background: white;
       border-radius: 8px;
       padding: 2rem;
-      height: 72vh;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      height: 80vh;
       overflow-y: auto;
     }
 
     /* Quill editor content */
     .ql-editor {
       min-height: 300px;
-      max-height: 100%;
-      overflow-y: auto;
     }
 
     .ql-editor h1 {
@@ -104,26 +96,6 @@
       color: #4b5563;
     }
 
-    /* Table styling inside Quill editor */
-    .ql-editor table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1rem;
-    }
-
-    .ql-editor td,
-    .ql-editor th {
-      border: 1px solid #e5e7eb;
-      padding: 0.5rem 0.75rem;
-      vertical-align: top;
-    }
-
-    .ql-editor th {
-      background-color: #f3f4f6;
-      font-weight: 600;
-      text-align: left;
-    }
-
     /* Component box for architecture diagrams */
     .component-box {
       display: inline-block;
@@ -149,8 +121,144 @@
       background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
     }
 
-    /* small UI niceties */
-    .insert-table-btn i.fa-table { font-size: 14px; }
+    /* Table embed visuals - Added from the original code */
+    .ql-table-embed {
+      margin:10px 0;
+      padding:6px;
+      background:transparent;
+    }
+    .ql-table-embed table {
+      width:100%;
+      border-collapse: collapse;
+      table-layout:auto;
+      background:white;
+      font-size:14px;
+    }
+    .ql-table-embed th, .ql-table-embed td {
+      border: 1px solid #d6dbe6;
+      padding: 8px 10px;
+      min-width:50px;
+      vertical-align: top;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .ql-table-embed thead th {
+      background: #f3f4f6;
+      font-weight:600;
+    }
+    .ql-table-embed td[contenteditable="true"], .ql-table-embed th[contenteditable="true"] {
+      outline: none;
+      cursor:text;
+      tabindex: 0;
+    }
+    .ql-table-embed td:focus, .ql-table-embed th:focus {
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+
+    /* Floating table toolbar - Updated to match your theme */
+    .floating-toolbar {
+      position: absolute;
+      z-index: 50;
+      display:flex;
+      gap:6px;
+      padding:6px;
+      border-radius:8px;
+      border:1px solid #e5e7eb;
+      background: linear-gradient(180deg, #fff, #fbfbff);
+      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+      transition: opacity .12s ease, transform .12s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .floating-toolbar.show {
+      opacity:1;
+      pointer-events:auto;
+      transform: translateY(-2px);
+    }
+
+    .floating-toolbar .btn-sm {
+      padding:6px 8px;
+      font-size:13px;
+      border-radius:6px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+    }
+    .floating-toolbar .btn-sm:hover {
+      background: #f9fafb;
+    }
+
+    /* Modal (Insert Table) - Updated to match your theme */
+    .modal-backdrop {
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:60;
+      background: rgba(3,7,18,0.45);
+    }
+    .modal {
+      width:360px;
+      border-radius:10px;
+      background:white;
+      padding:14px;
+      box-shadow: 0 20px 60px rgba(2,6,23,0.2);
+      border:1px solid #e5e7eb;
+    }
+    .modal h3 {
+      margin:0 0 8px 0;
+      font-size:16px;
+      font-weight: 600;
+    }
+    .modal .row {
+      display:flex;
+      gap:8px;
+      margin-top:8px;
+    }
+    .modal label {
+      font-size:13px;
+      color:#6b7280;
+      display:block;
+      margin-bottom:6px;
+    }
+    .modal input[type="number"] {
+      width:100%;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #e5e7eb;
+    }
+    .modal .actions {
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top:12px;
+    }
+    .modal .help {
+      font-size:13px;
+      color:#6b7280;
+      margin-top:8px;
+    }
+
+    /* Custom button styles */
+    .btn {
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:8px;
+      border:1px solid #e5e7eb;
+      background: white;
+      cursor:pointer;
+      font-size:14px;
+      color: #374151;
+    }
+    .btn:hover {
+      box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+    }
+
+    /* make sure the table toolbar shows the font-awesome icon */
+    .ql-toolbar .ql-table i { font-size: 14px; }
   </style>
 </head>
 <body>
@@ -185,47 +293,19 @@
     <!-- Hidden input used for the final form submit -->
     <input type="hidden" name="requirement" id="editedDocument"/>
 
-    <!-- Quill Toolbar (custom HTML toolbar - custom table button is plain button, NOT ql- prefixed) -->
-    <div class="editor-wrapper mb-4">
-      <div id="toolbar" class="ql-toolbar ql-snow">
-        <span class="ql-formats">
-          <select class="ql-header" title="Heading">
-            <option value="1">H1</option>
-            <option value="2">H2</option>
-            <option value="3">H3</option>
-            <option selected>Normal</option>
-          </select>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-bold" title="Bold"></button>
-          <button class="ql-italic" title="Italic"></button>
-          <button class="ql-underline" title="Underline"></button>
-          <button class="ql-strike" title="Strike"></button>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-list" value="ordered" title="Ordered list"></button>
-          <button class="ql-list" value="bullet" title="Bullet list"></button>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-link" title="Link"></button>
-          <button class="ql-image" title="Image"></button>
-          <button class="ql-code-block" title="Code block"></button>
-        </span>
-        <span class="ql-formats">
-          <select class="ql-color" title="Text color"></select>
-          <select class="ql-background" title="Background color"></select>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-clean" title="Remove formatting"></button>
-          <!-- NOTICE: This is a plain button (no 'ql-' prefix). Quill won't try to attach a format that doesn't exist. -->
-          <button type="button" id="insertTableBtn" class="insert-table-btn" title="Insert table" aria-label="Insert table">
-            <i class="fa fa-table"></i>
-          </button>
-        </span>
-      </div>
-
+    <!-- Editor wrapper with floating toolbar -->
+    <div class="editor-wrapper relative bg-white rounded-lg shadow-sm border border-gray-200">
       <!-- Quill Editor (editable) -->
       <div id="editor" th:utext="${processVariables.aiRequirementAnalysis}"></div>
+
+      <!-- Floating table toolbar (hidden until a cell is focused) -->
+      <div id="floating-toolbar" class="floating-toolbar" aria-hidden="true">
+        <button id="ft-add-row" class="btn-sm">+ Row</button>
+        <button id="ft-add-col" class="btn-sm">+ Col</button>
+        <button id="ft-del-row" class="btn-sm">Del Row</button>
+        <button id="ft-del-col" class="btn-sm">Del Col</button>
+        <button id="ft-del-table" class="btn-sm" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+      </div>
     </div>
 
     <!-- Complete Button -->
@@ -238,6 +318,31 @@
     </div>
   </form>
 
+  <!-- Insert table modal -->
+  <div id="insert-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="modal-title">
+      <h3 id="modal-title">Insert table</h3>
+      <div class="row">
+        <div style="flex:1">
+          <label for="input-rows">Rows</label>
+          <input id="input-rows" type="number" min="1" max="100" value="3">
+        </div>
+        <div style="width:120px">
+          <label for="input-cols">Columns</label>
+          <input id="input-cols" type="number" min="1" max="100" value="3">
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <label><input id="input-header" type="checkbox"> Include header row</label>
+      </div>
+      <div class="help">Tip: Use Tab to move between cells. Press Esc in a cell to return to the editor.</div>
+      <div class="actions">
+        <button id="modal-cancel" class="btn">Cancel</button>
+        <button id="modal-insert" class="btn" style="background:#780aff; color:white; border-color: transparent;">Insert</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Hidden logo for PDF generation -->
   <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
 
@@ -248,68 +353,538 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <script>
-    // Initialize Quill using the toolbar container (our custom toolbar)
-    var quill = new Quill('#editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: '#toolbar'
+    /*********************************
+     * Table embed blot (editable cells)
+     *********************************/
+    const BlockEmbed = Quill.import('blots/block/embed');
+
+    class TableBlot extends BlockEmbed {
+      static blotName = 'table-embed';
+      static tagName = 'div';
+      static className = 'ql-table-embed';
+
+      static create(value) {
+        const node = super.create();
+        node.setAttribute('contenteditable', 'false'); // embed container not editable (cells are)
+        node.innerHTML = value;
+
+        // Make cells editable (defensive: ensure attributes present)
+        const cells = node.querySelectorAll('td, th');
+        cells.forEach(c => {
+          c.setAttribute('contenteditable', 'true');
+          c.setAttribute('tabindex', '0');
+          if (c.innerHTML.trim() === '') c.innerHTML = '<br>';
+        });
+
+        return node;
       }
-    });
 
-    // Custom table insertion using a plain button (prevents Quill from complaining
-    // about a nonexistent 'table' format). This inserts a simple table HTML block.
-    (function registerInsertTableButton() {
-      const btn = document.getElementById('insertTableBtn');
-      if (!btn) return;
+      static value(node) {
+        const table = node.querySelector('table');
+        return table ? table.outerHTML : '';
+      }
+    }
 
-      btn.addEventListener('click', function () {
-        // Prompt user for table dimensions (simple and quick)
-        let rows = parseInt(prompt('Enter number of rows (minimum 1):', '3'), 10);
-        if (!rows || rows < 1) return;
-        let cols = parseInt(prompt('Enter number of columns (minimum 1):', '3'), 10);
-        if (!cols || cols < 1) return;
+    Quill.register(TableBlot);
 
-        const includeHeader = confirm('Include a header row? (OK = Yes, Cancel = No)');
+    /*********************************
+     * Preprocess existing server-side tables BEFORE Quill initializes.
+     * This converts <table> markup into <div class="ql-table-embed"> wrappers
+     * so Quill recognizes them as the custom TableBlot on initialization.
+     *********************************/
+    (function preprocessInitialTables() {
+      const editorEl = document.getElementById('editor');
+      if (!editorEl) return;
+      const tables = Array.from(editorEl.querySelectorAll('table'));
+      if (tables.length === 0) return;
 
-        // Build table HTML
-        const pieces = [];
-        pieces.push('<table class="quill-table" style="width:100%;border-collapse:collapse;">');
-        if (includeHeader) {
-          pieces.push('<thead><tr>');
-          for (let c = 0; c < cols; c++) {
-            pieces.push('<th style="border:1px solid #e5e7eb;padding:8px;text-align:left;"></th>');
-          }
-          pieces.push('</tr></thead>');
-        }
-        pieces.push('<tbody>');
-        for (let r = 0; r < rows; r++) {
-          pieces.push('<tr>');
-          for (let c = 0; c < cols; c++) {
-            pieces.push('<td style="border:1px solid #e5e7eb;padding:8px;"></td>');
-          }
-          pieces.push('</tr>');
-        }
-        pieces.push('</tbody></table>');
-        pieces.push('<p><br></p>'); // ensure a paragraph after the table so the cursor can move out
+      tables.forEach(table => {
+        // skip if already wrapped
+        if (table.closest('.ql-table-embed')) return;
 
-        const tableHtml = pieces.join('');
+        // clone and ensure editable cells
+        const cloned = table.cloneNode(true);
+        cloned.querySelectorAll('td, th').forEach(c => {
+          c.setAttribute('contenteditable', 'true');
+          c.setAttribute('tabindex', '0');
+          if (c.innerHTML.trim() === '') c.innerHTML = '<br>';
+        });
 
-        // Insert at current selection or at the end
-        const range = quill.getSelection(true);
-        const index = (range && typeof range.index === 'number') ? range.index : quill.getLength();
-        quill.clipboard.dangerouslyPasteHTML(index, tableHtml);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'ql-table-embed';
+        wrapper.setAttribute('contenteditable', 'false');
+        wrapper.innerHTML = cloned.outerHTML;
 
-        // Move cursor to first cell by placing it just after the inserted table (basic)
-        // Note: precise placement inside the cell is non-trivial without a table module.
-        quill.setSelection(index + 1, 0);
-        // Trigger an autosave immediately after insertion
-        if (typeof autosaveContent === 'function') {
-          autosaveContent();
-        }
+        table.parentNode.replaceChild(wrapper, table);
       });
     })();
 
-    // --- CSRF integration for htmx (works if Spring Security provides _csrf) ---
+    /*********************************
+     * Initialize Quill with table button in toolbar
+     *********************************/
+    var quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: {
+          container: [
+            [{ header: [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image', 'code-block'],
+            [{ color: [] }, { background: [] }],
+            ['table'], // Add table button to toolbar (we'll inject an icon below)
+            ['clean']
+          ],
+          handlers: {
+            'table': function() {
+              document.getElementById('insert-modal').style.display = 'flex';
+              document.getElementById('insert-modal').setAttribute('aria-hidden', 'false');
+              document.getElementById('input-rows').focus();
+            }
+          }
+        }
+      }
+    });
+
+    // Ensure the table toolbar button shows a Font Awesome icon (Quill doesn't ship a table icon by default)
+    (function decorateTableToolbarButton() {
+      const btn = document.querySelector('.ql-toolbar .ql-table');
+      if (btn) {
+        btn.innerHTML = '<i class="fas fa-table" aria-hidden="true"></i>';
+        btn.setAttribute('title', 'Insert table');
+      }
+    })();
+
+    // After initialization, re-attach behaviors to any table embeds that came from server
+    setTimeout(() => {
+      attachCellBehaviorToAllTables();
+      // also a fallback conversion in case any raw <table> tags still exist in the Quill root
+      convertExistingTablesToEmbeds();
+    }, 50);
+
+    // convenience refs
+    const wrapper = document.querySelector('.editor-wrapper');
+    const floatingToolbar = document.getElementById('floating-toolbar');
+    let currentCell = null;       // currently focused <td> or <th>
+    let currentEmbedNode = null;  // current .ql-table-embed container
+
+    /*********************************
+     * Table Utilities
+     *********************************/
+    function createTableHtml(rows, cols, header) {
+      rows = Math.max(1, Math.floor(rows));
+      cols = Math.max(1, Math.floor(cols));
+      let html = '<table>';
+      if (header) {
+        html += '<thead><tr>';
+        for (let c = 0; c < cols; c++) {
+          html += '<th><br></th>';
+        }
+        html += '</tr></thead>';
+      }
+      html += '<tbody>';
+      const bodyRows = header ? rows - 1 : rows;
+      for (let r = 0; r < Math.max(0, bodyRows); r++) {
+        html += '<tr>';
+        for (let c = 0; c < cols; c++) html += '<td><br></td>';
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      return html;
+    }
+
+    function placeCaretAtEnd(el) {
+      el = el || document;
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    // Insert HTML at a Quill index; preserves table nodes as table-embed
+    function insertHtmlAtIndex(html, index) {
+      const wrapperDom = document.createElement('div');
+      wrapperDom.innerHTML = html;
+      let nodes = Array.from(wrapperDom.childNodes);
+
+      // Insert sequentially
+      let currentIndex = Math.max(0, index);
+      nodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
+          quill.insertEmbed(currentIndex, 'table-embed', node.outerHTML, Quill.sources.USER);
+          currentIndex += 1;
+          // insert a newline after embed so future content sits below
+          quill.insertText(currentIndex, '\n', Quill.sources.USER);
+          currentIndex += 1;
+        } else {
+          const fragHtml = node.outerHTML ?? node.textContent ?? '';
+          quill.clipboard.dangerouslyPasteHTML(currentIndex, fragHtml);
+          currentIndex = quill.getLength() - 1;
+        }
+      });
+
+      // Reattach cell handlers
+      attachCellBehaviorToAllTables();
+    }
+
+    function loadHtmlIntoEditor(html) {
+      quill.setContents([]);
+      insertHtmlAtIndex(html, 0);
+    }
+
+    function getEditorHtmlPreservingTables() {
+      const container = quill.root;
+      const outParts = Array.from(container.childNodes).map(node => {
+        if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('ql-table-embed')) {
+          const table = node.querySelector('table');
+          return table ? table.outerHTML : '';
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
+          // Handle raw tables that might not be converted yet
+          return node.outerHTML;
+        } else {
+          return node.outerHTML ?? node.textContent ?? '';
+        }
+      });
+      return outParts.join('');
+    }
+
+    /*********************************
+     * Paste handler (intercept HTML tables)
+     *********************************/
+    quill.root.addEventListener('paste', e => {
+      const clipboardData = (e.clipboardData || window.clipboardData);
+      if (!clipboardData) return;
+      const html = clipboardData.getData('text/html');
+      if (!html) return; // let Quill handle plain-text
+      if (/<table[\s>]/i.test(html)) {
+        e.preventDefault();
+        const sel = quill.getSelection(true);
+        const index = sel ? sel.index : quill.getLength() - 1;
+        insertHtmlAtIndex(html, index);
+      }
+    });
+
+    /*********************************
+     * Cell behaviors: tab navigation, enter handling, focus tracking
+     *********************************/
+    function attachCellBehaviorToAllTables() {
+      const embeds = quill.root.querySelectorAll('.ql-table-embed');
+      embeds.forEach(embed => {
+        const table = embed.querySelector('table');
+        if (!table) return;
+        const cells = Array.from(table.querySelectorAll('td, th'));
+        cells.forEach(cell => {
+          if (cell.dataset._tblHandlers === '1') return;
+          cell.dataset._tblHandlers = '1';
+
+          // Focus tracking: show floating toolbar
+          cell.addEventListener('focus', (ev) => {
+            currentCell = cell;
+            currentEmbedNode = embed;
+            showFloatingToolbarNearCell(cell);
+          });
+
+          // Key handling
+          cell.addEventListener('keydown', ev => {
+            // Tab navigation
+            if (ev.key === 'Tab') {
+              ev.preventDefault();
+              const allCells = Array.from(table.querySelectorAll('td, th'));
+              const idx = allCells.indexOf(cell);
+              if (idx === -1) return;
+              const forward = !ev.shiftKey;
+              let nextIdx = forward ? idx + 1 : idx - 1;
+              if (nextIdx < 0) nextIdx = allCells.length - 1;
+              if (nextIdx >= allCells.length) nextIdx = 0;
+              const nextCell = allCells[nextIdx];
+              if (nextCell) {
+                nextCell.focus();
+                placeCaretAtEnd(nextCell);
+              }
+            }
+
+            // Enter should insert a line break inside cell instead of making a new Quill block
+            if (ev.key === 'Enter') {
+              ev.preventDefault();
+              // insert a <br> at caret position
+              // use execCommand as a small fallback for contenteditable cells
+              document.execCommand('insertHTML', false, '<br>');
+            }
+
+            // Escape: move focus to Quill editor root
+            if (ev.key === 'Escape') {
+              ev.stopPropagation();
+              quill.focus();
+            }
+          });
+
+          // Keep an empty placeholder so caret can go into empty cell
+          cell.addEventListener('blur', () => {
+            if (cell.textContent.trim() === '') cell.innerHTML = '<br>';
+          });
+        });
+      });
+    }
+
+    // initial attach in case content pre-exists
+    attachCellBehaviorToAllTables();
+
+    /*********************************
+     * Floating toolbar (Add/Delete row/col, Delete table)
+     *********************************/
+    function showFloatingToolbarNearCell(cell) {
+      // compute position relative to editor wrapper
+      const editorRect = quill.root.getBoundingClientRect();
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const cellRect = cell.getBoundingClientRect();
+
+      // account for editor scroll
+      const top = (cellRect.top - editorRect.top) + quill.root.scrollTop - floatingToolbar.offsetHeight - 6;
+      // position left aligned with cell (but ensure it stays within wrapper)
+      let left = (cellRect.left - wrapperRect.left) + quill.root.scrollLeft;
+      // clamp left
+      const maxLeft = wrapper.clientWidth - floatingToolbar.offsetWidth - 8;
+      if (left < 8) left = 8;
+      if (left > maxLeft) left = maxLeft;
+
+      floatingToolbar.style.top = `${top}px`;
+      floatingToolbar.style.left = `${left}px`;
+      floatingToolbar.classList.add('show');
+      floatingToolbar.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideFloatingToolbar() {
+      floatingToolbar.classList.remove('show');
+      floatingToolbar.setAttribute('aria-hidden', 'true');
+      currentCell = null;
+      currentEmbedNode = null;
+    }
+
+    // hide toolbar when clicking outside any table cell
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.ql-table-embed') && !e.target.closest('#floating-toolbar') && !e.target.closest('.modal')) {
+        // if click is outside table embed and outside toolbar and not modal, hide toolbar
+        hideFloatingToolbar();
+      }
+    });
+
+    // Keep toolbar visible while interacting with it
+    floatingToolbar.addEventListener('mouseenter', () => {
+      floatingToolbar.dataset.hover = '1';
+    });
+    floatingToolbar.addEventListener('mouseleave', () => {
+      floatingToolbar.dataset.hover = '0';
+    });
+
+    /*********************************
+     * Table structure operations
+     *********************************/
+    function addRowBelow(cell) {
+      if (!cell) return;
+      const tr = cell.closest('tr');
+      const table = cell.closest('table');
+      const rows = Array.from(table.rows);
+      const rowIndex = rows.indexOf(tr);
+      // compute columns count using max cells of current row
+      const cols = tr.cells.length;
+      const createdTr = document.createElement('tr');
+      for (let c = 0; c < cols; c++) {
+        const td = document.createElement('td');
+        td.innerHTML = '<br>';
+        createdTr.appendChild(td);
+      }
+      // insert createdTr after current tr
+      if (tr.nextSibling) tr.parentNode.insertBefore(createdTr, tr.nextSibling);
+      else tr.parentNode.appendChild(createdTr);
+      attachCellBehaviorToAllTables();
+      // focus new row's first cell
+      const createdCell = createdTr.querySelector('td,th');
+      if (createdCell) {
+        createdCell.focus();
+        placeCaretAtEnd(createdCell);
+      }
+    }
+
+    function deleteRow(cell) {
+      if (!cell) return;
+      const tr = cell.closest('tr');
+      const table = cell.closest('table');
+      // if only one row left (consider tbody rows) -> remove entire table
+      const bodyRows = table.tBodies.length ? table.tBodies[0].rows.length : table.rows.length;
+      // count total rows in table.rows (includes thead)
+      if (table.rows.length <= 1) {
+        removeEntireTable(table);
+        return;
+      }
+      tr.parentNode.removeChild(tr);
+      attachCellBehaviorToAllTables();
+      quill.focus();
+    }
+
+    function addColumnAfter(cell) {
+      if (!cell) return;
+      const table = cell.closest('table');
+      const tr = cell.closest('tr');
+      // Find column index of cell within its row
+      const colIndex = Array.from(tr.cells).indexOf(cell);
+      // For each row in table.rows, insert a new cell after colIndex
+      Array.from(table.rows).forEach(row => {
+        // decide cell type: if row is thead and originally header, create th else td
+        const isTheadRow = row.parentElement && row.parentElement.tagName === 'THEAD';
+        const newCell = isTheadRow ? document.createElement('th') : document.createElement('td');
+        newCell.innerHTML = '<br>';
+        // if row has fewer cells than index+1, append; else insert before existing cell at colIndex+1
+        if (row.cells.length <= colIndex) {
+          row.appendChild(newCell);
+        } else {
+          // insert after the reference cell
+          const ref = row.cells[colIndex];
+          if (ref.nextSibling) row.insertBefore(newCell, ref.nextSibling);
+          else row.appendChild(newCell);
+        }
+      });
+      attachCellBehaviorToAllTables();
+      // focus the inserted cell that corresponds to original cell's row
+      const insertedCell = tr.cells[colIndex + 1] || tr.cells[tr.cells.length - 1];
+      if (insertedCell) {
+        insertedCell.focus();
+        placeCaretAtEnd(insertedCell);
+      }
+    }
+
+    function deleteColumn(cell) {
+      if (!cell) return;
+      const table = cell.closest('table');
+      const tr = cell.closest('tr');
+      const colIndex = Array.from(tr.cells).indexOf(cell);
+      // Remove each cell at colIndex across rows (if exists)
+      Array.from(table.rows).forEach(row => {
+        if (row.cells.length > colIndex) {
+          row.deleteCell(colIndex);
+        }
+      });
+      // If table now has zero columns (rows with 0 cells), remove table
+      const remainingCols = Array.from(table.rows).reduce((acc, r) => Math.max(acc, r.cells.length), 0);
+      if (remainingCols === 0) {
+        removeEntireTable(table);
+        return;
+      }
+      attachCellBehaviorToAllTables();
+      quill.focus();
+    }
+
+    function removeEntireTable(table) {
+      // remove the .ql-table-embed wrapper, replacing with an empty paragraph.
+      const embed = table.closest('.ql-table-embed');
+      if (!embed) return;
+      // compute insertion index among editor child nodes
+      const parent = quill.root;
+      const nodes = Array.from(parent.childNodes);
+      const idx = nodes.indexOf(embed);
+      // remove embed DOM
+      embed.remove();
+      // insert empty paragraph to keep editor layout sane
+      const p = document.createElement('p');
+      p.innerHTML = '<br>';
+      if (idx >= nodes.length || nodes.length === 0) parent.appendChild(p); else parent.insertBefore(p, parent.childNodes[idx]);
+      attachCellBehaviorToAllTables();
+      hideFloatingToolbar();
+      quill.focus();
+    }
+
+    /*********************************
+     * Floating toolbar button wiring
+     *********************************/
+    document.getElementById('ft-add-row').addEventListener('click', () => {
+      addRowBelow(currentCell);
+    });
+    document.getElementById('ft-del-row').addEventListener('click', () => {
+      deleteRow(currentCell);
+    });
+    document.getElementById('ft-add-col').addEventListener('click', () => {
+      addColumnAfter(currentCell);
+    });
+    document.getElementById('ft-del-col').addEventListener('click', () => {
+      deleteColumn(currentCell);
+    });
+    document.getElementById('ft-del-table').addEventListener('click', () => {
+      const table = currentCell ? currentCell.closest('table') : null;
+      if (table && confirm('Delete the entire table?')) removeEntireTable(table);
+    });
+
+    /*********************************
+     * Insert table modal + main controls
+     *********************************/
+    const modal = document.getElementById('insert-modal');
+    const modalInsert = document.getElementById('modal-insert');
+    const modalCancel = document.getElementById('modal-cancel');
+
+    modalCancel.addEventListener('click', () => {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      quill.focus();
+    });
+
+    modalInsert.addEventListener('click', () => {
+      const rows = parseInt(document.getElementById('input-rows').value, 10) || 1;
+      const cols = parseInt(document.getElementById('input-cols').value, 10) || 1;
+      const header = document.getElementById('input-header').checked;
+      const html = '<p></p>' + createTableHtml(rows, cols, header) + '<p><br></p>';
+      const sel = quill.getSelection(true);
+      const index = sel ? sel.index : quill.getLength() - 1;
+      insertHtmlAtIndex(html, index);
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      quill.focus();
+    });
+
+    // Allow Esc to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (modal.style.display === 'flex') {
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+          quill.focus();
+        }
+      }
+    });
+
+    /*********************************
+     * Fallback converter (run after init) - replaces any raw TABLE nodes inside Quill root
+     * with our ql-table-embed wrappers so that getEditorHtmlPreservingTables() and behaviors work.
+     *********************************/
+    function convertExistingTablesToEmbeds() {
+      const editor = quill.root;
+      const tables = Array.from(editor.querySelectorAll('table'));
+      if (tables.length === 0) return;
+
+      tables.reverse().forEach(table => {
+        // skip if already inside wrapper
+        if (table.closest('.ql-table-embed')) return;
+
+        const cloned = table.cloneNode(true);
+        cloned.querySelectorAll('td, th').forEach(c => {
+          c.setAttribute('contenteditable', 'true');
+          c.setAttribute('tabindex', '0');
+          if (c.innerHTML.trim() === '') c.innerHTML = '<br>';
+        });
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'ql-table-embed';
+        wrapper.setAttribute('contenteditable', 'false');
+        wrapper.innerHTML = cloned.outerHTML;
+
+        table.parentNode.replaceChild(wrapper, table);
+      });
+
+      attachCellBehaviorToAllTables();
+    }
+
+    /*********************************
+     * CSRF integration and autosave
+     *********************************/
     (function setupHtmxCsrf() {
       const metaToken = document.querySelector('meta[name="_csrf"]');
       const metaHeader = document.querySelector('meta[name="_csrf_header"]');
@@ -329,12 +904,12 @@
     const AUTOSAVE_DEBOUNCE_MS = 800; // reduce spamming by debouncing
 
     function autosaveContent() {
-      const html = quill.root.innerHTML || '';
+      const html = getEditorHtmlPreservingTables();
       autosaveStatus.textContent = 'Saving...';
 
       // use htmx.ajax to POST form-encoded data { requirement: html } to your endpoint
       // endpoint: POST /api/richtext
-      htmx.ajax('POST', /* url */ '/richtext', {
+      htmx.ajax('POST', '/richtext', {
         values: {
           requirement: html,
           taskId: '[[${taskId}]]'
@@ -370,13 +945,13 @@
     const srsForm = document.getElementById('srsForm');
     const submitBtn = document.getElementById('submitBtn');
     srsForm.addEventListener('submit', function (e) {
-      document.getElementById('editedDocument').value = quill.root.innerHTML;
+      document.getElementById('editedDocument').value = getEditorHtmlPreservingTables();
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
     });
 
-    // Enhanced PDF export with logo and removed borders
+    // Enhanced PDF export with proper table rendering
     async function downloadAsPDF() {
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({
@@ -395,22 +970,17 @@
       const logo = document.getElementById('pdfLogo');
       if (logo && logo.src) {
         try {
-          // Create a canvas to handle the logo
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           const img = new Image();
 
           img.onload = function() {
-            // Set logo dimensions
             const logoWidth = 30;
             const logoHeight = 50;
             const logoX = pageWidth - margin - logoWidth;
             const logoY = margin;
 
-            // Add logo to PDF
             pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
-
-            // Continue with document content after logo is loaded
             addDocumentContent();
           };
 
@@ -447,7 +1017,7 @@
         y += 50;
 
         // Get the HTML content from the editor
-        const htmlContent = quill.root.innerHTML;
+        const htmlContent = getEditorHtmlPreservingTables();
 
         // Create a temporary div to process the content
         const tempDiv = document.createElement('div');
@@ -479,7 +1049,7 @@
           return false;
         }
 
-        // Function to add text with proper formatting (borders removed)
+        // Function to add text with proper formatting
         function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
           pdf.setFont("helvetica", isBold ? "bold" : "normal");
           pdf.setFontSize(fontSize);
@@ -506,6 +1076,89 @@
           y += 5;
         }
 
+        // Process tables using jsPDF autotable for proper rendering
+        function processTable(table) {
+          const data = [];
+          const headers = [];
+
+          // Extract headers from thead if exists
+          const thead = table.querySelector('thead');
+          if (thead) {
+            const headerRow = thead.querySelector('tr');
+            if (headerRow) {
+              Array.from(headerRow.querySelectorAll('th')).forEach(th => {
+                headers.push(th.innerText.trim());
+              });
+              data.push(headers);
+            }
+          }
+
+          // Extract data from tbody
+          const tbody = table.querySelector('tbody') || table;
+          const rows = tbody.querySelectorAll('tr');
+
+          Array.from(rows).forEach(row => {
+            // Skip header row if we already processed thead
+            if (row.parentElement.tagName === 'THEAD') return;
+
+            const rowData = [];
+            Array.from(row.querySelectorAll('td, th')).forEach(cell => {
+              rowData.push(cell.innerText.trim());
+            });
+            if (rowData.length > 0) {
+              data.push(rowData);
+            }
+          });
+
+          if (data.length > 0) {
+            // Calculate table height
+            const estimatedTableHeight = (data.length * 20) + 30;
+            checkPageBreak(estimatedTableHeight);
+
+            const tableConfig = {
+              startY: y,
+              margin: { left: margin, right: margin },
+              styles: {
+                fontSize: 10,
+                cellPadding: 4,
+                lineColor: [200, 200, 200],
+                lineWidth: 0.5,
+              },
+              headStyles: {
+                fillColor: [243, 244, 246],
+                textColor: [55, 65, 81],
+                fontStyle: 'bold',
+              },
+              alternateRowStyles: {
+                fillColor: [250, 250, 250],
+              },
+              tableWidth: 'auto',
+              columnStyles: {},
+            };
+
+            // If we have headers from thead, use them as proper headers
+            if (thead && headers.length > 0) {
+              const bodyData = data.slice(1); // Remove header row from data
+              pdf.autoTable({
+                head: [headers],
+                body: bodyData,
+                ...tableConfig
+              });
+            } else {
+              // No explicit headers, treat first row as header
+              pdf.autoTable({
+                head: [data[0]],
+                body: data.slice(1),
+                ...tableConfig
+              });
+            }
+
+            // Update y position after table
+            const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
+            y = finalY + 20;
+          }
+        }
+
         // Process each node in the content
         function processNode(node) {
           if (node.nodeType === Node.TEXT_NODE) {
@@ -523,18 +1176,16 @@
             const tag = node.tagName.toLowerCase();
             const textContent = node.textContent.trim();
 
-            if (!textContent && tag !== 'table') return;
+            if (!textContent && tag !== 'table' && tag !== 'div') return;
 
             switch(tag) {
               case "h1":
                 addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
-                // Removed border line under h1
                 y += 10;
                 break;
 
               case "h2":
                 addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
-                // Removed border line under h2
                 y += 8;
                 break;
 
@@ -586,6 +1237,10 @@
                   processComponentBox(node);
                 } else if (node.classList.contains('architecture-diagram')) {
                   processArchitectureDiagram(node);
+                } else if (node.classList.contains('ql-table-embed')) {
+                  // Handle table embed div by processing the table inside
+                  const table = node.querySelector('table');
+                  if (table) processTable(table);
                 } else {
                   Array.from(node.childNodes).forEach(processNode);
                 }
@@ -597,71 +1252,10 @@
           }
         }
 
-        // Process tables (with simplified styling - borders removed)
-        function processTable(table) {
-          const rows = [];
-          table.querySelectorAll("tr").forEach(tr => {
-            const row = [];
-            tr.querySelectorAll("td, th").forEach(cell => {
-              row.push({
-                content: cell.innerText.trim(),
-                isHeader: cell.tagName === 'TH'
-              });
-            });
-            rows.push(row);
-          });
-
-          if (rows.length > 0) {
-            checkPageBreak(100); // Reserve space for table
-
-            const columnWidths = Array(rows[0].length).fill(contentWidth / rows[0].length);
-            const startY = y;
-
-            // Draw table header (simplified - no background color)
-            const headerRow = rows[0];
-            const rowHeight = 25;
-
-            // Draw header text (no background)
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(10);
-            pdf.setTextColor(55, 65, 81); // Regular text color instead of white
-
-            headerRow.forEach((cell, index) => {
-              const x = margin + (index * columnWidths[index]);
-              const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
-              pdf.text(cellContent, x + 5, y + 15);
-            });
-
-            y += rowHeight;
-
-            // Draw table rows (simplified - no alternating colors)
-            pdf.setFont("helvetica", "normal");
-            pdf.setFontSize(10);
-            pdf.setTextColor(55, 65, 81);
-
-            for (let i = 1; i < rows.length; i++) {
-              checkPageBreak(rowHeight);
-
-              const row = rows[i];
-              row.forEach((cell, index) => {
-                const x = margin + (index * columnWidths[index]);
-                const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
-                pdf.text(cellContent, x + 5, y + 15);
-              });
-
-              y += rowHeight;
-            }
-
-            // Removed table borders
-            y += 20;
-          }
-        }
-
-        // Process component boxes (borders removed)
+        // Process component boxes
         function processComponentBox(box) {
           checkPageBreak(40);
 
-          // Removed background and border
           pdf.setFont("helvetica", "bold");
           pdf.setFontSize(11);
           pdf.setTextColor(55, 65, 81);
@@ -672,11 +1266,10 @@
           y += 40;
         }
 
-        // Process architecture diagrams (borders removed)
+        // Process architecture diagrams
         function processArchitectureDiagram(diagram) {
           checkPageBreak(100);
 
-          // Removed background and border
           pdf.setFont("helvetica", "bold");
           pdf.setFontSize(12);
           pdf.setTextColor(100, 100, 100);
@@ -692,6 +1285,42 @@
         pdf.save("srs-document.pdf");
       }
     }
+
+    /*********************************
+     * Keep cell handlers attached after changes
+     *********************************/
+    quill.on('text-change', () => {
+      // reattach behaviors (handles pasted tables or structural changes)
+      setTimeout(() => attachCellBehaviorToAllTables(), 0);
+    });
+
+    // If the editor loses focus and no table cell is focused, hide toolbar
+    quill.root.addEventListener('focusout', (ev) => {
+      // small timeout to allow focus to transfer to toolbar or other cell
+      setTimeout(() => {
+        if (!document.activeElement || !document.activeElement.closest || !document.activeElement.closest('.ql-table-embed')) {
+          hideFloatingToolbar();
+        }
+      }, 120);
+    });
+
+    // Prevent accidental Quill edits inside the embed container itself
+    quill.root.addEventListener('click', (e) => {
+      const embed = e.target.closest('.ql-table-embed');
+      if (embed && !e.target.closest('td,th')) {
+        // click landed in embed container but not a cell — focus the first cell
+        const firstCell = embed.querySelector('td,th');
+        if (firstCell) {
+          firstCell.focus();
+          placeCaretAtEnd(firstCell);
+        }
+      }
+    });
+
+    // Make sure floating toolbar stays positioned if editor scrolls
+    quill.root.addEventListener('scroll', () => {
+      if (currentCell) showFloatingToolbarNearCell(currentCell);
+    });
   </script>
 </div>
 </body>
