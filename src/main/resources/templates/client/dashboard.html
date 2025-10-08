@@ -426,7 +426,7 @@
 
             <!-- Invite Form -->
             <form id="inviteForm" class="flex flex-col sm:flex-row w-full md:w-2/3"
-                  th:action="@{/project/invite}" method="post">
+                  th:action="@{/client/project/invite}" method="post">
                 <div class="flex-1 mb-2 sm:mb-0 sm:mr-2">
                     <div class="input-wrapper">
                         <input
@@ -812,70 +812,70 @@
                     </div>
                 </div>
 
-                </div>
             </div>
         </div>
-
     </div>
-    <!-- Full Width Completed Tasks Section -->
-    <div th:if="${!#lists.isEmpty(completedTasks)}" class="mt-6">
-        <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Completed Tasks</h3>
-                <div class="flex items-center space-x-4">
+
+</div>
+<!-- Full Width Completed Tasks Section -->
+<div th:if="${!#lists.isEmpty(completedTasks)}" class="mt-6">
+    <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800">Completed Tasks</h3>
+            <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-600">
                             <span th:text="${completedTaskCount}" class="font-semibold text-green-600">32</span> tasks completed
                         </span>
-                </div>
             </div>
+        </div>
 
-            <div class="completed-tasks-grid">
-                <!-- Completed Task 1 -->
-                <div th:each="task : ${completedTasks}" class="completed-task-card border border-gray-200 rounded-xl p-4 card-hover">
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 th:text="${task.name}" class="font-medium">User Authentication System</h4>
-                        <span class="completion-badge text-xs font-medium px-2 py-1 rounded-full">
+        <div class="completed-tasks-grid">
+            <!-- Completed Task 1 -->
+            <div th:each="task : ${completedTasks}" class="completed-task-card border border-gray-200 rounded-xl p-4 card-hover">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 th:text="${task.name}" class="font-medium">User Authentication System</h4>
+                    <span class="completion-badge text-xs font-medium px-2 py-1 rounded-full">
                                 <i class="fas fa-check mr-1"></i> Completed
                             </span>
+                </div>
+                <p th:if="${task.name == 'Requirement Elicitation'}" class="text-sm text-gray-600 mb-3">
+                    Gathered and documented client requirements to ensure clear understanding of project goals
+                </p>
+                <p th:if="${task.name == 'Review The SRS'}" class="text-sm text-gray-600 mb-3">
+                    Reviewed and validated the Software Requirements Specification to ensure accuracy and completeness
+                </p>
+                <p th:if="${task.name == 'Review User Stories List'}" class="text-sm text-gray-600 mb-3">
+                    Reviewed and refined user stories to ensure clarity, completeness, and alignment with project requirements
+                </p>
+
+                <p th:if="${task.name == 'Solution Architecture Review'}" class="text-sm text-gray-600 mb-3">
+                    Evaluated the proposed solution architecture for scalability, security, and alignment with business objectives
+                </p>
+
+                <p th:if="${task.name == 'Review Generated Layout'}" class="text-sm text-gray-600 mb-3">
+                    Assessed the generated UI layouts for usability, consistency, and adherence to design standards
+                </p>
+
+                <p th:if="${task.name == 'Review Current User Story Implementation'}" class="text-sm text-gray-600 mb-3">
+                    Reviewed implemented user stories to verify functionality and ensure alignment with acceptance criteria
+                </p>
+
+                <p th:if="${task.name == 'UAT'}" class="text-sm text-gray-600 mb-3">
+                    Conducted User Acceptance Testing to validate the system against business needs and confirm readiness for deployment
+                </p>
+                <div class="flex justify-between items-center text-sm">
+                    <div class="flex items-center">
+                        <span class="text-gray-500">Completed by:</span>
+                        <span class="ml-2 font-medium">JustJava Team</span>
                     </div>
-                    <p th:if="${task.name == 'Requirement Elicitation'}" class="text-sm text-gray-600 mb-3">
-                        Gathered and documented client requirements to ensure clear understanding of project goals
-                    </p>
-                    <p th:if="${task.name == 'Review The SRS'}" class="text-sm text-gray-600 mb-3">
-                        Reviewed and validated the Software Requirements Specification to ensure accuracy and completeness
-                    </p>
-                    <p th:if="${task.name == 'Review User Stories List'}" class="text-sm text-gray-600 mb-3">
-                        Reviewed and refined user stories to ensure clarity, completeness, and alignment with project requirements
-                    </p>
-
-                    <p th:if="${task.name == 'Solution Architecture Review'}" class="text-sm text-gray-600 mb-3">
-                        Evaluated the proposed solution architecture for scalability, security, and alignment with business objectives
-                    </p>
-
-                    <p th:if="${task.name == 'Review Generated Layout'}" class="text-sm text-gray-600 mb-3">
-                        Assessed the generated UI layouts for usability, consistency, and adherence to design standards
-                    </p>
-
-                    <p th:if="${task.name == 'Review Current User Story Implementation'}" class="text-sm text-gray-600 mb-3">
-                        Reviewed implemented user stories to verify functionality and ensure alignment with acceptance criteria
-                    </p>
-
-                    <p th:if="${task.name == 'UAT'}" class="text-sm text-gray-600 mb-3">
-                        Conducted User Acceptance Testing to validate the system against business needs and confirm readiness for deployment
-                    </p>
-                    <div class="flex justify-between items-center text-sm">
-                        <div class="flex items-center">
-                            <span class="text-gray-500">Completed by:</span>
-                            <span class="ml-2 font-medium">JustJava Team</span>
-                        </div>
-                        <div>
-                            <span th:text="${#dates.format(task.createTime, 'MMM dd, yyyy')}"  class="text-gray-500">Oct 8, 2023</span>
-                        </div>
+                    <div>
+                        <span th:text="${#dates.format(task.createTime, 'MMM dd, yyyy')}"  class="text-gray-500">Oct 8, 2023</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- Hidden logo for PDF generation -->
@@ -1034,7 +1034,7 @@
 
     });
 
-    // Enhanced PDF export with logo and improved formatting
+    // Enhanced PDF export with logo and improved formatting for requirement and architecture specs
     async function downloadAsPDF(content, filename) {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
@@ -1053,22 +1053,15 @@
         const logo = document.getElementById('pdfLogo');
         if (logo && logo.src) {
             try {
-                // Create a canvas to handle the logo
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
                 const img = new Image();
 
                 img.onload = function() {
-                    // Set logo dimensions
                     const logoWidth = 30;
                     const logoHeight = 50;
                     const logoX = pageWidth - margin - logoWidth;
                     const logoY = margin;
 
-                    // Add logo to PDF
                     pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
-
-                    // Continue with document content after logo is loaded
                     addDocumentContent();
                 };
 
@@ -1163,6 +1156,89 @@
                 y += 5;
             }
 
+            // Process tables using jsPDF autotable for proper rendering
+            function processTable(table) {
+                const data = [];
+                const headers = [];
+
+                // Extract headers from thead if exists
+                const thead = table.querySelector('thead');
+                if (thead) {
+                    const headerRow = thead.querySelector('tr');
+                    if (headerRow) {
+                        Array.from(headerRow.querySelectorAll('th')).forEach(th => {
+                            headers.push(th.innerText.trim());
+                        });
+                        data.push(headers);
+                    }
+                }
+
+                // Extract data from tbody
+                const tbody = table.querySelector('tbody') || table;
+                const rows = tbody.querySelectorAll('tr');
+
+                Array.from(rows).forEach(row => {
+                    // Skip header row if we already processed thead
+                    if (row.parentElement.tagName === 'THEAD') return;
+
+                    const rowData = [];
+                    Array.from(row.querySelectorAll('td, th')).forEach(cell => {
+                        rowData.push(cell.innerText.trim());
+                    });
+                    if (rowData.length > 0) {
+                        data.push(rowData);
+                    }
+                });
+
+                if (data.length > 0) {
+                    // Calculate table height
+                    const estimatedTableHeight = (data.length * 20) + 30;
+                    checkPageBreak(estimatedTableHeight);
+
+                    const tableConfig = {
+                        startY: y,
+                        margin: { left: margin, right: margin },
+                        styles: {
+                            fontSize: 10,
+                            cellPadding: 4,
+                            lineColor: [200, 200, 200],
+                            lineWidth: 0.5,
+                        },
+                        headStyles: {
+                            fillColor: [243, 244, 246],
+                            textColor: [55, 65, 81],
+                            fontStyle: 'bold',
+                        },
+                        alternateRowStyles: {
+                            fillColor: [250, 250, 250],
+                        },
+                        tableWidth: 'auto',
+                        columnStyles: {},
+                    };
+
+                    // If we have headers from thead, use them as proper headers
+                    if (thead && headers.length > 0) {
+                        const bodyData = data.slice(1); // Remove header row from data
+                        pdf.autoTable({
+                            head: [headers],
+                            body: bodyData,
+                            ...tableConfig
+                        });
+                    } else {
+                        // No explicit headers, treat first row as header
+                        pdf.autoTable({
+                            head: [data[0]],
+                            body: data.slice(1),
+                            ...tableConfig
+                        });
+                    }
+
+                    // Update y position after table
+                    const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
+                    y = finalY + 20;
+                }
+            }
+
             // Process each node in the content
             function processNode(node) {
                 if (node.nodeType === Node.TEXT_NODE) {
@@ -1180,7 +1256,7 @@
                     const tag = node.tagName.toLowerCase();
                     const textContent = node.textContent.trim();
 
-                    if (!textContent) return;
+                    if (!textContent && tag !== 'table' && tag !== 'div') return;
 
                     switch(tag) {
                         case "h1":
@@ -1241,6 +1317,10 @@
                                 processComponentBox(node);
                             } else if (node.classList.contains('architecture-diagram')) {
                                 processArchitectureDiagram(node);
+                            } else if (node.classList.contains('ql-table-embed')) {
+                                // Handle table embed div by processing the table inside
+                                const table = node.querySelector('table');
+                                if (table) processTable(table);
                             } else {
                                 Array.from(node.childNodes).forEach(processNode);
                             }
@@ -1249,65 +1329,6 @@
                         default:
                             Array.from(node.childNodes).forEach(processNode);
                     }
-                }
-            }
-
-            // Process tables with simplified styling
-            function processTable(table) {
-                const rows = [];
-                table.querySelectorAll("tr").forEach(tr => {
-                    const row = [];
-                    tr.querySelectorAll("td, th").forEach(cell => {
-                        row.push({
-                            content: cell.innerText.trim(),
-                            isHeader: cell.tagName === 'TH'
-                        });
-                    });
-                    rows.push(row);
-                });
-
-                if (rows.length > 0) {
-                    checkPageBreak(100); // Reserve space for table
-
-                    const columnWidths = Array(rows[0].length).fill(contentWidth / rows[0].length);
-                    const startY = y;
-
-                    // Draw table header (simplified - no background color)
-                    const headerRow = rows[0];
-                    const rowHeight = 25;
-
-                    // Draw header text (no background)
-                    pdf.setFont("helvetica", "bold");
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(55, 65, 81); // Regular text color instead of white
-
-                    headerRow.forEach((cell, index) => {
-                        const x = margin + (index * columnWidths[index]);
-                        const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
-                        pdf.text(cellContent, x + 5, y + 15);
-                    });
-
-                    y += rowHeight;
-
-                    // Draw table rows (simplified - no alternating colors)
-                    pdf.setFont("helvetica", "normal");
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(55, 65, 81);
-
-                    for (let i = 1; i < rows.length; i++) {
-                        checkPageBreak(rowHeight);
-
-                        const row = rows[i];
-                        row.forEach((cell, index) => {
-                            const x = margin + (index * columnWidths[index]);
-                            const cellContent = pdf.splitTextToSize(cell.content, columnWidths[index] - 10);
-                            pdf.text(cellContent, x + 5, y + 15);
-                        });
-
-                        y += rowHeight;
-                    }
-
-                    y += 20;
                 }
             }
 
@@ -1366,6 +1387,7 @@
         downloadAsPDF(content, "solution-architecture.pdf");
     }
 
+    // User Stories PDF generation function (unchanged as requested)
     async function generatePDF() {
         try {
             const { jsPDF } = window.jspdf;
