@@ -480,16 +480,16 @@
             <div class="md:col-span-2 equal-height-container">
                 <h3 class="text-lg font-semibold mb-4 flex items-center">
                     <span>Project Progress</span>
-                    <span th:text="${completedTaskPercentage + '%' + ' Complete'}" class="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">65% Complete</span>
+                    <span th:text="|${((project.processVariables['progress'] ?: 0) * 100) / 7}% Complete|" class="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">65% Complete</span>
                 </h3>
 
                 <div class="mb-6">
                     <div class="flex justify-between text-sm text-gray-600 mb-2">
                         <span>Overall Progress</span>
-                        <span th:text="${completedTaskPercentage + '%'}">65%</span>
+                        <span th:text="|${((project.processVariables['progress'] ?: 0) * 100) / 7}%|">65%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full progress-transition" th:style="'width:' + ${completedTaskPercentage} + '%'"></div>
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full progress-transition" th:style="|width:${((project.processVariables['progress'] ?: 0) * 100) / 7}%|"></div>
                     </div>
                 </div>
 
@@ -499,16 +499,16 @@
                     <div class="flex items-center">
                         <div class="progress-dot"
                              th:classappend="${completedTaskCount >= 2} ? ' completed' :
-                             (${completedTaskCount < 2 and completedTaskCount >= 0} ? ' current' : ' upcoming')">
+                             (${project.processVariables['progress'] < 2 and project.processVariables['progress'] >= 0} ? ' current' : ' upcoming')">
                         </div>
                         <div class="flex-1">
                             <div class="flex justify-between">
                                 <span class="font-medium">Planning Phase</span>
                                 <span class="text-sm font-medium"
-                                      th:classappend="${completedTaskCount >= 2} ? ' text-green-600' :
-                                      (${completedTaskCount < 2 and completedTaskCount >= 0} ? ' text-blue-600' : ' text-gray-500')"
-                                      th:text="${completedTaskCount >= 2 ? 'Completed' :
-                               (completedTaskCount < 2 and completedTaskCount >= 0 ? 'In Progress' : 'Upcoming')}">
+                                      th:classappend="${project.processVariables['progress'] >= 2} ? ' text-green-600' :
+                                      (${project.processVariables['progress'] < 2 and project.processVariables['progress'] >= 0} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${project.processVariables['progress'] >= 2 ? 'Completed' :
+                               (project.processVariables['progress'] < 2 and project.processVariables['progress'] >= 0 ? 'In Progress' : 'Upcoming')}">
                 </span>
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Requirements gathering and project planning</div>
@@ -518,17 +518,17 @@
                     <!-- 2. Design Phase -->
                     <div class="flex items-center">
                         <div class="progress-dot"
-                             th:classappend="${completedTaskCount >= 4} ? ' completed' :
-                             (${completedTaskCount < 4 and completedTaskCount >= 3} ? ' current' : ' upcoming')">
+                             th:classappend="${project.processVariables['progress'] >= 4} ? ' completed' :
+                             (${project.processVariables['progress'] < 4 and project.processVariables['progress'] >= 3} ? ' current' : ' upcoming')">
                         </div>
                         <div class="flex-1">
                             <div class="flex justify-between">
                                 <span class="font-medium">Design Phase</span>
                                 <span class="text-sm font-medium"
-                                      th:classappend="${completedTaskCount >= 4} ? ' text-green-600' :
-                                      (${completedTaskCount < 4 and completedTaskCount >= 3} ? ' text-blue-600' : ' text-gray-500')"
-                                      th:text="${completedTaskCount >= 4 ? 'Completed' :
-                               (completedTaskCount < 4 and completedTaskCount >= 3 ? 'In Progress' : 'Upcoming')}">
+                                      th:classappend="${project.processVariables['progress'] >= 4} ? ' text-green-600' :
+                                      (${project.processVariables['progress'] < 4 and project.processVariables['progress'] >= 3} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${project.processVariables['progress'] >= 4 ? 'Completed' :
+                               (project.processVariables['progress'] < 4 and project.processVariables['progress'] >= 3 ? 'In Progress' : 'Upcoming')}">
                 </span>
                             </div>
                             <div class="text-sm text-gray-600 mt-1">UI/UX design and prototyping</div>
@@ -538,17 +538,17 @@
                     <!-- 3. Development Phase -->
                     <div class="flex items-center">
                         <div class="progress-dot"
-                             th:classappend="${completedTaskCount >= 6} ? ' completed' :
-                             (${completedTaskCount < 6 and completedTaskCount >= 5} ? ' current' : ' upcoming')">
+                             th:classappend="${project.processVariables['progress'] >= 6} ? ' completed' :
+                             (${project.processVariables['progress'] < 6 and project.processVariables['progress'] >= 5} ? ' current' : ' upcoming')">
                         </div>
                         <div class="flex-1">
                             <div class="flex justify-between">
                                 <span class="font-medium">Development Phase</span>
                                 <span class="text-sm font-medium"
-                                      th:classappend="${completedTaskCount >= 6} ? ' text-green-600' :
-                                      (${completedTaskCount < 6 and completedTaskCount >= 5} ? ' text-blue-600' : ' text-gray-500')"
-                                      th:text="${completedTaskCount >= 6 ? 'Completed' :
-                               (completedTaskCount < 6 and completedTaskCount >= 5 ? 'In Progress' : 'Upcoming')}">
+                                      th:classappend="${project.processVariables['progress'] >= 6} ? ' text-green-600' :
+                                      (${project.processVariables['progress'] < 6 and completedTaskCount >= 5} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${project.processVariables['progress'] >= 6 ? 'Completed' :
+                               (project.processVariables['progress'] < 6 and project.processVariables['progress'] >= 5 ? 'In Progress' : 'Upcoming')}">
                 </span>
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Backend development and API integration</div>
@@ -558,17 +558,17 @@
                     <!-- 4. Testing Phase -->
                     <div class="flex items-center">
                         <div class="progress-dot"
-                             th:classappend="${completedTaskCount >= 7} ? ' completed' :
-                             (${completedTaskCount == 7} ? ' current' : ' upcoming')">
+                             th:classappend="${project.processVariables['progress'] >= 7} ? ' completed' :
+                             (${project.processVariables['progress'] == 7} ? ' current' : ' upcoming')">
                         </div>
                         <div class="flex-1">
                             <div class="flex justify-between">
                                 <span class="font-medium">Testing Phase</span>
                                 <span class="text-sm font-medium"
-                                      th:classappend="${completedTaskCount >= 7} ? ' text-green-600' :
-                                      (${completedTaskCount == 7} ? ' text-blue-600' : ' text-gray-500')"
-                                      th:text="${completedTaskCount >= 7 ? 'Completed' :
-                               (completedTaskCount == 7 ? 'In Progress' : 'Upcoming')}">
+                                      th:classappend="${project.processVariables['progress'] >= 7} ? ' text-green-600' :
+                                      (${project.processVariables['progress'] == 7} ? ' text-blue-600' : ' text-gray-500')"
+                                      th:text="${project.processVariables['progress'] >= 7 ? 'Completed' :
+                               (project.processVariables['progress'] == 7 ? 'In Progress' : 'Upcoming')}">
                 </span>
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Quality assurance and user acceptance testing</div>
@@ -578,14 +578,14 @@
                     <!-- 5. Launch -->
                     <div class="flex items-center">
                         <div class="progress-dot"
-                             th:classappend="${completedTaskCount == 7} ? ' current' : ' upcoming'">
+                             th:classappend="${project.processVariables['progress'] == 7} ? ' current' : ' upcoming'">
                         </div>
                         <div class="flex-1">
                             <div class="flex justify-between">
                                 <span class="font-medium">Launch</span>
                                 <span class="text-sm font-medium"
-                                      th:classappend="${completedTaskCount == 7} ? ' text-blue-600' : ' text-gray-500'"
-                                      th:text="${completedTaskCount == 7 ? 'In Progress' : 'Upcoming'}">
+                                      th:classappend="${project.processVariables['progress'] == 7} ? ' text-blue-600' : ' text-gray-500'"
+                                      th:text="${project.processVariables['progress'] == 7 ? 'In Progress' : 'Upcoming'}">
                 </span>
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Deployment and go-live</div>

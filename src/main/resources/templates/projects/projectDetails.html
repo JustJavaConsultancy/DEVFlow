@@ -249,23 +249,12 @@
         and admin dashboard for managing products and orders.
       </p>
 
-      <div th:each="task : ${tasks}" th:if="${task.state == 'created'}" class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-        <div th:if="${task.name == 'Requirement Elicitation'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 0%"></div>
-        <div th:if="${task.name == 'Review The SRS'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 17%"></div>
-        <div th:if="${task.name == 'Review User Stories List'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 33%"></div>
-        <div th:if="${task.name == 'Solution Architecture Review'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 50%"></div>
-        <div th:if="${task.name == 'Review Current User Story Implementation'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width:67%"></div>
-        <div th:if="${task.name == 'UAT'}" class="bg-blue-600 h-2.5 rounded-full progress-transition" style="width: 83%"></div>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div class="bg-blue-600 h-2.5 rounded-full progress-transition" th:style="|width:${((project.processVariables['progress'] ?: 0) * 100) / 7}%|"></div>
       </div>
 
-      <div th:each="task : ${tasks}" th:if="${task.state == 'created'}" class="flex justify-between text-sm text-gray-500 mb-6">
-        <span th:if="${task.name == 'Requirement Elicitation'}">0/6 tasks completed</span>
-        <span th:if="${task.name == 'Review The SRS'}">1/6 tasks completed</span>
-        <span th:if="${task.name == 'Review User Stories List'}">2/6 tasks completed</span>
-        <span th:if="${task.name == 'Solution Architecture Review'}">3/6 tasks completed</span>
-        <span th:if="${task.name == 'Review Current User Story Implementation'}">4/6 tasks completed</span>
-        <span th:if="${task.name == 'UAT'}">5/6 tasks completed</span>
-        <span th:text="${'Expected: ' + project.processVariables['dueDate']}">Due: Nov 15, 2023</span>
+      <div class="flex justify-between text-sm text-gray-500 mb-6">
+        <span th:text="${project.processVariables['progress']} + '/7' + ' Tasks Completed'">0/6 tasks completed</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

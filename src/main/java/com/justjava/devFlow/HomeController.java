@@ -37,12 +37,6 @@ public class HomeController {
                 .includeProcessVariables()
                 .active()
                 .list();
-        projects.forEach(project -> {
-/*            System.out.println(" The Process Instance" +
-                    " Here=ID=="+project.getProcessInstanceId()
-                    +" the start time ==="+project.getStartTime()
-                    +" the variables==="+project.getProcessVariables());*/
-        });
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
                 .finished()
@@ -59,7 +53,6 @@ public class HomeController {
                 .orderByTaskCreateTime().desc()
                 .list();
 
-        //System.out.println(" The Completed Process Here==="+completedProcess.size());
         model.addAttribute("projects",projects);
         model.addAttribute("activeTask",tasks.size());
         model.addAttribute("completedTask",historicTasks.size());

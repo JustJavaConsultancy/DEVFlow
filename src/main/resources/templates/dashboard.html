@@ -130,10 +130,10 @@
                 <span class="text-sm text-gray-600" th:text="${project.processVariables['clientName']}">Sarah Johnson</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                <div class="bg-blue-600 h-2 rounded-full progress-transition"  th:style="|width:${((project.processVariables['progress'] ?: 0) * 100) / 6}%|"></div>
+                <div class="bg-blue-600 h-2 rounded-full progress-transition"  th:style="|width:${((project.processVariables['progress'] ?: 0) * 100) / 7}%|"></div>
             </div>
             <div class="flex justify-between text-xs text-sm text-gray-500 mb-4">
-                <span th:text="${project.processVariables['progress']} + '/6' + ' Tasks Completed'">13/20 tasks completed</span>
+                <span th:text="${project.processVariables['progress']} + '/7' + ' Tasks Completed'">13/20 tasks completed</span>
                 <span th:text="${'Expected: ' + project.processVariables['dueDate']}">Due: Nov 15, 2023</span>
             </div>
         </div>
