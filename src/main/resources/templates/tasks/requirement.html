@@ -298,6 +298,55 @@
         .cursor-instruction i {
             color: #780aff;
         }
+
+        /* Process Driven Application Checkbox Styles */
+        .process-driven-section {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .process-driven-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        .process-driven-title i {
+            margin-right: 0.5rem;
+            color: #780aff;
+        }
+        .process-driven-description {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-bottom: 1rem;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.75rem;
+            accent-color: #780aff;
+            cursor: pointer;
+        }
+        .checkbox-label {
+            font-size: 0.95rem;
+            color: #4a5568;
+            cursor: pointer;
+        }
+        .checkbox-info {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 0.25rem;
+            margin-left: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -315,6 +364,26 @@
     <form th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post"
           id="requirementForm"
           class="bg-white border border-gray-200 rounded-lg p-4 md:p-5 mb-6">
+
+        <!-- Process Driven Application Section -->
+        <div class="process-driven-section">
+            <h3 class="process-driven-title">
+                <i class="fas fa-cogs"></i>
+                Application Type
+            </h3>
+            <p class="process-driven-description">
+                Select whether this application is process-driven to help us better understand your requirements.
+            </p>
+            <div class="checkbox-container">
+                <input type="checkbox" id="processDriven" name="process" class="checkbox-input">
+                <label for="processDriven" class="checkbox-label">
+                    This is a process-driven application
+                </label>
+            </div>
+            <p class="checkbox-info">
+                Process-driven applications typically involve workflows, sequential steps, and business processes.
+            </p>
+        </div>
 
         <!-- Strategic Upload Section - Placed before the editor for better UX -->
         <div class="upload-section">
@@ -452,6 +521,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const charCount = document.getElementById('charCount');
             const toolbarButtons = document.querySelectorAll('.toolbar-btn');
+            const processDrivenCheckbox = document.getElementById('processDriven');
 
             // Upload modal elements
             const uploadPdfBtn = document.getElementById('uploadPdfBtn');
