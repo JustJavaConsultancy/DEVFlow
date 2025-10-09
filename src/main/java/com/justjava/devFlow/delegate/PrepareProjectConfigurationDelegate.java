@@ -33,7 +33,7 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
 
 
         // Add dependencies (Spring Web as example)
-        String  dependencies = "web,data-jpa,thymeleaf,oauth2-client,lombok,devtools,validation,security";//buildDependenciesList();
+        String  dependencies = "web,data-jpa,thymeleaf,oauth2-client,lombok,devtools,validation,security,postgresql";//buildDependenciesList();
 
         System.out.println(" dependencies==="+dependencies);
         execution.setVariable("dependencies",dependencies);

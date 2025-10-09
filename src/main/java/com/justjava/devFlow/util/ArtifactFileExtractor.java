@@ -2,10 +2,6 @@ package com.justjava.devFlow.util;
 
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,10 +100,11 @@ public class ArtifactFileExtractor {
 
         // Matches various path formats
         Pattern pathPattern = Pattern.compile(
-                "(?:\\*\\*File Path:\\*\\*\\s*`([^`]+)`|" +    // **File Path:** `...`
-                        "<!--\\s*([\\w./\\-]+)\\s*-->|" +             // <!-- src/... -->
-                        "#\\s*([\\w./\\-]+)|" +                       // # src/...
-                        "^(src/[\\w./\\-]+))",                        // Plain src/...
+                "(?:\\*\\*File Path:\\*\\*\\s*`([^`]+?\\.\\w+)`|" +    // **File Path:** `...`
+                        "<!--\\s*((?:[\\w.-]+/)+[\\w.-]+\\.[a-z]+)\\s*-->|" +  // <!-- src/... -->
+                        "#\\s*((?:[\\w.-]+/)+[\\w.-]+\\.[a-z]+)|" +            // # src/...
+                        "//\\s*((?:[\\w.-]+/)+[\\w.-]+\\.[a-z]+)|" +           // // src/...
+                        "^(?:((?:[\\w.-]+/)+[\\w.-]+\\.[a-z]+)))",             // Plain src/...
                 Pattern.MULTILINE
         );
 
