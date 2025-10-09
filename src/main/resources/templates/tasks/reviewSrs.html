@@ -123,141 +123,159 @@
 
     /* Table embed visuals - Added from the original code */
     .ql-table-embed {
-      margin:10px 0;
-      padding:6px;
-      background:transparent;
-    }
-    .ql-table-embed table {
-      width:100%;
-      border-collapse: collapse;
-      table-layout:auto;
-      background:white;
-      font-size:14px;
-    }
-    .ql-table-embed th, .ql-table-embed td {
-      border: 1px solid #d6dbe6;
-      padding: 8px 10px;
-      min-width:50px;
-      vertical-align: top;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-    .ql-table-embed thead th {
-      background: #f3f4f6;
-      font-weight:600;
-    }
-    .ql-table-embed td[contenteditable="true"], .ql-table-embed th[contenteditable="true"] {
-      outline: none;
-      cursor:text;
-      tabindex: 0;
-    }
-    .ql-table-embed td:focus, .ql-table-embed th:focus {
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+      margin: 10px 0;
+      padding: 6px;
+      background: transparent;
+      position: relative;
     }
 
-    /* Floating table toolbar - Updated to match your theme */
-    .floating-toolbar {
+    /* Table toolbar styling */
+    .table-toolbar {
       position: absolute;
       z-index: 50;
-      display:flex;
-      gap:6px;
-      padding:6px;
-      border-radius:8px;
-      border:1px solid #e5e7eb;
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
       background: linear-gradient(180deg, #fff, #fbfbff);
-      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
       transition: opacity .12s ease, transform .12s ease;
       opacity: 0;
       pointer-events: none;
+      top: -40px;
+      left: 0;
     }
-    .floating-toolbar.show {
-      opacity:1;
-      pointer-events:auto;
+
+    .table-toolbar.show {
+      opacity: 1;
+      pointer-events: auto;
       transform: translateY(-2px);
     }
 
-    .floating-toolbar .btn-sm {
-      padding:6px 8px;
-      font-size:13px;
-      border-radius:6px;
+    .table-toolbar .btn-sm {
+      padding: 6px 8px;
+      font-size: 13px;
+      border-radius: 6px;
       background: white;
       border: 1px solid #e5e7eb;
       cursor: pointer;
     }
-    .floating-toolbar .btn-sm:hover {
+
+    .table-toolbar .btn-sm:hover {
       background: #f9fafb;
+    }
+
+    .ql-table-embed table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+      background: white;
+      font-size: 14px;
+    }
+
+    .ql-table-embed th, .ql-table-embed td {
+      border: 1px solid #d6dbe6;
+      padding: 8px 10px;
+      min-width: 50px;
+      vertical-align: top;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .ql-table-embed thead th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+
+    .ql-table-embed td[contenteditable="true"], .ql-table-embed th[contenteditable="true"] {
+      outline: none;
+      cursor: text;
+      tabindex: 0;
+    }
+
+    .ql-table-embed td:focus, .ql-table-embed th:focus {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
     /* Modal (Insert Table) - Updated to match your theme */
     .modal-backdrop {
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:60;
-      background: rgba(3,7,18,0.45);
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      background: rgba(3, 7, 18, 0.45);
     }
+
     .modal {
-      width:360px;
-      border-radius:10px;
-      background:white;
-      padding:14px;
-      box-shadow: 0 20px 60px rgba(2,6,23,0.2);
-      border:1px solid #e5e7eb;
+      width: 360px;
+      border-radius: 10px;
+      background: white;
+      padding: 14px;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.2);
+      border: 1px solid #e5e7eb;
     }
+
     .modal h3 {
-      margin:0 0 8px 0;
-      font-size:16px;
+      margin: 0 0 8px 0;
+      font-size: 16px;
       font-weight: 600;
     }
+
     .modal .row {
-      display:flex;
-      gap:8px;
-      margin-top:8px;
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
     }
+
     .modal label {
-      font-size:13px;
-      color:#6b7280;
-      display:block;
-      margin-bottom:6px;
+      font-size: 13px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 6px;
     }
+
     .modal input[type="number"] {
-      width:100%;
-      padding:8px;
-      border-radius:8px;
-      border:1px solid #e5e7eb;
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
+
     .modal .actions {
-      display:flex;
-      gap:8px;
-      justify-content:flex-end;
-      margin-top:12px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 12px;
     }
+
     .modal .help {
-      font-size:13px;
-      color:#6b7280;
-      margin-top:8px;
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
     }
 
     /* Custom button styles */
     .btn {
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:8px 12px;
-      border-radius:8px;
-      border:1px solid #e5e7eb;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
       background: white;
-      cursor:pointer;
-      font-size:14px;
+      cursor: pointer;
+      font-size: 14px;
       color: #374151;
     }
+
     .btn:hover {
-      box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+      box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
     }
 
-    /* make sure the table toolbar shows the font-awesome icon */
+    /* make sure the table toolbar button shows the font-awesome icon */
     .ql-toolbar .ql-table i { font-size: 14px; }
   </style>
 </head>
@@ -297,15 +315,6 @@
     <div class="editor-wrapper relative bg-white rounded-lg shadow-sm border border-gray-200">
       <!-- Quill Editor (editable) -->
       <div id="editor" th:utext="${processVariables.aiRequirementAnalysis}"></div>
-
-      <!-- Floating table toolbar (hidden until a cell is focused) -->
-      <div id="floating-toolbar" class="floating-toolbar" aria-hidden="true">
-        <button id="ft-add-row" class="btn-sm">+ Row</button>
-        <button id="ft-add-col" class="btn-sm">+ Col</button>
-        <button id="ft-del-row" class="btn-sm">Del Row</button>
-        <button id="ft-del-col" class="btn-sm">Del Col</button>
-        <button id="ft-del-table" class="btn-sm" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
-      </div>
     </div>
 
     <!-- Complete Button -->
@@ -368,6 +377,18 @@
         node.setAttribute('contenteditable', 'false'); // embed container not editable (cells are)
         node.innerHTML = value;
 
+        // Add table toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'table-toolbar';
+        toolbar.innerHTML = `
+          <button class="btn-sm add-row">+ Row</button>
+          <button class="btn-sm add-col">+ Col</button>
+          <button class="btn-sm del-row">Del Row</button>
+          <button class="btn-sm del-col">Del Col</button>
+          <button class="btn-sm del-table" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+        `;
+        node.appendChild(toolbar);
+
         // Make cells editable (defensive: ensure attributes present)
         const cells = node.querySelectorAll('td, th');
         cells.forEach(c => {
@@ -415,6 +436,18 @@
         wrapper.setAttribute('contenteditable', 'false');
         wrapper.innerHTML = cloned.outerHTML;
 
+        // Add table toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'table-toolbar';
+        toolbar.innerHTML = `
+          <button class="btn-sm add-row">+ Row</button>
+          <button class="btn-sm add-col">+ Col</button>
+          <button class="btn-sm del-row">Del Row</button>
+          <button class="btn-sm del-col">Del Col</button>
+          <button class="btn-sm del-table" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+        `;
+        wrapper.appendChild(toolbar);
+
         table.parentNode.replaceChild(wrapper, table);
       });
     })();
@@ -461,12 +494,6 @@
       // also a fallback conversion in case any raw <table> tags still exist in the Quill root
       convertExistingTablesToEmbeds();
     }, 50);
-
-    // convenience refs
-    const wrapper = document.querySelector('.editor-wrapper');
-    const floatingToolbar = document.getElementById('floating-toolbar');
-    let currentCell = null;       // currently focused <td> or <th>
-    let currentEmbedNode = null;  // current .ql-table-embed container
 
     /*********************************
      * Table Utilities
@@ -567,118 +594,6 @@
     });
 
     /*********************************
-     * Cell behaviors: tab navigation, enter handling, focus tracking
-     *********************************/
-    function attachCellBehaviorToAllTables() {
-      const embeds = quill.root.querySelectorAll('.ql-table-embed');
-      embeds.forEach(embed => {
-        const table = embed.querySelector('table');
-        if (!table) return;
-        const cells = Array.from(table.querySelectorAll('td, th'));
-        cells.forEach(cell => {
-          if (cell.dataset._tblHandlers === '1') return;
-          cell.dataset._tblHandlers = '1';
-
-          // Focus tracking: show floating toolbar
-          cell.addEventListener('focus', (ev) => {
-            currentCell = cell;
-            currentEmbedNode = embed;
-            showFloatingToolbarNearCell(cell);
-          });
-
-          // Key handling
-          cell.addEventListener('keydown', ev => {
-            // Tab navigation
-            if (ev.key === 'Tab') {
-              ev.preventDefault();
-              const allCells = Array.from(table.querySelectorAll('td, th'));
-              const idx = allCells.indexOf(cell);
-              if (idx === -1) return;
-              const forward = !ev.shiftKey;
-              let nextIdx = forward ? idx + 1 : idx - 1;
-              if (nextIdx < 0) nextIdx = allCells.length - 1;
-              if (nextIdx >= allCells.length) nextIdx = 0;
-              const nextCell = allCells[nextIdx];
-              if (nextCell) {
-                nextCell.focus();
-                placeCaretAtEnd(nextCell);
-              }
-            }
-
-            // Enter should insert a line break inside cell instead of making a new Quill block
-            if (ev.key === 'Enter') {
-              ev.preventDefault();
-              // insert a <br> at caret position
-              // use execCommand as a small fallback for contenteditable cells
-              document.execCommand('insertHTML', false, '<br>');
-            }
-
-            // Escape: move focus to Quill editor root
-            if (ev.key === 'Escape') {
-              ev.stopPropagation();
-              quill.focus();
-            }
-          });
-
-          // Keep an empty placeholder so caret can go into empty cell
-          cell.addEventListener('blur', () => {
-            if (cell.textContent.trim() === '') cell.innerHTML = '<br>';
-          });
-        });
-      });
-    }
-
-    // initial attach in case content pre-exists
-    attachCellBehaviorToAllTables();
-
-    /*********************************
-     * Floating toolbar (Add/Delete row/col, Delete table)
-     *********************************/
-    function showFloatingToolbarNearCell(cell) {
-      // compute position relative to editor wrapper
-      const editorRect = quill.root.getBoundingClientRect();
-      const wrapperRect = wrapper.getBoundingClientRect();
-      const cellRect = cell.getBoundingClientRect();
-
-      // account for editor scroll
-      const top = (cellRect.top - editorRect.top) + quill.root.scrollTop - floatingToolbar.offsetHeight - 6;
-      // position left aligned with cell (but ensure it stays within wrapper)
-      let left = (cellRect.left - wrapperRect.left) + quill.root.scrollLeft;
-      // clamp left
-      const maxLeft = wrapper.clientWidth - floatingToolbar.offsetWidth - 8;
-      if (left < 8) left = 8;
-      if (left > maxLeft) left = maxLeft;
-
-      floatingToolbar.style.top = `${top}px`;
-      floatingToolbar.style.left = `${left}px`;
-      floatingToolbar.classList.add('show');
-      floatingToolbar.setAttribute('aria-hidden', 'false');
-    }
-
-    function hideFloatingToolbar() {
-      floatingToolbar.classList.remove('show');
-      floatingToolbar.setAttribute('aria-hidden', 'true');
-      currentCell = null;
-      currentEmbedNode = null;
-    }
-
-    // hide toolbar when clicking outside any table cell
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.ql-table-embed') && !e.target.closest('#floating-toolbar') && !e.target.closest('.modal')) {
-        // if click is outside table embed and outside toolbar and not modal, hide toolbar
-        hideFloatingToolbar();
-      }
-    });
-
-    // Keep toolbar visible while interacting with it
-    floatingToolbar.addEventListener('mouseenter', () => {
-      floatingToolbar.dataset.hover = '1';
-    });
-    floatingToolbar.addEventListener('mouseleave', () => {
-      floatingToolbar.dataset.hover = '0';
-    });
-
-    /*********************************
      * Table structure operations
      *********************************/
     function addRowBelow(cell) {
@@ -693,6 +608,8 @@
       for (let c = 0; c < cols; c++) {
         const td = document.createElement('td');
         td.innerHTML = '<br>';
+        td.setAttribute('contenteditable', 'true');
+        td.setAttribute('tabindex', '0');
         createdTr.appendChild(td);
       }
       // insert createdTr after current tr
@@ -735,6 +652,8 @@
         const isTheadRow = row.parentElement && row.parentElement.tagName === 'THEAD';
         const newCell = isTheadRow ? document.createElement('th') : document.createElement('td');
         newCell.innerHTML = '<br>';
+        newCell.setAttribute('contenteditable', 'true');
+        newCell.setAttribute('tabindex', '0');
         // if row has fewer cells than index+1, append; else insert before existing cell at colIndex+1
         if (row.cells.length <= colIndex) {
           row.appendChild(newCell);
@@ -790,28 +709,156 @@
       p.innerHTML = '<br>';
       if (idx >= nodes.length || nodes.length === 0) parent.appendChild(p); else parent.insertBefore(p, parent.childNodes[idx]);
       attachCellBehaviorToAllTables();
-      hideFloatingToolbar();
       quill.focus();
     }
 
     /*********************************
-     * Floating toolbar button wiring
+     * Cell behaviors: tab navigation, enter handling, focus tracking
      *********************************/
-    document.getElementById('ft-add-row').addEventListener('click', () => {
-      addRowBelow(currentCell);
-    });
-    document.getElementById('ft-del-row').addEventListener('click', () => {
-      deleteRow(currentCell);
-    });
-    document.getElementById('ft-add-col').addEventListener('click', () => {
-      addColumnAfter(currentCell);
-    });
-    document.getElementById('ft-del-col').addEventListener('click', () => {
-      deleteColumn(currentCell);
-    });
-    document.getElementById('ft-del-table').addEventListener('click', () => {
-      const table = currentCell ? currentCell.closest('table') : null;
-      if (table && confirm('Delete the entire table?')) removeEntireTable(table);
+    function attachCellBehaviorToAllTables() {
+      const embeds = quill.root.querySelectorAll('.ql-table-embed');
+      embeds.forEach(embed => {
+        const table = embed.querySelector('table');
+        if (!table) return;
+        const cells = Array.from(table.querySelectorAll('td, th'));
+        const toolbar = embed.querySelector('.table-toolbar');
+
+        cells.forEach(cell => {
+          if (cell.dataset._tblHandlers === '1') return;
+          cell.dataset._tblHandlers = '1';
+
+          // Focus tracking: show table toolbar
+          cell.addEventListener('focus', (ev) => {
+            showTableToolbar(embed);
+          });
+
+          // Key handling
+          cell.addEventListener('keydown', ev => {
+            // Tab navigation
+            if (ev.key === 'Tab') {
+              ev.preventDefault();
+              const allCells = Array.from(table.querySelectorAll('td, th'));
+              const idx = allCells.indexOf(cell);
+              if (idx === -1) return;
+              const forward = !ev.shiftKey;
+              let nextIdx = forward ? idx + 1 : idx - 1;
+              if (nextIdx < 0) nextIdx = allCells.length - 1;
+              if (nextIdx >= allCells.length) nextIdx = 0;
+              const nextCell = allCells[nextIdx];
+              if (nextCell) {
+                nextCell.focus();
+                placeCaretAtEnd(nextCell);
+              }
+            }
+
+            // Enter should insert a line break inside cell instead of making a new Quill block
+            if (ev.key === 'Enter') {
+              ev.preventDefault();
+              // insert a <br> at caret position
+              // use execCommand as a small fallback for contenteditable cells
+              document.execCommand('insertHTML', false, '<br>');
+            }
+
+            // Escape: move focus to Quill editor root
+            if (ev.key === 'Escape') {
+              ev.stopPropagation();
+              quill.focus();
+              hideTableToolbar(embed);
+            }
+          });
+
+          // Keep an empty placeholder so caret can go into empty cell
+          cell.addEventListener('blur', () => {
+            if (cell.textContent.trim() === '') cell.innerHTML = '<br>';
+          });
+        });
+
+        // Attach toolbar event handlers
+        if (toolbar && !toolbar.dataset._tblHandlers) {
+          toolbar.dataset._tblHandlers = '1';
+
+          // Store reference to the embed for use in event handlers
+          const tableEmbed = embed;
+
+          toolbar.querySelector('.add-row').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              addRowBelow(focusedCell);
+              // Re-show toolbar after operation
+              showTableToolbar(tableEmbed);
+            }
+          });
+
+          toolbar.querySelector('.del-row').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              deleteRow(focusedCell);
+              // Re-show toolbar if table still exists
+              if (tableEmbed.parentNode) {
+                showTableToolbar(tableEmbed);
+              }
+            }
+          });
+
+          toolbar.querySelector('.add-col').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              addColumnAfter(focusedCell);
+              // Re-show toolbar after operation
+              showTableToolbar(tableEmbed);
+            }
+          });
+
+          toolbar.querySelector('.del-col').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              deleteColumn(focusedCell);
+              // Re-show toolbar if table still exists
+              if (tableEmbed.parentNode) {
+                showTableToolbar(tableEmbed);
+              }
+            }
+          });
+
+          toolbar.querySelector('.del-table').addEventListener('click', () => {
+            const table = tableEmbed.querySelector('table');
+            if (table && confirm('Delete the entire table?')) {
+              removeEntireTable(table);
+            }
+          });
+        }
+      });
+    }
+
+    // initial attach in case content pre-exists
+    attachCellBehaviorToAllTables();
+
+    /*********************************
+     * Table toolbar functions
+     *********************************/
+    function showTableToolbar(embed) {
+      const toolbar = embed.querySelector('.table-toolbar');
+      if (!toolbar) return;
+
+      // Position toolbar above the table
+      toolbar.style.top = '-40px';
+      toolbar.style.left = '0';
+      toolbar.classList.add('show');
+    }
+
+    function hideTableToolbar(embed) {
+      const toolbar = embed.querySelector('.table-toolbar');
+      if (toolbar) {
+        toolbar.classList.remove('show');
+      }
+    }
+
+    // Hide all table toolbars when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.ql-table-embed') && !e.target.closest('.modal')) {
+        const embeds = quill.root.querySelectorAll('.ql-table-embed');
+        embeds.forEach(embed => hideTableToolbar(embed));
+      }
     });
 
     /*********************************
@@ -831,9 +878,11 @@
       const rows = parseInt(document.getElementById('input-rows').value, 10) || 1;
       const cols = parseInt(document.getElementById('input-cols').value, 10) || 1;
       const header = document.getElementById('input-header').checked;
-      const html = '<p></p>' + createTableHtml(rows, cols, header) + '<p><br></p>';
+      const html = createTableHtml(rows, cols, header);
       const sel = quill.getSelection(true);
       const index = sel ? sel.index : quill.getLength() - 1;
+
+      // Insert at cursor position
       insertHtmlAtIndex(html, index);
       modal.style.display = 'none';
       modal.setAttribute('aria-hidden', 'true');
@@ -875,6 +924,18 @@
         wrapper.className = 'ql-table-embed';
         wrapper.setAttribute('contenteditable', 'false');
         wrapper.innerHTML = cloned.outerHTML;
+
+        // Add table toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'table-toolbar';
+        toolbar.innerHTML = `
+          <button class="btn-sm add-row">+ Row</button>
+          <button class="btn-sm add-col">+ Col</button>
+          <button class="btn-sm del-row">Del Row</button>
+          <button class="btn-sm del-col">Del Col</button>
+          <button class="btn-sm del-table" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+        `;
+        wrapper.appendChild(toolbar);
 
         table.parentNode.replaceChild(wrapper, table);
       });
@@ -1294,12 +1355,13 @@
       setTimeout(() => attachCellBehaviorToAllTables(), 0);
     });
 
-    // If the editor loses focus and no table cell is focused, hide toolbar
+    // If the editor loses focus and no table cell is focused, hide all toolbars
     quill.root.addEventListener('focusout', (ev) => {
       // small timeout to allow focus to transfer to toolbar or other cell
       setTimeout(() => {
         if (!document.activeElement || !document.activeElement.closest || !document.activeElement.closest('.ql-table-embed')) {
-          hideFloatingToolbar();
+          const embeds = quill.root.querySelectorAll('.ql-table-embed');
+          embeds.forEach(embed => hideTableToolbar(embed));
         }
       }, 120);
     });
@@ -1313,13 +1375,9 @@
         if (firstCell) {
           firstCell.focus();
           placeCaretAtEnd(firstCell);
+          showTableToolbar(embed);
         }
       }
-    });
-
-    // Make sure floating toolbar stays positioned if editor scrolls
-    quill.root.addEventListener('scroll', () => {
-      if (currentCell) showFloatingToolbarNearCell(currentCell);
     });
   </script>
 </div>
