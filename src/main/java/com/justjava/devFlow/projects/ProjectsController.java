@@ -189,6 +189,7 @@ public class ProjectsController {
 
         String businessKey= String.valueOf(authenticationManager.get("sub")) ;
 
+        startVariables.put("isProcess",false);
         System.out.println(" The login user here==="+businessKey);
         startVariables.put("progress",0);
         ProcessInstance processInstance=runtimeService
