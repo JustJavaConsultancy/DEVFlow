@@ -48,7 +48,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
       <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-09-21T22:03:28.317Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-10-06T19:24:07.484Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-10-09T10:17:47.018Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_43" name="Review User Stories List" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -784,11 +784,10 @@ try {
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${accepted}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_54" sourceRef="Exclusive_Databased_Gateway_44" targetRef="requirement_elicitation">
+    <sequenceFlow id="SequenceFlow_92" sourceRef="Exclusive_Databased_Gateway_44" targetRef="requirement_elicitation">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aiRequirementAnalysis != null && aiRequirementAnalysis.contains('"error":"Internal Server Error"')}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_56" sourceRef="Exclusive_Databased_Gateway_45" targetRef="ServiceTask_27">
       <extensionElements>
@@ -842,12 +841,13 @@ try {
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!isProcess}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${process == 'false'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_80" sourceRef="Exclusive_Databased_Gateway_71" targetRef="ServiceTask_79">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${process == 'true'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_71" sourceRef="startnoneevent1" targetRef="requirement_elicitation">
       <extensionElements>
@@ -1155,10 +1155,10 @@ try {
         <omgdi:waypoint x="7638.769804526749" y="276.0"></omgdi:waypoint>
         <omgdi:waypoint x="7863.769804526749" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_54" id="BPMNEdge_SequenceFlow_54" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_92" id="BPMNEdge_SequenceFlow_92" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="1998.0" y="296.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1998.0" y="463.0138854980469"></omgdi:waypoint>
-        <omgdi:waypoint x="1345.0" y="463.0138854980469"></omgdi:waypoint>
+        <omgdi:waypoint x="1998.0" y="515.9391718106997"></omgdi:waypoint>
+        <omgdi:waypoint x="1345.0" y="515.9391718106997"></omgdi:waypoint>
         <omgdi:waypoint x="1345.0" y="316.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_71" id="BPMNEdge_SequenceFlow_71" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">

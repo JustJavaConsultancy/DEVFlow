@@ -333,7 +333,8 @@ public class FlowableTaskController {
                     "Testing once again",true);*/
             //runtimeService.
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
-            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
+            runtimeService.setVariable(task.getProcessInstanceId(),"process", "false");
+;            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
             taskService.complete(taskId, variables);
 
 

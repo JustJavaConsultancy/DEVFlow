@@ -189,11 +189,12 @@ public class ProjectsController {
 
         String businessKey= String.valueOf(authenticationManager.get("sub")) ;
 
-        startVariables.put("isProcess",false);
+        startVariables.put("process",false);
         System.out.println(" The login user here==="+businessKey);
         startVariables.put("progress",0);
         ProcessInstance processInstance=runtimeService
-                .startProcessInstanceByKey("softwareEngineeringProcess",businessKey,startVariables);
+                .startProcessInstanceByKey("softwareEngineeringProcess",
+                        businessKey,startVariables);
         List<ProcessInstance> projects = runtimeService
                 .createProcessInstanceQuery()
                 .processDefinitionKey("softwareEngineeringProcess")
