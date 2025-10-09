@@ -48,7 +48,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
       <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-09-21T22:03:28.317Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-10-09T10:17:47.018Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-10-09T11:14:19.438Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_43" name="Review User Stories List" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -788,6 +788,7 @@ try {
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aiRequirementAnalysis != null && aiRequirementAnalysis.contains('"error":"Internal Server Error"')}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_56" sourceRef="Exclusive_Databased_Gateway_45" targetRef="ServiceTask_27">
       <extensionElements>
