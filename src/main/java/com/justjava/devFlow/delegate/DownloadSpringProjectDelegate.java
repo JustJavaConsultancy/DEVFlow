@@ -51,9 +51,9 @@ public class DownloadSpringProjectDelegate implements JavaDelegate {
             execution.setVariable("downloadStatus", "SUCCESS");
             execution.setVariable("projectGenerated", true);
 
-            System.out.println("✅ Spring Boot project successfully created and pushed to GitHub: " + result.getRepositoryUrl());
+ /*           System.out.println("✅ Spring Boot project successfully created and pushed to GitHub: " + result.getRepositoryUrl());
             System.out.println("✅ Repository: " + result.getRepositoryName());
-            System.out.println("✅ Files processed: " + result.getFilesCount());
+            System.out.println("✅ Files processed: " + result.getFilesCount());*/
 
         } catch (SpringBootProjectGitHubService.ProjectDownloadException e) {
             handleError(execution, "Failed to download Spring Boot project: " + e.getMessage(), e);

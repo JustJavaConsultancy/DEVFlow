@@ -19,22 +19,22 @@ public class ProcessProjectResponseDelegate implements JavaDelegate {
             Object response = execution.getVariable("springInitializrResponse");
 
             String stringResponse = (String) response;
-            System.out.println("String length: " + stringResponse.length());
-            System.out.println("First 200 characters: " + stringResponse.substring(0, Math.min(200, stringResponse.length())));
+            //System.out.println("String length: " + stringResponse.length());
+           // System.out.println("First 200 characters: " + stringResponse.substring(0, Math.min(200, stringResponse.length())));
 
             // Check if it's an error message
             if (stringResponse.contains("error") || stringResponse.contains("Error") ||
                     stringResponse.contains("exception") || stringResponse.contains("Exception")) {
-                System.out.println("RESPONSE APPEARS TO BE AN ERROR MESSAGE");
+                //System.out.println("RESPONSE APPEARS TO BE AN ERROR MESSAGE");
             }
             // Check if it's HTML
             if (stringResponse.contains("<!DOCTYPE") || stringResponse.contains("<html") || stringResponse.contains("<body")) {
-                System.out.println("RESPONSE APPEARS TO BE HTML (POSSIBLE ERROR PAGE)");
+                //System.out.println("RESPONSE APPEARS TO BE HTML (POSSIBLE ERROR PAGE)");
             }
 
             // Show the actual content
-            System.out.println("Full response content:");
-            System.out.println(stringResponse);
+            //System.out.println("Full response content:");
+            //System.out.println(stringResponse);
             byte[] projectZip = stringResponse.getBytes(StandardCharsets.UTF_8);
 
             if (projectZip instanceof byte[]) {
@@ -45,7 +45,7 @@ public class ProcessProjectResponseDelegate implements JavaDelegate {
 
                 try (FileOutputStream fos = new FileOutputStream(filename)) {
                     fos.write(projectZip);
-                    System.out.println(" The full path=="+fos.getFD());
+                    //System.out.println(" The full path=="+fos.getFD());
                 }
 
                 execution.setVariable("generatedProjectPath", filename);

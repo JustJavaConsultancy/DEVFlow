@@ -66,7 +66,7 @@ public class TaskController {
     @GetMapping("/tasks/revert-confirm/{taskId}")
     public String getRevertConfirmation(@PathVariable String taskId, Model model) {
         HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery().finished().taskId(taskId).singleResult();
-        System.out.println("The task " + task);
+        //System.out.println("The task " + task);
 
 
         model.addAttribute("task", task);

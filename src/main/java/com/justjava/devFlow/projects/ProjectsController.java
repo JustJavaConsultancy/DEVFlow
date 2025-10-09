@@ -185,12 +185,12 @@ public class ProjectsController {
 
     @PostMapping("/project/start")
     public String startProject(@RequestParam Map<String,Object>  startVariables,Model model){
-        System.out.println(" The Sent Parameter Here==="+startVariables);
+        //System.out.println(" The Sent Parameter Here==="+startVariables);
 
         String businessKey= String.valueOf(authenticationManager.get("sub")) ;
 
         startVariables.put("process",false);
-        System.out.println(" The login user here==="+businessKey);
+        //System.out.println(" The login user here==="+businessKey);
         startVariables.put("progress",0);
         ProcessInstance processInstance=runtimeService
                 .startProcessInstanceByKey("softwareEngineeringProcess",
@@ -263,7 +263,7 @@ public class ProjectsController {
     public String saveProjectURL(@RequestParam Map<String,Object> urlDetails, HttpServletRequest request){
         String processInstanceId = (String) urlDetails.get("projectId");
         String repoUrl = (String) urlDetails.get("projectUrl");
-        System.out.println(" The URL Details Here === " + urlDetails);
+     //   System.out.println(" The URL Details Here === " + urlDetails);
         runtimeService.setVariable(processInstanceId, "projectURL", repoUrl);
 
         // Get the page the request came from

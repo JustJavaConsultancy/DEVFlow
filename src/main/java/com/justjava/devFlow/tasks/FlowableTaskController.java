@@ -145,7 +145,7 @@ public class FlowableTaskController {
                 .taskId(taskId)
                 .singleResult();
 
-        System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
+       // System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
         if (task == null) {
             throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
@@ -189,7 +189,7 @@ public class FlowableTaskController {
                 List.of(task.getId()));
 
         Map<String, Object> taskVariables = (Map<String, Object>) runtimeService.getVariable(task.getExecutionId(),taskId);
-        System.out.println(" The variable pulled out =====\n\n\n\n\n\n\n\n\n\n"+taskVariables);
+        //System.out.println(" The variable pulled out =====\n\n\n\n\n\n\n\n\n\n"+taskVariables);
         //System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
     //qweqweqweqwe
         processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
@@ -209,7 +209,7 @@ public class FlowableTaskController {
                 .singleResult();
 
 
-        System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
+        //System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
         if (task == null) {
             throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
@@ -231,7 +231,7 @@ public class FlowableTaskController {
     public String editTaskForm(@PathVariable String taskId, Model model) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
-        System.out.println(task);
+        //System.out.println(task);
         if (task == null) {
             model.addAttribute("error", "Task not found");
             return "error/404";
@@ -280,7 +280,7 @@ public class FlowableTaskController {
     public String completeTask(@PathVariable String taskId,
                                @RequestParam Map<String, String> formParams,
                                RedirectAttributes redirectAttributes) {
-        System.out.println("This is what is submitted === " + formParams);
+        //System.out.println("This is what is submitted === " + formParams);
         try {
 
             Task task = taskService.createTaskQuery().taskId(taskId).singleResult();

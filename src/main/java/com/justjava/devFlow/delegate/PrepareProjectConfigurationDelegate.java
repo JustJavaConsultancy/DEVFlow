@@ -23,7 +23,7 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         // Get project configuration from process variables or set defaults
 
-        System.out.println(" Welcome to this delegate (prepareProjectConfigurationDelegate) ");
+        //System.out.println(" Welcome to this delegate (prepareProjectConfigurationDelegate) ");
         execution.setVariable("groupId","tech.justjava");
         execution.setVariable("artifactId",String.valueOf(execution.getVariable("projectName")));
         //execution.setVariable("packageName","tech.justjava"+".JDocMan".toLowerCase());
@@ -35,7 +35,7 @@ public class PrepareProjectConfigurationDelegate implements JavaDelegate {
         // Add dependencies (Spring Web as example)
         String  dependencies = "web,data-jpa,thymeleaf,oauth2-client,lombok,devtools,validation,security,postgresql";//buildDependenciesList();
 
-        System.out.println(" dependencies==="+dependencies);
+        //System.out.println(" dependencies==="+dependencies);
         execution.setVariable("dependencies",dependencies);
 
 

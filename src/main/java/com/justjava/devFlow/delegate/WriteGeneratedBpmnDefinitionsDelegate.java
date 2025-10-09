@@ -40,7 +40,7 @@ public class WriteGeneratedBpmnDefinitionsDelegate implements JavaDelegate {
 
             System.out.println("📦 Processing BPMN definitions for repository: " + repositoryName);
             System.out.println("👤 GitHub user: " + githubUsername);
-            System.out.println("📝 BPMN definition length: " + (bpmnDefinitions != null ? bpmnDefinitions.length() : 0) + " characters");
+            //System.out.println("📝 BPMN definition length: " + (bpmnDefinitions != null ? bpmnDefinitions.length() : 0) + " characters");
 
             // Extract BPMN definitions and push to GitHub
             BpmnDefinitionExtractor.GitHubPushResult result =
