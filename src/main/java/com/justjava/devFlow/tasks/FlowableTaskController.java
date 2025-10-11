@@ -332,6 +332,11 @@ public class FlowableTaskController {
                     "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",
                     "Testing once again",true);*/
             //runtimeService.
+            String architecture=String.valueOf(runtimeService.getVariable(task.getProcessInstanceId(),"architecture"));
+            String projectName=String.valueOf(runtimeService.getVariable(task.getProcessInstanceId(),"projectName"));
+            projectName=projectName.replaceAll("\\s+","").toLowerCase();
+            runtimeService.setVariable(task.getProcessInstanceId(),
+                    "architecture","Application Name: "+projectName +" " + architecture);
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
             runtimeService.setVariable(task.getProcessInstanceId(),"process", "false");
 ;            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
