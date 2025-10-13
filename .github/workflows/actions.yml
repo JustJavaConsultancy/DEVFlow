@@ -1,105 +1,105 @@
-name: build-devflow
+name: devflow-ci-cd
+
 on:
   push:
     branches:
-      - prod
+      - master
+      - qa
+      - prod # prod deployments happen only on prod
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: "21"
           cache: maven
+
+      - name: Build & run tests
+        run: mvn clean verify -DskipTests
+
+      # - name: SonarCloud Analysis
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: |
+      #     mvn sonar:sonar \
+      #       -Dsonar.projectKey=JustJavaConsultancyCommunity \
+      #       -Dsonar.organization=justjavaconsultancyng \
+      #       -Dsonar.host.url=https://sonarcloud.io \
+      #       -Dsonar.login=$SONAR_TOKEN
 
       - name: Install glibc
         run: sudo apt-get update && sudo apt-get install -y libc6
 
-          # sonar-analysis:
-          #   name: SonarCloud Analysis
-          #   runs-on: ubuntu-latest
-          #   needs: build
-          #   steps:
-          #     - uses: actions/checkout@v4
-
-          #     - name: Set up JDK
-          #       uses: actions/setup-java@v4
-          #       with:
-          #         distribution: temurin
-          #         java-version: '21'
-          #         cache: maven
-
-          #     - name: Build before SonarQube Scan
-          #       run: mvn clean compile -DskipTests
-
-          #     - name: SonarCloud Scan
-          #       env:
-          #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          #       run: |
-          #         mvn sonar:sonar \
-          #           -Dsonar.projectKey=Zeezart_devflow \
-          #           -Dsonar.organization=zeezart \
-          #           -Dsonar.host.url=https://sonarcloud.io \
-          #           -Dsonar.login=$SONAR_TOKEN \
-        #           -X
-
-
-
-  build-image:
-    name: Build and push to docker
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-
-      - name: Build jar and push to Docker Hub
+      - name: Build jar
         id: jib-build
         run: mvn clean compile jib:build
 
-  deploy:
-    name: deploy to docker
+      - name: Push Docker image
+        run: |
+          IMAGE_REF="kazeemakinrinde/devflow:${{ github.sha }}"
+          echo "IMAGE_REF=$IMAGE_REF" >> $GITHUB_ENV
+          echo "Updating service image to: $IMAGE_REF"
+
+  deploy-QA:
+    name: Deploy QA
     runs-on: ubuntu-latest
-    needs: build-image
+    needs: build
+    if: github.ref == 'refs/heads/qa'
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-
-      # Install Railway CLI
       - name: Install Railway CLI
         run: npm install -g @railway/cli@latest
 
-      - name: Print Railway CLI version
-        run: railway --version
+      - name: Deploy dev to railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
+          RAILWAY_SERVICE_ID: Devflow-QA
+        run: |
+          echo "Deploying Dev with image: $IMAGE_REF"
+          railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
 
-      - name: Print Help
-        run: railway variables --help
+  deploy-master:
+    name: Deploy master
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
 
-
-      - name: Deploy to Railway
+      - name: Deploy dev to railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
           RAILWAY_SERVICE_ID: Devflow-2
         run: |
-          IMAGE_REF="kazeemakinrinde/devflow:latest"
-          echo "Updating service image to: $IMAGE_REF"
+          echo "Deploying Dev with image: $IMAGE_REF"
           railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
 
-#          railway up --service 44789973-0362-4a36-a751-5e97098a7090 --detach
+  deploy-prod:
+    name: Deploy Prod
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/prod'
+    environment:
+      name: production # requires manual approval in GitHub settings
+      url: https://devflow-prod-production.up.railway.app
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
+
+      - name: Deploy to Prod
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
+          RAILWAY_SERVICE_ID: Devflow-Prod
+        run: |
+          echo "Deploying Prod with image: $IMAGE_REF"
+          railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
