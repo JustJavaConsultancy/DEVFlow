@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - QA
+      - qa
       - prod # prod deployments happen only on prod
 
 jobs:
