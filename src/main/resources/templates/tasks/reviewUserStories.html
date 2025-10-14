@@ -181,11 +181,13 @@
                  class="user-story-card priority-high bg-white border border-gray-200 rounded-lg p-4 md:p-5"
                  th:attr="data-story-id=${story.id}">
                 <div class="flex justify-between items-start mb-3">
-                    <span th:if="${story.priority == 'Must have'}" class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">High Priority</span>
-                    <span th:if="${story.priority == 'Should have'}" class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Medium Priority</span>
-                    <span th:if="${story.priority == 'Could have'}" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Low Priority</span>
-                    <span th:if="${story.priority == 'Won’t have'}"
-                          class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">Not Planned</span>
+                    <span th:switch="${story.priority}">
+    <span th:case="'Must have'" class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">High Priority</span>
+    <span th:case="'Should have'" class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Medium Priority</span>
+    <span th:case="'Could have'" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Low Priority</span>
+    <span th:case="'Won’t have'" class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">Not Planned</span>
+    <span th:case="*" class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">Not Planned</span>
+</span>
                     <span th:text="${story.id}" class="text-xs text-gray-500">US-101</span>
                 </div>
 
