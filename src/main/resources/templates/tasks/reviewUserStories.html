@@ -9,6 +9,12 @@
     <title>Review User Stories</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Add HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Provide CSRF tokens when Spring Security is active -->
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .btn-disabled { opacity: 0.7; cursor: not-allowed; } .btn-disabled:hover { transform: none; box-shadow: none; } .gradient-bg { background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%); }
@@ -43,10 +49,80 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        /* Edit mode styles */
+        .edit-mode {
+            box-shadow: 0 0 0 2px #780aff;
+            background-color: #f9f9ff;
+        }
+
+        .save-btn {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #059669;
+        }
+
+        .cancel-btn {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .editable-content {
+            transition: all 0.2s ease;
+        }
+
+        .editable-content:focus {
+            background-color: #f0f8ff;
+            outline: 2px solid #780aff;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(120, 10, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(120, 10, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(120, 10, 255, 0); }
+        }
+
+        /* HTMX loading states */
+        .htmx-request {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 <div layout:fragment="content">
+
     <!-- Page Title -->
     <div class="mb-8 mt-6">
         <h1 class="text-2xl md:text-3xl font-bold text-blue-800">
@@ -72,10 +148,15 @@
     </div>
 
     <form id="userStoriesForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
+        <!-- CSRF Token for main form -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
         <!-- User Stories Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
-            <!-- User Story Card 1 -->
-            <div th:each="story, iterStat : *{processVariables.stories.user_stories}" class="user-story-card priority-high bg-white border border-gray-200 rounded-lg p-4 md:p-5">
+            <!-- User Story Card -->
+            <div th:each="story, iterStat : *{processVariables.stories.user_stories}"
+                 class="user-story-card priority-high bg-white border border-gray-200 rounded-lg p-4 md:p-5"
+                 th:attr="data-story-id=${story.id}">
                 <div class="flex justify-between items-start mb-3">
                     <span th:if="${story.priority == 'Must have'}" class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">High Priority</span>
                     <span th:if="${story.priority == 'Should have'}" class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Medium Priority</span>
@@ -84,13 +165,31 @@
                           class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">Not Planned</span>
                     <span th:text="${story.id}" class="text-xs text-gray-500">US-101</span>
                 </div>
-                <p th:text="${story.story}" class="text-gray-600 text-sm mb-4">As a new visitor, I want to create an account so that I can make purchases and save my preferences.</p>
+
+                <p th:text="${story.story}" class="text-gray-600 text-sm mb-4 editable-content" data-field="story">As a new visitor, I want to create an account so that I can make purchases and save my preferences.</p>
 
                 <div class="mb-4">
                     <h4 class="font-medium text-sm text-blue-700 mb-1">Acceptance Criteria:</h4>
-                    <ul class="text-xs text-gray-600 list-disc pl-5 space-y-1">
+                    <ul class="text-xs text-gray-600 list-disc pl-5 space-y-1 editable-content" data-field="criteria">
                         <li th:each="criteria : ${story.acceptance_criteria}" th:text="${criteria}"></li>
                     </ul>
+                </div>
+
+                <!-- Edit/Save/Cancel buttons -->
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="text-blue-600 hover:text-blue-800 action-btn edit-btn">
+                        <i class="fas fa-edit mr-1"></i> Edit
+                    </button>
+                    <button type="button"
+                            class="save-btn px-3 py-1 rounded text-sm hidden"
+                            data-story-id="${story.id}">
+                        <i class="fas fa-check mr-1"></i>
+                        <span>Save</span>
+                        <i class="fas fa-spinner fa-spin htmx-indicator ml-1"></i>
+                    </button>
+                    <button type="button" class="cancel-btn px-3 py-1 rounded text-sm hidden">
+                        <i class="fas fa-times mr-1"></i> Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -108,9 +207,237 @@
     <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" style="display: none;" alt="Logo" />
 
     <script>
+        // Configure HTMX with CSRF token
+        document.addEventListener('DOMContentLoaded', function() {
+           /*********************************
+     * CSRF integration and autosave
+     *********************************/
+    (function setupHtmxCsrf() {
+      const metaToken = document.querySelector('meta[name="_csrf"]');
+      const metaHeader = document.querySelector('meta[name="_csrf_header"]');
+      if (metaToken && metaHeader && window.htmx) {
+        const csrfToken = metaToken.getAttribute('content');
+        const csrfHeader = metaHeader.getAttribute('content');
+        // Add the CSRF header to every htmx request:
+        document.addEventListener('htmx:configRequest', function (evt) {
+          evt.detail.headers[csrfHeader] = csrfToken;
+        });
+      }
+    })();
+
+        });
+
         const submitBtn = document.getElementById('submitBtn');
         const userStoriesForm = document.getElementById('userStoriesForm');
         const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+
+        // Edit functionality
+        let originalContents = new Map();
+
+        // Initialize edit buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.edit-btn');
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.user-story-card');
+                    const storyId = card.querySelector('span.text-xs.text-gray-500:last-child').textContent;
+
+                    // If already in edit mode, do nothing
+                    if (card.classList.contains('edit-mode')) {
+                        return;
+                    }
+
+                    // Store original content
+                    originalContents.set(storyId, {
+                        story: card.querySelector('[data-field="story"]').innerHTML,
+                        criteria: card.querySelector('[data-field="criteria"]').innerHTML
+                    });
+
+                    // Enter edit mode
+                    enterEditMode(card, storyId);
+                });
+            });
+
+            // Save All button functionality
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function() {
+                    const editedCards = document.querySelectorAll('.user-story-card.edit-mode');
+
+                    if (editedCards.length > 0) {
+                        // Save all edited cards using HTMX
+                        const savePromises = Array.from(editedCards).map(card => {
+                            return saveCardWithHtmx(card);
+                        });
+
+                        Promise.all(savePromises).then(() => {
+                            showNotification('All user stories saved successfully!', 'success');
+                        }).catch(error => {
+                            showNotification('Error saving some stories', 'error');
+                        });
+                    } else {
+                        showNotification('No changes to save.', 'info');
+                    }
+                });
+            }
+        });
+
+        function enterEditMode(card, storyId) {
+            // Add edit mode styling
+            card.classList.add('edit-mode', 'pulse');
+
+            // Show save and cancel buttons, hide edit button
+            const editBtn = card.querySelector('.edit-btn');
+            const saveBtn = card.querySelector('.save-btn');
+            const cancelBtn = card.querySelector('.cancel-btn');
+
+            editBtn.classList.add('hidden');
+            saveBtn.classList.remove('hidden');
+            cancelBtn.classList.remove('hidden');
+
+            // Make content editable
+            const editableElements = card.querySelectorAll('.editable-content');
+            editableElements.forEach(element => {
+                element.setAttribute('contenteditable', 'true');
+                element.classList.add('editable-content');
+            });
+
+            // Add event listeners for save and cancel
+            saveBtn.onclick = () => saveCardWithHtmx(card);
+            cancelBtn.onclick = () => cancelEdit(card, storyId);
+
+            // Focus on the story text for better UX
+            const storyElement = card.querySelector('[data-field="story"]');
+            storyElement.focus();
+
+            // Remove pulse animation after a while
+            setTimeout(() => {
+                card.classList.remove('pulse');
+            }, 2000);
+        }
+
+   function saveCardWithHtmx(card) {
+    const storyId = card.querySelector('span.text-xs.text-gray-500:last-child').textContent;
+    const storyText = card.querySelector('[data-field="story"]').textContent;
+    const saveBtn = card.querySelector('.save-btn');
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+    // Show loading state
+    saveBtn.disabled = true;
+    saveBtn.querySelector('span').textContent = 'Saving...';
+
+    // Use fetch API instead of htmx.ajax for better error handling
+    fetch('/api/stories/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            [csrfHeader]: csrfToken
+        },
+        body: new URLSearchParams({
+            storyId: storyId,
+            story: storyText,
+            taskId: '[[${taskId}]]',
+            _csrf: csrfToken
+        })
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
+        if (response.ok) {
+            exitEditMode(card);
+            showNotification(`Saved changes to ${storyId}`, 'success');
+            return response.text();
+        } else {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        }
+    })
+    .then(responseText => {
+        console.log('Response text:', responseText);
+    })
+    .catch(error => {
+        console.error('Error saving story:', error);
+        showNotification(`Error saving ${storyId}: ${error.message}`, 'error');
+        saveBtn.disabled = false;
+        saveBtn.querySelector('span').textContent = 'Save';
+    });
+}
+        function exitEditMode(card) {
+            const storyId = card.querySelector('span.text-xs.text-gray-500:last-child').textContent;
+
+            // Remove edit mode styling
+            card.classList.remove('edit-mode');
+
+            // Show edit button, hide save and cancel buttons
+            const editBtn = card.querySelector('.edit-btn');
+            const saveBtn = card.querySelector('.save-btn');
+            const cancelBtn = card.querySelector('.cancel-btn');
+
+            editBtn.classList.remove('hidden');
+            saveBtn.classList.add('hidden');
+            cancelBtn.classList.add('hidden');
+
+            // Reset save button state
+            saveBtn.disabled = false;
+            saveBtn.querySelector('span').textContent = 'Save';
+
+            // Make content non-editable
+            const editableElements = card.querySelectorAll('.editable-content');
+            editableElements.forEach(element => {
+                element.setAttribute('contenteditable', 'false');
+            });
+
+            // Remove from original contents if it exists
+            if (originalContents.has(storyId)) {
+                originalContents.delete(storyId);
+            }
+        }
+
+        function cancelEdit(card, storyId) {
+            // Restore original content
+            if (originalContents.has(storyId)) {
+                const original = originalContents.get(storyId);
+                card.querySelector('[data-field="story"]').innerHTML = original.story;
+                card.querySelector('[data-field="criteria"]').innerHTML = original.criteria;
+
+                originalContents.delete(storyId);
+            }
+
+            exitEditMode(card);
+            showNotification(`Edit cancelled for ${storyId}`, 'info');
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' :
+                           type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            const icon = type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg fade-in ${bgColor} text-white`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${icon} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('fade-in');
+                notification.classList.add('opacity-0');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
 
         // Form submission handler
         userStoriesForm.addEventListener('submit', function(e) {
@@ -119,7 +446,7 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
         });
 
-        // PDF Download functionality
+        // PDF Download functionality (unchanged)
         downloadPdfBtn.addEventListener('click', function() {
             downloadPdfBtn.disabled = true;
             downloadPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating PDF...';
@@ -130,8 +457,9 @@
             });
         });
 
+        // generatePDF function remains the same as in your original code
         async function generatePDF() {
-            try {
+           try {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
 
