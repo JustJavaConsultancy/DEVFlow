@@ -292,8 +292,11 @@ public class FlowableTaskController {
 
             // Convert form parameters to proper types
             Map<String, Object> variables = convertFormParamsToVariables(formParams);
-            // Complete the task with form data
+            variables.computeIfPresent("process", (key, value) -> "true");
+            variables.putIfAbsent("process", "false");
 
+//            System.out.println("These are the variables" + variables);
+            // Complete the task with form data
 
             String storyDevelopmentDetail = (String) runtimeService.getVariable(task.getProcessInstanceId(),"storyDevelopmentDetail");
             String appPath = (String) runtimeService.getVariable(task.getProcessInstanceId(),"appPath");
@@ -338,10 +341,10 @@ public class FlowableTaskController {
             runtimeService.setVariable(task.getProcessInstanceId(),
                     "architecture","Application Name: "+projectName +" " + architecture);
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
-            runtimeService.setVariable(task.getProcessInstanceId(),"process", "false");
-;            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
-            taskService.complete(taskId, variables);
+            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
 
+            taskService.complete(taskId, variables);
+//            System.out.println("These are the runtime variables " + task.getProcessVariables());
 
             redirectAttributes.addFlashAttribute("success", "Task completed successfully");
             return "redirect:/tasks/" + task.getProcessInstanceId();
