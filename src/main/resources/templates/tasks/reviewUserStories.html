@@ -118,6 +118,29 @@
         .htmx-request .htmx-indicator {
             opacity: 1;
         }
+
+        /* Enhanced styles for editable criteria */
+        [data-field="criteria"] li[contenteditable="true"] {
+            background-color: #f0f8ff;
+            border-radius: 4px;
+            outline: 1px solid #780aff;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+            padding: 2px 4px;
+        }
+
+        [data-field="criteria"] li[contenteditable="true"]:focus {
+            background-color: #e6f3ff;
+            outline: 2px solid #780aff;
+        }
+
+        /* Make the entire criteria list more editable-friendly */
+        [data-field="criteria"][contenteditable="true"] {
+            min-height: 60px;
+            padding: 8px;
+            background-color: #f9f9ff;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -302,6 +325,16 @@
                 element.classList.add('editable-content');
             });
 
+            // Make criteria list items editable individually
+            const criteriaItems = card.querySelectorAll('[data-field="criteria"] li');
+            criteriaItems.forEach(item => {
+                item.setAttribute('contenteditable', 'true');
+                item.classList.add('editable-content');
+                item.style.cursor = 'text';
+                item.style.padding = '2px 4px';
+                item.style.marginBottom = '2px';
+            });
+
             // Add event listeners for save and cancel
             saveBtn.onclick = () => saveCardWithHtmx(card);
             cancelBtn.onclick = () => cancelEdit(card, storyId);
@@ -316,55 +349,82 @@
             }, 2000);
         }
 
-   function saveCardWithHtmx(card) {
-    const storyId = card.querySelector('span.text-xs.text-gray-500:last-child').textContent;
-    const storyText = card.querySelector('[data-field="story"]').textContent;
-    const saveBtn = card.querySelector('.save-btn');
+        function addNewCriteria(card) {
+            const criteriaList = card.querySelector('[data-field="criteria"]');
+            const newItem = document.createElement('li');
+            newItem.setAttribute('contenteditable', 'true');
+            newItem.classList.add('editable-content');
+            newItem.style.cursor = 'text';
+            newItem.style.padding = '2px 4px';
+            newItem.style.marginBottom = '2px';
+            newItem.textContent = 'New acceptance criteria...';
+            criteriaList.appendChild(newItem);
 
-    // Get CSRF token
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
-    // Show loading state
-    saveBtn.disabled = true;
-    saveBtn.querySelector('span').textContent = 'Saving...';
-
-    // Use fetch API instead of htmx.ajax for better error handling
-    fetch('/api/stories/save', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            [csrfHeader]: csrfToken
-        },
-        body: new URLSearchParams({
-            storyId: storyId,
-            story: storyText,
-            taskId: '[[${taskId}]]',
-            _csrf: csrfToken
-        })
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-
-        if (response.ok) {
-            exitEditMode(card);
-            showNotification(`Saved changes to ${storyId}`, 'success');
-            return response.text();
-        } else {
-            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+            // Focus on the new item
+            newItem.focus();
         }
-    })
-    .then(responseText => {
-        console.log('Response text:', responseText);
-    })
-    .catch(error => {
-        console.error('Error saving story:', error);
-        showNotification(`Error saving ${storyId}: ${error.message}`, 'error');
-        saveBtn.disabled = false;
-        saveBtn.querySelector('span').textContent = 'Save';
-    });
-}
+
+        function saveCardWithHtmx(card) {
+            const storyId = card.querySelector('span.text-xs.text-gray-500:last-child').textContent;
+            const storyText = card.querySelector('[data-field="story"]').textContent;
+
+            // Get acceptance criteria as text with line breaks
+            const criteriaElements = card.querySelectorAll('[data-field="criteria"] li');
+            let acceptanceCriteria = '';
+            criteriaElements.forEach(li => {
+                if (li.textContent.trim() !== '') {
+                    acceptanceCriteria += li.textContent + '\n';
+                }
+            });
+
+            const saveBtn = card.querySelector('.save-btn');
+
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            // Show loading state
+            saveBtn.disabled = true;
+            saveBtn.querySelector('span').textContent = 'Saving...';
+
+            // Use fetch API instead of htmx.ajax for better error handling
+            fetch('/api/stories/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    [csrfHeader]: csrfToken
+                },
+                body: new URLSearchParams({
+                    storyId: storyId,
+                    story: storyText,
+                    acceptanceCriteria: acceptanceCriteria,
+                    taskId: '[[${taskId}]]',
+                    _csrf: csrfToken
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                if (response.ok) {
+                    exitEditMode(card);
+                    showNotification(`Saved changes to ${storyId}`, 'success');
+                    return response.text();
+                } else {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+            })
+            .then(responseText => {
+                console.log('Response text:', responseText);
+            })
+            .catch(error => {
+                console.error('Error saving story:', error);
+                showNotification(`Error saving ${storyId}: ${error.message}`, 'error');
+                saveBtn.disabled = false;
+                saveBtn.querySelector('span').textContent = 'Save';
+            });
+        }
+
         function exitEditMode(card) {
             const storyId = card.querySelector('span.text-xs.text-gray-500:last-child').textContent;
 
@@ -388,6 +448,15 @@
             const editableElements = card.querySelectorAll('.editable-content');
             editableElements.forEach(element => {
                 element.setAttribute('contenteditable', 'false');
+            });
+
+            // Make criteria items non-editable
+            const criteriaItems = card.querySelectorAll('[data-field="criteria"] li');
+            criteriaItems.forEach(item => {
+                item.setAttribute('contenteditable', 'false');
+                item.style.cursor = 'default';
+                item.style.padding = '0';
+                item.style.marginBottom = '0';
             });
 
             // Remove from original contents if it exists

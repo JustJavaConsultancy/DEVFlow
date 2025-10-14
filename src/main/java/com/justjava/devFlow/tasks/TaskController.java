@@ -14,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class TaskController {
@@ -108,6 +111,7 @@ public class TaskController {
     public ResponseEntity<String> saveStory(
             @RequestParam String storyId,
             @RequestParam String story,
+            @RequestParam String acceptanceCriteria, // New parameter
             @RequestParam String taskId) {
 
         try {
@@ -160,15 +164,22 @@ public class TaskController {
             // ✅ Find and update story by ID
             boolean storyFound = false;
             for (Map<String, Object> userStory : userStories) {
-                Object id = userStory.get("Id");
+                Object id = userStory.get("id");
                 if (id != null && storyId.equals(String.valueOf(id))) {
+                    // Update both story and acceptance criteria
                     userStory.put("story", story);
+
+                    // Parse acceptance criteria from string to List
+                    List<String> criteriaList = parseAcceptanceCriteria(acceptanceCriteria);
+                    userStory.put("acceptance_criteria", criteriaList);
+
                     storyFound = true;
                     break;
                 }
             }
 
             if (!storyFound) {
+                System.out.println("This are all the stories: " + userStories);
                 System.out.println("❌ Story not found with id: " + storyId);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Story not found with id: " + storyId);
@@ -181,6 +192,7 @@ public class TaskController {
             System.out.println("✅ Story updated successfully:");
             System.out.println("  - storyId: " + storyId);
             System.out.println("  - story content: " + story);
+            System.out.println("  - acceptance criteria: " + acceptanceCriteria);
             System.out.println("  - taskId: " + taskId);
 
             return ResponseEntity.ok("Story saved successfully");
@@ -191,5 +203,18 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error saving story: " + e.getMessage());
         }
+    }
+
+    // Helper method to parse acceptance criteria from string to List
+    private List<String> parseAcceptanceCriteria(String acceptanceCriteria) {
+        if (acceptanceCriteria == null || acceptanceCriteria.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Split by newlines and filter out empty lines
+        return Arrays.stream(acceptanceCriteria.split("\n"))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .collect(Collectors.toList());
     }
 }
