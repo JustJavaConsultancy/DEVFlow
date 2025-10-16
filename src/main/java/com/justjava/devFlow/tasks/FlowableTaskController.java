@@ -145,7 +145,6 @@ public class FlowableTaskController {
                 .taskId(taskId)
                 .singleResult();
 
-       // System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
         if (task == null) {
             throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
@@ -181,23 +180,28 @@ public class FlowableTaskController {
                 break;
         }
 
-        // Load task variables
-        //Map<String, Object> taskVariables = taskService.getVariables(taskId);
+        // Load process variables from HISTORY (not runtime)
+        Map<String, Object> processVariables = historyService
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .includeProcessVariables()
+                .singleResult()
+                .getProcessVariables();
 
-        // Load process variables
-        Map<String, Object> processVariables = runtimeService.getVariables(task.getExecutionId(),
-                List.of(task.getId()));
+        // Load task variables from HISTORY
+        Map<String, Object> taskVariables = historyService
+                .createHistoricTaskInstanceQuery()
+                .taskId(taskId)
+                .includeTaskLocalVariables()
+                .singleResult()
+                .getTaskLocalVariables();
 
-        Map<String, Object> taskVariables = (Map<String, Object>) runtimeService.getVariable(task.getExecutionId(),taskId);
-        //System.out.println(" The variable pulled out =====\n\n\n\n\n\n\n\n\n\n"+taskVariables);
-        //System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
-    //qweqweqweqwe
-        processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
         model.addAttribute("task", task);
-        model.addAttribute("taskId",taskId);
-        //model.addAttribute("taskVariables", taskVariables);
-        model.addAttribute("processVariables",taskVariables );
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("processVariables", processVariables);
+        model.addAttribute("taskVariables", taskVariables); // Add this if you need task variables
         model.addAttribute("isCompleted", true);
+
         return currentTask;
     }
     @GetMapping("/moveTaskTo/{taskId}")

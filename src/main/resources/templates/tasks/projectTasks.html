@@ -51,6 +51,40 @@
     .completed-task:hover .revert-btn {
       opacity: 1;
     }
+     .detail-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .detail-value {
+            color: #1f2937;
+        }
+
+        .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .detail-tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
 
     .revert-btn:hover {
       background-color: #2563eb;
@@ -78,6 +112,47 @@
       width: 90%;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
+    .skip-btn {
+            background-color: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .skip-btn:hover {
+            background-color: #f9fafb;
+            color: #4b5563;
+            border-color: #9ca3af;
+        }
+
+        .skip-confirm-modal .task-details-content {
+            max-width: 500px;
+        }
+
+        .skip-reason-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-top: 10px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .skip-reason-input:focus {
+            outline: none;
+            border-color: #780aff;
+            box-shadow: 0 0 0 3px rgba(120, 10, 255, 0.2);
+        }
 
     .modal-actions {
       display: flex;
@@ -159,6 +234,13 @@
           <a th:href="@{/tasks/view/{taskId}(taskId=${task.id})}" class="gradient-bg text-white px-4 py-2 rounded-lg text-sm flex items-center">
             <i class="fas fa-hand-paper mr-1"></i> Claim Task
           </a>
+          <a
+                  th:hx-get="@{/tasks/skip-confirm/{taskId}(taskId=${task.id})}"
+                  hx-target="#skip-task-modal-container"
+                  hx-swap="innerHTML"
+                  class="skip-btn" >
+            <i class="fas fa-forward mr-1"></i> Skip Task
+          </a>
         </div>
       </div>
     </div>
@@ -217,6 +299,10 @@
   <!-- Modal Container -->
   <div id="modal-container"></div>
 
+<!--  Skip Task Modal Container-->
+    <div id="skip-task-modal-container"></div>
+
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Animate progress bars
@@ -233,6 +319,12 @@
           document.getElementById('modal-container').innerHTML = '';
         }
       });
+      // Close skip modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'skip-modal-overlay') {
+            document.getElementById('skip-task-modal-container').innerHTML = '';
+            }
+        });
     });
   </script>
 </div>

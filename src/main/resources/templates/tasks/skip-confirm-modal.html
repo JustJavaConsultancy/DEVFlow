@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="skip-confirm-modal">
+    <div class="modal-overlay" id="skip-modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold text-blue-800 mb-4">Skip Current Task</h2>
+
+            <div class="detail-section">
+                <p class="detail-value">Are you sure you want to skip the current task? Please provide a reason for skipping this task.</p>
+
+                <div class="mt-4">
+                    <label class="detail-label">Reason for skipping:</label>
+                    <textarea class="skip-reason-input" id="skipReasonInput" placeholder="Explain why you're skipping this task..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <form th:action="@{/tasks/moveTaskTo/{taskId}(taskId=${nextTaskId})}" method="post">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-forward"></i> Skip Task
+                    </button>
+                </form>
+                <button class="btn-secondary" onclick="document.getElementById('skip-task-modal-container').innerHTML = ''">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

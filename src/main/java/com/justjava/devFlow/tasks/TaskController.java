@@ -1,6 +1,7 @@
 package com.justjava.devFlow.tasks;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.flowable.bpmn.model.*;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -25,6 +23,9 @@ public class TaskController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private org.flowable.engine.RepositoryService repositoryService;
 
     @Autowired
     private FormService formService;
@@ -69,6 +70,76 @@ public class TaskController {
         //model.addAttribute("userId", userId);
         return "tasks/projectTasks";
     }
+    @GetMapping("/tasks/skip-confirm/{taskId}")
+    public String getSkipConfirmation(@PathVariable String taskId, Model model) {
+        try {
+            Task currentTask = taskService.createTaskQuery()
+                    .taskId(taskId)
+                    .singleResult();
+
+            if (currentTask == null) {
+                model.addAttribute("error", "Task not found with ID: " + taskId);
+                return "/tasks/error-fragment :: error";
+            }
+
+            BpmnModel bpmnModel = repositoryService.getBpmnModel(currentTask.getProcessDefinitionId());
+            FlowElement currentElement = bpmnModel.getMainProcess()
+                    .getFlowElement(currentTask.getTaskDefinitionKey());
+
+            if (!(currentElement instanceof FlowNode)) {
+                model.addAttribute("error", "Current element is not a flow node");
+                return "/tasks/error-fragment :: error";
+            }
+
+            Set<String> visited = new HashSet<>();
+            UserTask nextUserTask = findNextUserTask((FlowNode) currentElement, visited, currentElement.getId());
+
+            if (nextUserTask != null) {
+                System.out.println("✅ Next user task found: " + nextUserTask.getName() + " (ID: " + nextUserTask.getId() + ")");
+                model.addAttribute("nextTaskId", nextUserTask.getId());
+            } else {
+                System.out.println("⚠️ No valid next user task found after: " + currentTask.getName());
+                model.addAttribute("nextTaskId", "");
+            }
+
+            return "/tasks/skip-confirm-modal :: skip-confirm-modal";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Unable to determine next task");
+            return "/tasks/error-fragment :: error";
+        }
+    }
+
+    /**
+     * 🔁 Recursively find the next valid UserTask, avoiding loops and self-references.
+     */
+    private UserTask findNextUserTask(FlowNode currentNode, Set<String> visited, String startId) {
+        if (!visited.add(currentNode.getId())) {
+            return null; // Already visited, avoid loop
+        }
+
+        for (SequenceFlow flow : currentNode.getOutgoingFlows()) {
+            FlowElement target = flow.getTargetFlowElement();
+
+            // Skip if the target loops back to the start node
+            if (target.getId().equals(startId)) {
+                continue;
+            }
+
+            if (target instanceof UserTask) {
+                return (UserTask) target;
+            }
+
+            if (target instanceof FlowNode) {
+                UserTask next = findNextUserTask((FlowNode) target, visited, startId);
+                if (next != null) return next;
+            }
+        }
+        return null;
+    }
+
+
     @GetMapping("/tasks/revert-confirm/{taskId}")
     public String getRevertConfirmation(@PathVariable String taskId, Model model) {
         HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery().finished().taskId(taskId).singleResult();
@@ -111,81 +182,84 @@ public class TaskController {
     public ResponseEntity<String> saveStory(
             @RequestParam String storyId,
             @RequestParam String story,
-            @RequestParam String acceptanceCriteria, // New parameter
+            @RequestParam String acceptanceCriteria,
             @RequestParam String taskId) {
 
         try {
             System.out.println("🔍 Checking task for ID: " + taskId);
-            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
-            // ✅ Ensure task exists
-            if (task == null) {
-                System.out.println("❌ No task found for id: " + taskId);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Task not found with id: " + taskId);
+            // Try to find an active task first
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            String processInstanceId = null;
+
+            if (task != null) {
+                processInstanceId = task.getProcessInstanceId();
+                System.out.println("📦 Active process instance: " + processInstanceId);
+            } else {
+                // If not active, check history
+                HistoricTaskInstance completedTask = historyService
+                        .createHistoricTaskInstanceQuery()
+                        .finished()
+                        .taskId(taskId)
+                        .singleResult();
+
+                if (completedTask == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body("No active or completed task found for ID: " + taskId);
+                }
+
+                processInstanceId = completedTask.getProcessInstanceId();
+                System.out.println("📦 Completed process instance: " + processInstanceId);
             }
 
-            String processInstanceId = task.getProcessInstanceId();
-            System.out.println("📦 Process instance: " + processInstanceId);
-
-            // ✅ Fetch the process variable
+            // ✅ Fetch the 'stories' variable from runtime
             Object storiesObj = runtimeService.getVariable(processInstanceId, "stories");
             if (storiesObj == null) {
-                System.out.println("❌ No 'stories' variable found in process instance");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("No 'stories' variable found for this process");
             }
 
-            // ✅ Validate that 'stories' is a Map
             if (!(storiesObj instanceof Map)) {
-                System.out.println("❌ Invalid 'stories' type: " + storiesObj.getClass().getName());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Invalid 'stories' format — expected a Map");
             }
 
             Map<String, Object> stories = (Map<String, Object>) storiesObj;
 
-            // ✅ Fetch 'user_stories' inside 'stories'
+            // ✅ Fetch 'user_stories'
             Object userStoriesObj = stories.get("user_stories");
             if (userStoriesObj == null) {
-                System.out.println("❌ No 'user_stories' found inside 'stories'");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("No 'user_stories' found inside 'stories'");
             }
 
             if (!(userStoriesObj instanceof List)) {
-                System.out.println("❌ Invalid 'user_stories' type: " + userStoriesObj.getClass().getName());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Invalid 'user_stories' format — expected a List");
             }
 
             List<Map<String, Object>> userStories = (List<Map<String, Object>>) userStoriesObj;
 
-            // ✅ Find and update story by ID
+            // ✅ Find and update story
             boolean storyFound = false;
             for (Map<String, Object> userStory : userStories) {
                 Object id = userStory.get("id");
                 if (id != null && storyId.equals(String.valueOf(id))) {
-                    // Update both story and acceptance criteria
                     userStory.put("story", story);
-
-                    // Parse acceptance criteria from string to List
-                    List<String> criteriaList = parseAcceptanceCriteria(acceptanceCriteria);
-                    userStory.put("acceptance_criteria", criteriaList);
-
+                    userStory.put("acceptance_criteria", parseAcceptanceCriteria(acceptanceCriteria));
                     storyFound = true;
                     break;
                 }
             }
 
             if (!storyFound) {
-                System.out.println("This are all the stories: " + userStories);
                 System.out.println("❌ Story not found with id: " + storyId);
+                System.out.println("All stories: " + userStories);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Story not found with id: " + storyId);
             }
 
-            // ✅ Update and save the process variable
+            // ✅ Update process variable
             stories.put("user_stories", userStories);
             runtimeService.setVariable(processInstanceId, "stories", stories);
 
@@ -205,16 +279,18 @@ public class TaskController {
         }
     }
 
-    // Helper method to parse acceptance criteria from string to List
+    /**
+     * Helper method to parse acceptance criteria from string to List.
+     */
     private List<String> parseAcceptanceCriteria(String acceptanceCriteria) {
         if (acceptanceCriteria == null || acceptanceCriteria.trim().isEmpty()) {
             return new ArrayList<>();
         }
 
-        // Split by newlines and filter out empty lines
         return Arrays.stream(acceptanceCriteria.split("\n"))
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
                 .collect(Collectors.toList());
     }
+
 }
