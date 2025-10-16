@@ -103,6 +103,11 @@
       color: #4b5563;
     }
 
+    /* Enhanced content styling */
+    .enhanced-content {
+      margin: 1rem 0;
+    }
+
     /* Component box for architecture diagrams */
     .component-box {
       display: inline-block;
@@ -231,6 +236,12 @@
 
     .api-path {
       color: #495057;
+    }
+
+    .api-description {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #6b7280;
     }
 
     /* Configuration example styling */
@@ -383,6 +394,15 @@
 
     /* make sure the table toolbar shows the font-awesome icon */
     .ql-toolbar .ql-table i { font-size: 14px; }
+
+    /* Enhanced content toolbar styling */
+    .ql-toolbar .ql-enhanced {
+      border: none;
+      background: none;
+    }
+    .ql-toolbar .ql-enhanced:hover {
+      background: #f3f4f6;
+    }
   </style>
 </head>
 <body>
@@ -482,6 +502,129 @@
 
   <script>
     /*********************************
+     * Enhanced Content Blots for Quill
+     *********************************/
+    const BlockEmbed = Quill.import('blots/block/embed');
+    const Block = Quill.import('blots/block');
+
+    // PlantUML Diagram Blot
+    class PlantUMLBlot extends BlockEmbed {
+      static blotName = 'plantuml-diagram';
+      static tagName = 'div';
+      static className = 'plantuml-diagram enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        node.setAttribute('data-plantuml', value);
+        node.innerHTML = `
+          <div class="flex justify-center items-center h-64">
+            <div class="text-center">
+              <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-2"></i>
+              <p>Loading diagram...</p>
+            </div>
+          </div>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        return node.getAttribute('data-plantuml');
+      }
+    }
+
+    // Code Block Blot
+    class CodeBlockBlot extends Block {
+      static blotName = 'code-block';
+      static tagName = 'div';
+      static className = 'code-block enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        const { code, language, title } = value;
+        node.innerHTML = `
+          <div class="code-block-header">
+            <span class="code-block-title">${title || 'Code'}</span>
+            <button class="copy-button">Copy</button>
+          </div>
+          <pre><code class="language-${language}">${code}</code></pre>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        const codeElement = node.querySelector('code');
+        const titleElement = node.querySelector('.code-block-title');
+        return {
+          code: codeElement ? codeElement.textContent : '',
+          language: codeElement ? codeElement.className.replace('language-', '') : '',
+          title: titleElement ? titleElement.textContent : ''
+        };
+      }
+    }
+
+    // API Endpoint Blot
+    class APIEndpointBlot extends BlockEmbed {
+      static blotName = 'api-endpoint';
+      static tagName = 'div';
+      static className = 'api-endpoint enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        const { method, path, description } = value;
+        const methodClass = `api-method ${method.toLowerCase()}`;
+        node.innerHTML = `
+          <div>
+            <span class="${methodClass}">${method.toUpperCase()}</span>
+            <span class="api-path">${path}</span>
+            ${description ? `<p class="api-description">${description}</p>` : ''}
+          </div>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        const methodElement = node.querySelector('.api-method');
+        const pathElement = node.querySelector('.api-path');
+        const descriptionElement = node.querySelector('.api-description');
+        return {
+          method: methodElement ? methodElement.textContent.toLowerCase() : '',
+          path: pathElement ? pathElement.textContent : '',
+          description: descriptionElement ? descriptionElement.textContent : ''
+        };
+      }
+    }
+
+    // Configuration Example Blot
+    class ConfigExampleBlot extends Block {
+      static blotName = 'config-example';
+      static tagName = 'div';
+      static className = 'config-example enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        const { code, language } = value;
+        node.innerHTML = `
+          <pre><code class="language-${language}">${code}</code></pre>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        const codeElement = node.querySelector('code');
+        return {
+          code: codeElement ? codeElement.textContent : '',
+          language: codeElement ? codeElement.className.replace('language-', '') : ''
+        };
+      }
+    }
+
+    // Register all custom blots
+    Quill.register(PlantUMLBlot);
+    Quill.register(CodeBlockBlot);
+    Quill.register(APIEndpointBlot);
+    Quill.register(ConfigExampleBlot);
+
+    /*********************************
      * Initialize syntax highlighting and PlantUML rendering
      *********************************/
     document.addEventListener('DOMContentLoaded', function() {
@@ -490,6 +633,9 @@
 
       // Render PlantUML diagrams
       renderPlantUMLDiagrams();
+
+      // Add copy functionality to code blocks
+      setupCopyButtons();
     });
 
     /*********************************
@@ -531,10 +677,21 @@
     }
 
     /*********************************
+     * Copy Button Setup
+     *********************************/
+    function setupCopyButtons() {
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('copy-button')) {
+          copyCode(e.target);
+        }
+      });
+    }
+
+    /*********************************
      * Code Copy Functionality
      *********************************/
     function copyCode(button) {
-      const codeBlock = button.closest('.code-block');
+      const codeBlock = button.closest('.code-block, .config-example');
       const codeElement = codeBlock.querySelector('code');
       const codeText = codeElement.textContent;
 
@@ -555,10 +712,44 @@
     }
 
     /*********************************
+     * Enhanced Content Insertion Functions
+     *********************************/
+    function insertPlantUMLDiagram(plantumlCode) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'plantuml-diagram', plantumlCode, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      setTimeout(renderPlantUMLDiagrams, 100);
+    }
+
+    function insertCodeBlock(code, language = 'plaintext', title = 'Code') {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'code-block', { code, language, title }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      setTimeout(() => {
+        hljs.highlightAll();
+        setupCopyButtons();
+      }, 100);
+    }
+
+    function insertAPIEndpoint(method, path, description = '') {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'api-endpoint', { method, path, description }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+    }
+
+    function insertConfigExample(code, language = 'yaml') {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'config-example', { code, language }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      setTimeout(() => {
+        hljs.highlightAll();
+        setupCopyButtons();
+      }, 100);
+    }
+
+    /*********************************
      * Table embed blot (editable cells)
      *********************************/
-    const BlockEmbed = Quill.import('blots/block/embed');
-
     class TableBlot extends BlockEmbed {
       static blotName = 'table-embed';
       static tagName = 'div';
@@ -566,10 +757,10 @@
 
       static create(value) {
         const node = super.create();
-        node.setAttribute('contenteditable', 'false'); // embed container not editable (cells are)
+        node.setAttribute('contenteditable', 'false');
         node.innerHTML = value;
 
-        // Make cells editable (defensive: ensure attributes present)
+        // Make cells editable
         const cells = node.querySelectorAll('td, th');
         cells.forEach(c => {
           c.setAttribute('contenteditable', 'true');
@@ -590,8 +781,6 @@
 
     /*********************************
      * Preprocess existing server-side tables BEFORE Quill initializes.
-     * This converts <table> markup into <div class="ql-table-embed"> wrappers
-     * so Quill recognizes them as the custom TableBlot on initialization.
      *********************************/
     (function preprocessInitialTables() {
       const editorEl = document.getElementById('editor');
@@ -600,10 +789,8 @@
       if (tables.length === 0) return;
 
       tables.forEach(table => {
-        // skip if already wrapped
         if (table.closest('.ql-table-embed')) return;
 
-        // clone and ensure editable cells
         const cloned = table.cloneNode(true);
         cloned.querySelectorAll('td, th').forEach(c => {
           c.setAttribute('contenteditable', 'true');
@@ -621,7 +808,7 @@
     })();
 
     /*********************************
-     * Initialize Quill with table button in toolbar
+     * Initialize Quill with enhanced toolbar
      *********************************/
     var quill = new Quill('#editor', {
       theme: 'snow',
@@ -633,7 +820,7 @@
             [{ list: 'ordered' }, { list: 'bullet' }],
             ['link', 'image', 'code-block'],
             [{ color: [] }, { background: [] }],
-            ['table'], // Add table button to toolbar (we'll inject an icon below)
+            ['table'],
             ['clean']
           ],
           handlers: {
@@ -647,7 +834,54 @@
       }
     });
 
-    // Ensure the table toolbar button shows a Font Awesome icon (Quill doesn't ship a table icon by default)
+    // Add enhanced content buttons to toolbar
+    function addEnhancedContentToolbar() {
+      const toolbar = document.querySelector('.ql-toolbar');
+      if (!toolbar) return;
+
+      const enhancedContentHtml = `
+        <span class="ql-formats">
+          <button class="ql-plantuml" title="Insert PlantUML Diagram">
+            <i class="fas fa-project-diagram"></i>
+          </button>
+          <button class="ql-api" title="Insert API Endpoint">
+            <i class="fas fa-code"></i>
+          </button>
+          <button class="ql-config" title="Insert Configuration">
+            <i class="fas fa-cog"></i>
+          </button>
+        </span>
+      `;
+
+      toolbar.insertAdjacentHTML('beforeend', enhancedContentHtml);
+
+      // Add event listeners for enhanced content buttons
+      document.querySelector('.ql-plantuml').addEventListener('click', function() {
+        const plantumlCode = prompt('Enter PlantUML code:');
+        if (plantumlCode) {
+          insertPlantUMLDiagram(plantumlCode);
+        }
+      });
+
+      document.querySelector('.ql-api').addEventListener('click', function() {
+        const method = prompt('Enter HTTP method (GET, POST, PUT, DELETE):', 'GET');
+        const path = prompt('Enter API path:', '/api/v1/endpoint');
+        const description = prompt('Enter description (optional):', '');
+        if (method && path) {
+          insertAPIEndpoint(method, path, description);
+        }
+      });
+
+      document.querySelector('.ql-config').addEventListener('click', function() {
+        const language = prompt('Enter language (yaml, java, javascript, etc.):', 'yaml');
+        const code = prompt('Enter configuration code:');
+        if (code) {
+          insertConfigExample(code, language);
+        }
+      });
+    }
+
+    // Ensure the table toolbar button shows a Font Awesome icon
     (function decorateTableToolbarButton() {
       const btn = document.querySelector('.ql-toolbar .ql-table');
       if (btn) {
@@ -656,17 +890,16 @@
       }
     })();
 
-    // After initialization, re-attach behaviors to any table embeds that came from server
+    // Add enhanced content toolbar and initialize
     setTimeout(() => {
+      addEnhancedContentToolbar();
       attachCellBehaviorToAllTables();
-      // also a fallback conversion in case any raw <table> tags still exist in the Quill root
       convertExistingTablesToEmbeds();
-      // Process enhanced content elements
       processEnhancedContent();
     }, 50);
 
     /*********************************
-     * Process enhanced content elements (code blocks, API endpoints, etc.)
+     * Process enhanced content elements
      *********************************/
     function processEnhancedContent() {
       // Add copy buttons to existing code blocks
@@ -677,7 +910,6 @@
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-button';
             copyBtn.textContent = 'Copy';
-            copyBtn.onclick = function() { copyCode(this); };
             header.appendChild(copyBtn);
           }
         }
@@ -690,8 +922,8 @@
     // convenience refs
     const wrapper = document.querySelector('.editor-wrapper');
     const floatingToolbar = document.getElementById('floating-toolbar');
-    let currentCell = null;       // currently focused <td> or <th>
-    let currentEmbedNode = null;  // current .ql-table-embed container
+    let currentCell = null;
+    let currentEmbedNode = null;
 
     /*********************************
      * Table Utilities
@@ -702,9 +934,7 @@
       let html = '<table>';
       if (header) {
         html += '<thead><tr>';
-        for (let c = 0; c < cols; c++) {
-          html += '<th><br></th>';
-        }
+        for (let c = 0; c < cols; c++) html += '<th><br></th>';
         html += '</tr></thead>';
       }
       html += '<tbody>';
@@ -733,16 +963,12 @@
       const wrapperDom = document.createElement('div');
       wrapperDom.innerHTML = html;
       let nodes = Array.from(wrapperDom.childNodes);
-
-      // Insert sequentially
       let currentIndex = Math.max(0, index);
+
       nodes.forEach(node => {
         if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
           quill.insertEmbed(currentIndex, 'table-embed', node.outerHTML, Quill.sources.USER);
-          currentIndex += 1;
-          // insert a newline after embed so future content sits below
-          quill.insertText(currentIndex, '\n', Quill.sources.USER);
-          currentIndex += 1;
+          currentIndex += 2;
         } else {
           const fragHtml = node.outerHTML ?? node.textContent ?? '';
           quill.clipboard.dangerouslyPasteHTML(currentIndex, fragHtml);
@@ -750,7 +976,6 @@
         }
       });
 
-      // Reattach cell handlers and process enhanced content
       attachCellBehaviorToAllTables();
       processEnhancedContent();
     }
@@ -767,7 +992,6 @@
           const table = node.querySelector('table');
           return table ? table.outerHTML : '';
         } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
-          // Handle raw tables that might not be converted yet
           return node.outerHTML;
         } else {
           return node.outerHTML ?? node.textContent ?? '';
