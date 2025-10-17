@@ -1405,338 +1405,374 @@
 
     // Enhanced PDF export with proper table rendering
     async function downloadAsPDF() {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        unit: 'pt',
-        format: 'a4',
-        compress: true
-      });
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    unit: 'pt',
+    format: 'a4',
+    compress: true
+  });
 
-      const margin = 40;
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const contentWidth = pageWidth - (2 * margin);
-      let y = margin;
+  const margin = 40;
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const contentWidth = pageWidth - (2 * margin);
+  let y = margin;
 
-      // Add logo to top right corner
-      const logo = document.getElementById('pdfLogo');
-      if (logo && logo.src) {
-        try {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
+  // ---------- Helper: Load image element ----------
+  function loadImageElement(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
 
-          img.onload = function() {
-            const logoWidth = 30;
-            const logoHeight = 50;
-            const logoX = pageWidth - margin - logoWidth;
-            const logoY = margin;
+  // ---------- Add Logo ----------
+  async function addLogo() {
+    const logo = document.getElementById('pdfLogo');
+    if (!logo || !logo.src) return;
+    try {
+      const img = await loadImageElement(logo.src);
+      const logoWidth = 30;
+      const logoHeight = 50;
+      const logoX = pageWidth - margin - logoWidth;
+      const logoY = margin;
+      pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
+    } catch (err) {
+      console.warn('Logo not added:', err);
+    }
+  }
 
-            pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
-            addDocumentContent();
-          };
+  // ---------- Add document header ----------
+  async function addDocumentHeader() {
+    await addLogo();
+    y += 40;
 
-          img.onerror = function() {
-            console.warn('Logo could not be loaded, proceeding without logo');
-            addDocumentContent();
-          };
+    const projectNameEl = document.querySelector('p.text-gray-600');
+    const projectName = projectNameEl ? projectNameEl.textContent.trim() : '';
 
-          img.src = logo.src;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor(30, 64, 175);
+    pdf.text("Architecture Document", margin, y);
 
-        } catch (error) {
-          console.warn('Error loading logo:', error);
-          addDocumentContent();
-        }
-      } else {
-        addDocumentContent();
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(projectName, margin, y + 20);
+
+    y += 50;
+  }
+
+  // ---------- Page break with logo ----------
+  async function checkPageBreak(heightNeeded = 0) {
+    if (y + heightNeeded > pageHeight - margin) {
+      pdf.addPage();
+      y = margin;
+      await addLogo();
+      return true;
+    }
+    return false;
+  }
+
+  // ---------- EXACT TEXT FORMATTING FROM FIRST CODE ----------
+  function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
+    if (!text || text.trim() === '') return;
+
+    pdf.setFont("helvetica", isBold ? "bold" : "normal");
+    pdf.setFontSize(fontSize);
+    pdf.setTextColor(...color);
+
+    const lines = pdf.splitTextToSize(text, contentWidth - indent);
+    const lineSpacing = fontSize * lineHeight;
+
+    // Check if we need a page break before adding this text
+    checkPageBreak(lines.length * lineSpacing);
+
+    lines.forEach((line, index) => {
+      // Check if we need a page break for each line
+      if (y + lineSpacing > pageHeight - margin) {
+        pdf.addPage();
+        y = margin;
+        addLogo();
       }
 
-      function addDocumentContent() {
-        // Add document header (moved down to accommodate logo)
-        y += 40; // Extra space for logo
+      pdf.text(line, margin + indent, y);
+      y += lineSpacing;
+    });
 
-        const projectName = document.querySelector('p.text-gray-600').textContent;
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.setTextColor(30, 64, 175); // Blue color
-        pdf.text("Architecture Document", margin, y);
+    // Add a small gap after the text block
+    y += 5;
+  }
 
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(12);
-        pdf.setTextColor(100, 100, 100);
-        pdf.text(projectName, margin, y + 20);
+  // ---------- Process tables using jsPDF autotable ----------
+  function processTable(table) {
+    const data = [];
+    const headers = [];
 
-        y += 50;
-
-        // Get the HTML content from the editor
-        const htmlContent = getEditorHtmlPreservingTables();
-
-        // Create a temporary div to process the content
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = htmlContent;
-
-        // Function to check if we need a page break
-        function checkPageBreak(heightNeeded = 0) {
-          if (y + heightNeeded > pageHeight - margin) {
-            pdf.addPage();
-            y = margin;
-            // Add logo to new page
-            const logo = document.getElementById('pdfLogo');
-            if (logo && logo.src) {
-              try {
-                const img = new Image();
-                img.onload = function() {
-                  const logoWidth = 30;
-                  const logoHeight = 50;
-                  const logoX = pageWidth - margin - logoWidth;
-                  pdf.addImage(img, 'PNG', logoX, margin, logoWidth, logoHeight);
-                };
-                img.src = logo.src;
-              } catch (error) {
-                console.warn('Could not add logo to new page');
-              }
-            }
-            return true;
-          }
-          return false;
-        }
-
-        // Function to add text with proper formatting
-        function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
-          pdf.setFont("helvetica", isBold ? "bold" : "normal");
-          pdf.setFontSize(fontSize);
-          pdf.setTextColor(...color);
-
-          const lines = pdf.splitTextToSize(text, contentWidth - indent);
-          const lineSpacing = fontSize * lineHeight;
-
-          // Check if we need a page break before adding this text
-          checkPageBreak(lines.length * lineSpacing);
-
-          lines.forEach((line, index) => {
-            // Check if we need a page break for each line
-            if (y + lineSpacing > pageHeight - margin) {
-              pdf.addPage();
-              y = margin;
-            }
-
-            pdf.text(line, margin + indent, y);
-            y += lineSpacing;
-          });
-
-          // Add a small gap after the text block
-          y += 5;
-        }
-
-        // Process tables using jsPDF autotable for proper rendering
-        function processTable(table) {
-          const data = [];
-          const headers = [];
-
-          // Extract headers from thead if exists
-          const thead = table.querySelector('thead');
-          if (thead) {
-            const headerRow = thead.querySelector('tr');
-            if (headerRow) {
-              Array.from(headerRow.querySelectorAll('th')).forEach(th => {
-                headers.push(th.innerText.trim());
-              });
-              data.push(headers);
-            }
-          }
-
-          // Extract data from tbody
-          const tbody = table.querySelector('tbody') || table;
-          const rows = tbody.querySelectorAll('tr');
-
-          Array.from(rows).forEach(row => {
-            // Skip header row if we already processed thead
-            if (row.parentElement.tagName === 'THEAD') return;
-
-            const rowData = [];
-            Array.from(row.querySelectorAll('td, th')).forEach(cell => {
-              rowData.push(cell.innerText.trim());
-            });
-            if (rowData.length > 0) {
-              data.push(rowData);
-            }
-          });
-
-          if (data.length > 0) {
-            // Calculate table height
-            const estimatedTableHeight = (data.length * 20) + 30;
-            checkPageBreak(estimatedTableHeight);
-
-            const tableConfig = {
-              startY: y,
-              margin: { left: margin, right: margin },
-              styles: {
-                fontSize: 10,
-                cellPadding: 4,
-                lineColor: [200, 200, 200],
-                lineWidth: 0.5,
-              },
-              headStyles: {
-                fillColor: [243, 244, 246],
-                textColor: [55, 65, 81],
-                fontStyle: 'bold',
-              },
-              alternateRowStyles: {
-                fillColor: [250, 250, 250],
-              },
-              tableWidth: 'auto',
-              columnStyles: {},
-            };
-
-            // If we have headers from thead, use them as proper headers
-            if (thead && headers.length > 0) {
-              const bodyData = data.slice(1); // Remove header row from data
-              pdf.autoTable({
-                head: [headers],
-                body: bodyData,
-                ...tableConfig
-              });
-            } else {
-              // No explicit headers, treat first row as header
-              pdf.autoTable({
-                head: [data[0]],
-                body: data.slice(1),
-                ...tableConfig
-              });
-            }
-
-            // Update y position after table
-            const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
-            y = finalY + 20;
-          }
-        }
-
-        // Process each node in the content
-        function processNode(node) {
-          if (node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent.trim()) {
-              // Check if parent is bold
-              const parent = node.parentElement;
-              const isBold = parent && (
-                      parent.tagName === 'STRONG' ||
-                      parent.tagName === 'B' ||
-                      parent.style.fontWeight === 'bold'
-              );
-              addText(node.textContent.trim(), 12, isBold);
-            }
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const tag = node.tagName.toLowerCase();
-            const textContent = node.textContent.trim();
-
-            if (!textContent && tag !== 'table' && tag !== 'div') return;
-
-            switch(tag) {
-              case "h1":
-                addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
-                y += 10;
-                break;
-
-              case "h2":
-                addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
-                y += 8;
-                break;
-
-              case "h3":
-                addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
-                y += 8;
-                break;
-
-              case "h4":
-                addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
-                y += 6;
-                break;
-
-              case "p":
-                addText(textContent, 12, false);
-                break;
-
-              case "li":
-                const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
-                const prefix = isOrdered ?
-                        (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
-                addText(prefix + textContent, 12, false, 20);
-                break;
-
-              case "ul":
-              case "ol":
-                y += 8;
-                Array.from(node.children).forEach(child => processNode(child));
-                y += 8;
-                break;
-
-              case "strong":
-              case "b":
-                Array.from(node.childNodes).forEach(child => {
-                  if (child.nodeType === Node.TEXT_NODE) {
-                    addText(child.textContent.trim(), 12, true);
-                  } else {
-                    processNode(child);
-                  }
-                });
-                break;
-
-              case "table":
-                processTable(node);
-                break;
-
-              case "div":
-                if (node.classList.contains('component-box')) {
-                  processComponentBox(node);
-                } else if (node.classList.contains('architecture-diagram')) {
-                  processArchitectureDiagram(node);
-                } else if (node.classList.contains('ql-table-embed')) {
-                  // Handle table embed div by processing the table inside
-                  const table = node.querySelector('table');
-                  if (table) processTable(table);
-                } else {
-                  Array.from(node.childNodes).forEach(processNode);
-                }
-                break;
-
-              default:
-                Array.from(node.childNodes).forEach(processNode);
-            }
-          }
-        }
-
-        // Process component boxes
-        function processComponentBox(box) {
-          checkPageBreak(40);
-
-          pdf.setFont("helvetica", "bold");
-          pdf.setFontSize(11);
-          pdf.setTextColor(55, 65, 81);
-
-          const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
-          pdf.text(text, margin + 10, y + 18);
-
-          y += 40;
-        }
-
-        // Process architecture diagrams
-        function processArchitectureDiagram(diagram) {
-          checkPageBreak(100);
-
-          pdf.setFont("helvetica", "bold");
-          pdf.setFontSize(12);
-          pdf.setTextColor(100, 100, 100);
-          pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
-
-          y += 100;
-        }
-
-        // Process all content nodes
-        Array.from(tempDiv.childNodes).forEach(processNode);
-
-        // Save the PDF
-        pdf.save("architecture-document.pdf");
+    // Extract headers from thead if exists
+    const thead = table.querySelector('thead');
+    if (thead) {
+      const headerRow = thead.querySelector('tr');
+      if (headerRow) {
+        Array.from(headerRow.querySelectorAll('th')).forEach(th => {
+          headers.push(th.innerText.trim());
+        });
+        data.push(headers);
       }
     }
+
+    // Extract data from tbody
+    const tbody = table.querySelector('tbody') || table;
+    const rows = tbody.querySelectorAll('tr');
+
+    Array.from(rows).forEach(row => {
+      // Skip header row if we already processed thead
+      if (row.parentElement.tagName === 'THEAD') return;
+
+      const rowData = [];
+      Array.from(row.querySelectorAll('td, th')).forEach(cell => {
+        rowData.push(cell.innerText.trim());
+      });
+      if (rowData.length > 0) {
+        data.push(rowData);
+      }
+    });
+
+    if (data.length > 0) {
+      // Calculate table height
+      const estimatedTableHeight = (data.length * 20) + 30;
+      checkPageBreak(estimatedTableHeight);
+
+      const tableConfig = {
+        startY: y,
+        margin: { left: margin, right: margin },
+        styles: {
+          fontSize: 10,
+          cellPadding: 4,
+          lineColor: [200, 200, 200],
+          lineWidth: 0.5,
+        },
+        headStyles: {
+          fillColor: [243, 244, 246],
+          textColor: [55, 65, 81],
+          fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+          fillColor: [250, 250, 250],
+        },
+        tableWidth: 'auto',
+        columnStyles: {},
+      };
+
+      // If we have headers from thead, use them as proper headers
+      if (thead && headers.length > 0) {
+        const bodyData = data.slice(1); // Remove header row from data
+        pdf.autoTable({
+          head: [headers],
+          body: bodyData,
+          ...tableConfig
+        });
+      } else {
+        // No explicit headers, treat first row as header
+        pdf.autoTable({
+          head: [data[0]],
+          body: data.slice(1),
+          ...tableConfig
+        });
+      }
+
+      // Update y position after table
+      const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
+      y = finalY + 20;
+    }
+  }
+
+  // ---------- Process HTML content (PRIMARY METHOD) ----------
+  async function processHTML() {
+    const htmlContent = getEditorHtmlPreservingTables();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+
+    // Process each node in the content - EXACTLY like first code
+    function processNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (node.textContent.trim()) {
+          // Check if parent is bold
+          const parent = node.parentElement;
+          const isBold = parent && (
+            parent.tagName === 'STRONG' ||
+            parent.tagName === 'B' ||
+            parent.style.fontWeight === 'bold'
+          );
+          addText(node.textContent.trim(), 12, isBold);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const tag = node.tagName.toLowerCase();
+        const textContent = node.textContent.trim();
+
+        if (!textContent && tag !== 'table' && tag !== 'div') return;
+
+        switch(tag) {
+          case "h1":
+            addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
+            y += 10;
+            break;
+
+          case "h2":
+            addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
+            y += 8;
+            break;
+
+          case "h3":
+            addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
+            y += 8;
+            break;
+
+          case "h4":
+            addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
+            y += 6;
+            break;
+
+          case "p":
+            addText(textContent, 12, false);
+            break;
+
+          case "li":
+            const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
+            const prefix = isOrdered ?
+              (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
+            addText(prefix + textContent, 12, false, 20);
+            break;
+
+          case "ul":
+          case "ol":
+            y += 8;
+            Array.from(node.children).forEach(child => processNode(child));
+            y += 8;
+            break;
+
+          case "strong":
+          case "b":
+            Array.from(node.childNodes).forEach(child => {
+              if (child.nodeType === Node.TEXT_NODE) {
+                addText(child.textContent.trim(), 12, true);
+              } else {
+                processNode(child);
+              }
+            });
+            break;
+
+          case "table":
+            processTable(node);
+            break;
+
+          case "div":
+            if (node.classList.contains('component-box')) {
+              processComponentBox(node);
+            } else if (node.classList.contains('architecture-diagram')) {
+              processArchitectureDiagram(node);
+            } else if (node.classList.contains('ql-table-embed')) {
+              // Handle table embed div by processing the table inside
+              const table = node.querySelector('table');
+              if (table) processTable(table);
+            } else {
+              Array.from(node.childNodes).forEach(processNode);
+            }
+            break;
+
+          default:
+            Array.from(node.childNodes).forEach(processNode);
+        }
+      }
+    }
+
+    // Process component boxes
+    function processComponentBox(box) {
+      checkPageBreak(40);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(11);
+      pdf.setTextColor(55, 65, 81);
+
+      const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
+      pdf.text(text, margin + 10, y + 18);
+
+      y += 40;
+    }
+
+    // Process architecture diagrams
+    function processArchitectureDiagram(diagram) {
+      checkPageBreak(100);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
+
+      y += 100;
+    }
+
+    // Process all content nodes
+    Array.from(tempDiv.childNodes).forEach(processNode);
+  }
+
+  // ---------- Process images from Delta ----------
+  async function processDeltaImages() {
+    if (!window.quill) return;
+
+    const delta = window.quill.getContents();
+
+    for (const op of delta.ops || []) {
+      if (typeof op.insert === 'object' && op.insert.image) {
+        await addImageFromDelta(op.insert.image);
+      }
+    }
+  }
+
+  // ---------- Add image from Delta ----------
+  async function addImageFromDelta(imageSrc) {
+    if (!imageSrc) return;
+    try {
+      const img = await loadImageElement(imageSrc);
+      const naturalW = img.naturalWidth;
+      const naturalH = img.naturalHeight;
+      const ratio = naturalW / naturalH;
+      let drawW = Math.min(contentWidth, naturalW);
+      let drawH = drawW / ratio;
+
+      if (y + drawH > pageHeight - margin) {
+        await checkPageBreak(drawH);
+      }
+
+      pdf.addImage(img, 'JPEG', margin, y, drawW, drawH);
+      y += drawH + 10;
+    } catch (err) {
+      console.warn('Image skipped:', imageSrc, err);
+      addText('[Image could not be loaded]', 12, false, 0, 1.4, [220, 38, 38]);
+    }
+  }
+
+  // ---------- MAIN EXECUTION ----------
+  try {
+    await addDocumentHeader();
+
+    // Use HTML processing for text formatting (like first code)
+    await processHTML();
+
+    // Process images from Delta to preserve them
+    await processDeltaImages();
+
+    // Save the PDF
+    pdf.save("architecture-document.pdf");
+
+  } catch (error) {
+    console.error('PDF generation failed:', error);
+    alert('Error generating PDF: ' + error.message);
+  }
+}
 
     /*********************************
      * Keep cell handlers attached after changes
