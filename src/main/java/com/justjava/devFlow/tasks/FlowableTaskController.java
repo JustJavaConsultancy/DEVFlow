@@ -348,12 +348,14 @@ public class FlowableTaskController {
             System.out.println(" The FormData ==="+formParams);
             if(formParams.get("process")!=null && formParams.get("process").equalsIgnoreCase("on")){
                 System.out.println(" The process is true");
-                runtimeService.setVariable(task.getProcessInstanceId(),
-                        "process",Boolean.TRUE);
+//                runtimeService.setVariable(task.getProcessInstanceId(),
+//                        "process",Boolean.TRUE);
+                variables.put("process", Boolean.TRUE);
             }else {
                 System.out.println(" The process is false");
-                runtimeService.setVariable(task.getProcessInstanceId(),
-                        "process",Boolean.FALSE);
+//                runtimeService.setVariable(task.getProcessInstanceId(),
+//                        "process",Boolean.FALSE);
+                variables.put("process", Boolean.FALSE);
             }
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
             runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
@@ -362,8 +364,6 @@ public class FlowableTaskController {
 
             System.out.println("\n\n 2 These are the runtime full variables " + runtimeService.getVariables(task.getProcessInstanceId()));
             taskService.complete(taskId, variables);
-
-
 
 
             redirectAttributes.addFlashAttribute("success", "Task completed successfully");
