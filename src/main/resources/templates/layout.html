@@ -127,12 +127,10 @@
                 <i class="fas fa-project-diagram text-blue-200 mr-3"></i>
                 <span class="text-blue-100">Projects</span>
             </a>
-
-                <a th:href="@{/diagrams/load-page}" class="flex flex-col items-center justify-center h-full">
-                    <i class="fas fa-project-diagram text-blue-200 mr-3"></i>
-                    <span class="text-indigo-600">Generate Diagrams</span>
-                </a>
-
+            <a th:href="@{/tasks}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/tasks'} ? ' bg-white bg-opacity-20'">
+                <i class="fas fa-tasks text-blue-200 mr-3"></i>
+                <span class="text-blue-100">Tasks</span>
+            </a>
             <a class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer">
                 <i class="fas fa-users text-blue-200 mr-3"></i>
                 <span class="text-blue-100">Clients</span>
@@ -147,6 +145,10 @@
                class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer">
                 <i class="fas fa-users text-blue-200 mr-3"></i>
                 <span class="text-blue-100">Community</span>
+            </a>
+            <a th:href="@{/diagrams/load-page}" class="flex items-center p-3 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer" th:classappend="${currentPath == '/diagrams/load-page'} ? ' bg-white bg-opacity-20'">
+                <i class="fas fa-sitemap text-blue-200 mr-3"></i>
+                <span class="text-blue-100">Generate Diagrams</span>
             </a>
         </div>
     </div>
