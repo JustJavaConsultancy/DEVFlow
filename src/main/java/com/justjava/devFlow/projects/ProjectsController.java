@@ -258,6 +258,25 @@ public class ProjectsController {
 
         return ResponseEntity.ok("saved");
     }
+    @PostMapping("/richtext/plan")
+    public ResponseEntity<String> receiveRichTextplan(
+            @RequestParam("taskId") String taskId,
+            @RequestParam("requirement") String plan) {
+
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        if (task == null) {
+            HistoricTaskInstance completedTask = historyService
+                    .createHistoricTaskInstanceQuery()
+                    .finished()
+                    .taskId(taskId)
+                    .singleResult();
+            runtimeService.setVariable(completedTask.getProcessInstanceId(), "plans", plan);
+        }else {
+            runtimeService.setVariable(task.getProcessInstanceId(), "plans", plan);
+        }
+
+        return ResponseEntity.ok("saved");
+    }
 
     @PostMapping("/project/save-url")
     public String saveProjectURL(@RequestParam Map<String,Object> urlDetails, HttpServletRequest request){

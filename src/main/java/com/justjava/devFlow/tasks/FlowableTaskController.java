@@ -109,6 +109,9 @@ public class FlowableTaskController {
             case "formtask_11":
                 currentTask = "tasks/reviewSolutionArchitecture";
                 break;
+            case "formtask_104":
+                currentTask = "tasks/reviewProjectPlan";
+                break;
             case "formtask_51":
                 currentTask = "tasks/reviewLayoutCode";
                 break;

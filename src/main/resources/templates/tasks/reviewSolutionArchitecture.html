@@ -1392,17 +1392,24 @@
     });
 
     // On main form submit, copy HTML into hidden input (keeps your original behaviour)
-    const architectureForm = document.getElementById('architectureForm');
-    const submitBtn = document.getElementById('submitBtn');
-    if (architectureForm && submitBtn) {
-      architectureForm.addEventListener('submit', function (e) {
-        document.getElementById('editedDocument').value = quill.root.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
-      });
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+  const architectureForm = document.getElementById('architectureForm');
+  const submitBtn = document.getElementById('submitBtn');
 
+  if (architectureForm && submitBtn) {
+    architectureForm.addEventListener('submit', function(e) {
+      // Update the hidden input with current content
+      document.getElementById('editedDocument').value = getEditorHtmlPreservingTables();
+
+      // Disable the button and show loading state
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+
+      // Allow the form to submit normally
+    });
+  }
+});
     // Enhanced PDF export with proper table rendering
     async function downloadAsPDF() {
   const { jsPDF } = window.jspdf;
