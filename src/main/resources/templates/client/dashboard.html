@@ -734,6 +734,22 @@
                 </div>
                 <div class="space-y-3 content-scrollable custom-scrollbar">
 
+                    <!-- Project Plan -->
+                    <div th:if="${project.processVariables?.['plans']}"
+                         class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
+                        <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-project-diagram text-orange-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="hidden" id="projectPlan" th:value="${project.processVariables?.['plans']}">
+                            <div class="font-medium">Project Plan.pdf</div>
+                        </div>
+                        <button onclick="downloadProjectPlan()"
+                                class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+
                     <!-- Project Requirements -->
                     <div th:if="${project.processVariables?.['aiRequirementAnalysis']}"
                          class="document-item flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer">
@@ -765,6 +781,7 @@
                             <i class="fas fa-download"></i>
                         </button>
                     </div>
+
                     <!-- User Stories -->
                     <div th:if="${project.processVariables['stories'] != null
              and project.processVariables['stories']['user_stories'] != null
@@ -1373,6 +1390,12 @@
             // Save the PDF
             pdf.save(filename);
         }
+    }
+
+    // Function to download project plan
+    function downloadProjectPlan() {
+        const content = document.getElementById('projectPlan').value;
+        downloadAsPDF(content, "project-plan.pdf");
     }
 
     // Function to download requirement specification
