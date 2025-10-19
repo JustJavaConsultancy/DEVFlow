@@ -3,7 +3,6 @@ package com.justjava.devFlow.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -33,9 +32,6 @@ public class SecurityConfig {
 
     @Autowired
     private ClientRegistrationRepository clientRegistrationRepository;
-
-    @Value("${cors.allowed-origins}")
-    private String allowedOrigins;
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
@@ -84,7 +80,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                allowedOrigins.split(",")
+                "http://localhost:9022",
+                "http://127.0.0.1:9022",
+                "https://devflow-2-production.up.railway.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
