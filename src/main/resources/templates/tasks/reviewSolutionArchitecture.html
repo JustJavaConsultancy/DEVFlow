@@ -17,6 +17,13 @@
   <!-- Quill CSS -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
+  <!-- PlantUML rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
+
+  <!-- Code syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
   <style>
     /* Editor container */
     #editor {
@@ -96,6 +103,11 @@
       color: #4b5563;
     }
 
+    /* Enhanced content styling */
+    .enhanced-content {
+      margin: 1rem 0;
+    }
+
     /* Component box for architecture diagrams */
     .component-box {
       display: inline-block;
@@ -119,6 +131,129 @@
 
     .gradient-bg {
       background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
+    }
+
+    /* Code block styling */
+    .code-block {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .code-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .code-block-title {
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .copy-button {
+      background: #780aff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .copy-button:hover {
+      background: #6a00e6;
+    }
+
+    .copy-button.copied {
+      background: #10b981;
+    }
+
+    /* PlantUML diagram container */
+    .plantuml-diagram {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    .plantuml-diagram img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* API endpoint styling */
+    .api-endpoint {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    .api-method {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    .api-method.get {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .api-method.post {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .api-method.put {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .api-method.delete {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .api-path {
+      color: #495057;
+    }
+
+    .api-description {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    /* Configuration example styling */
+    .config-example {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
     }
 
     /* Table embed visuals - Added from the original code */
@@ -259,6 +394,15 @@
 
     /* make sure the table toolbar shows the font-awesome icon */
     .ql-toolbar .ql-table i { font-size: 14px; }
+
+    /* Enhanced content toolbar styling */
+    .ql-toolbar .ql-enhanced {
+      border: none;
+      background: none;
+    }
+    .ql-toolbar .ql-enhanced:hover {
+      background: #f3f4f6;
+    }
   </style>
 </head>
 <body>
@@ -274,6 +418,10 @@
 
   <!-- Thymeleaf Form (kept so Complete Review still works server-side) -->
   <form id="architectureForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
+    <div th:if="${_csrf != null}">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
+
     <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
       <div class="flex items-center">
         <span class="text-blue-800 mr-4 font-medium">Document Status:</span>
@@ -344,7 +492,7 @@
   </div>
 
   <!-- Hidden logo for PDF generation -->
-  <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
+  <img id="pdfLogo" th:src="@{/images/JJ LOGOMARK COLORED.png}" alt="Company Logo" style="display: none;">
 
   <!-- Scripts: htmx (for AJAX), Quill, jsPDF (kept) -->
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
@@ -354,10 +502,254 @@
 
   <script>
     /*********************************
-     * Table embed blot (editable cells)
+     * Enhanced Content Blots for Quill
      *********************************/
     const BlockEmbed = Quill.import('blots/block/embed');
+    const Block = Quill.import('blots/block');
 
+    // PlantUML Diagram Blot
+    class PlantUMLBlot extends BlockEmbed {
+      static blotName = 'plantuml-diagram';
+      static tagName = 'div';
+      static className = 'plantuml-diagram enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        node.setAttribute('data-plantuml', value);
+        node.innerHTML = `
+          <div class="flex justify-center items-center h-64">
+            <div class="text-center">
+              <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-2"></i>
+              <p>Loading diagram...</p>
+            </div>
+          </div>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        return node.getAttribute('data-plantuml');
+      }
+    }
+
+    // Code Block Blot
+    class CodeBlockBlot extends Block {
+      static blotName = 'code-block';
+      static tagName = 'div';
+      static className = 'code-block enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        const { code, language, title } = value;
+        node.innerHTML = `
+          <div class="code-block-header">
+            <span class="code-block-title">${title || 'Code'}</span>
+            <button class="copy-button">Copy</button>
+          </div>
+          <pre><code class="language-${language}">${code}</code></pre>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        const codeElement = node.querySelector('code');
+        const titleElement = node.querySelector('.code-block-title');
+        return {
+          code: codeElement ? codeElement.textContent : '',
+          language: codeElement ? codeElement.className.replace('language-', '') : '',
+          title: titleElement ? titleElement.textContent : ''
+        };
+      }
+    }
+
+    // API Endpoint Blot
+    class APIEndpointBlot extends BlockEmbed {
+      static blotName = 'api-endpoint';
+      static tagName = 'div';
+      static className = 'api-endpoint enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        const { method, path, description } = value;
+        const methodClass = `api-method ${method.toLowerCase()}`;
+        node.innerHTML = `
+          <div>
+            <span class="${methodClass}">${method.toUpperCase()}</span>
+            <span class="api-path">${path}</span>
+            ${description ? `<p class="api-description">${description}</p>` : ''}
+          </div>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        const methodElement = node.querySelector('.api-method');
+        const pathElement = node.querySelector('.api-path');
+        const descriptionElement = node.querySelector('.api-description');
+        return {
+          method: methodElement ? methodElement.textContent.toLowerCase() : '',
+          path: pathElement ? pathElement.textContent : '',
+          description: descriptionElement ? descriptionElement.textContent : ''
+        };
+      }
+    }
+
+    // Configuration Example Blot
+    class ConfigExampleBlot extends Block {
+      static blotName = 'config-example';
+      static tagName = 'div';
+      static className = 'config-example enhanced-content';
+
+      static create(value) {
+        const node = super.create();
+        const { code, language } = value;
+        node.innerHTML = `
+          <pre><code class="language-${language}">${code}</code></pre>
+        `;
+        return node;
+      }
+
+      static value(node) {
+        const codeElement = node.querySelector('code');
+        return {
+          code: codeElement ? codeElement.textContent : '',
+          language: codeElement ? codeElement.className.replace('language-', '') : ''
+        };
+      }
+    }
+
+    // Register all custom blots
+    Quill.register(PlantUMLBlot);
+    Quill.register(CodeBlockBlot);
+    Quill.register(APIEndpointBlot);
+    Quill.register(ConfigExampleBlot);
+
+    /*********************************
+     * Initialize syntax highlighting and PlantUML rendering
+     *********************************/
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize syntax highlighting
+      hljs.highlightAll();
+
+      // Render PlantUML diagrams
+      renderPlantUMLDiagrams();
+
+      // Add copy functionality to code blocks
+      setupCopyButtons();
+    });
+
+    /*********************************
+     * PlantUML Diagram Rendering
+     *********************************/
+    function renderPlantUMLDiagrams() {
+      const diagramContainers = document.querySelectorAll('.plantuml-diagram[data-plantuml]');
+
+      diagramContainers.forEach(container => {
+        const plantumlCode = container.getAttribute('data-plantuml');
+        if (plantumlCode) {
+          // Encode the PlantUML code
+          const encoded = plantumlEncoder.encode(plantumlCode);
+          // Generate the URL for the PlantUML server
+          const url = `https://www.plantuml.com/plantuml/svg/${encoded}`;
+
+          // Create and append the image
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = 'PlantUML Diagram';
+          img.className = 'max-w-full h-auto';
+          img.onload = function() {
+            // Replace loading indicator with the image
+            container.innerHTML = '';
+            container.appendChild(img);
+          };
+          img.onerror = function() {
+            // If image fails to load, show error message
+            container.innerHTML = `
+              <div class="text-center p-4 text-red-600">
+                <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                <p>Failed to load diagram</p>
+                <button class="mt-2 text-sm text-blue-500 underline" onclick="renderPlantUMLDiagrams()">Retry</button>
+              </div>
+            `;
+          };
+        }
+      });
+    }
+
+    /*********************************
+     * Copy Button Setup
+     *********************************/
+    function setupCopyButtons() {
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('copy-button')) {
+          copyCode(e.target);
+        }
+      });
+    }
+
+    /*********************************
+     * Code Copy Functionality
+     *********************************/
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-block, .config-example');
+      const codeElement = codeBlock.querySelector('code');
+      const codeText = codeElement.textContent;
+
+      navigator.clipboard.writeText(codeText).then(() => {
+        // Visual feedback for successful copy
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy code: ', err);
+        alert('Failed to copy code to clipboard');
+      });
+    }
+
+    /*********************************
+     * Enhanced Content Insertion Functions
+     *********************************/
+    function insertPlantUMLDiagram(plantumlCode) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'plantuml-diagram', plantumlCode, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      setTimeout(renderPlantUMLDiagrams, 100);
+    }
+
+    function insertCodeBlock(code, language = 'plaintext', title = 'Code') {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'code-block', { code, language, title }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      setTimeout(() => {
+        hljs.highlightAll();
+        setupCopyButtons();
+      }, 100);
+    }
+
+    function insertAPIEndpoint(method, path, description = '') {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'api-endpoint', { method, path, description }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+    }
+
+    function insertConfigExample(code, language = 'yaml') {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'config-example', { code, language }, Quill.sources.USER);
+      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
+      setTimeout(() => {
+        hljs.highlightAll();
+        setupCopyButtons();
+      }, 100);
+    }
+
+    /*********************************
+     * Table embed blot (editable cells)
+     *********************************/
     class TableBlot extends BlockEmbed {
       static blotName = 'table-embed';
       static tagName = 'div';
@@ -365,10 +757,10 @@
 
       static create(value) {
         const node = super.create();
-        node.setAttribute('contenteditable', 'false'); // embed container not editable (cells are)
+        node.setAttribute('contenteditable', 'false');
         node.innerHTML = value;
 
-        // Make cells editable (defensive: ensure attributes present)
+        // Make cells editable
         const cells = node.querySelectorAll('td, th');
         cells.forEach(c => {
           c.setAttribute('contenteditable', 'true');
@@ -389,8 +781,6 @@
 
     /*********************************
      * Preprocess existing server-side tables BEFORE Quill initializes.
-     * This converts <table> markup into <div class="ql-table-embed"> wrappers
-     * so Quill recognizes them as the custom TableBlot on initialization.
      *********************************/
     (function preprocessInitialTables() {
       const editorEl = document.getElementById('editor');
@@ -399,10 +789,8 @@
       if (tables.length === 0) return;
 
       tables.forEach(table => {
-        // skip if already wrapped
         if (table.closest('.ql-table-embed')) return;
 
-        // clone and ensure editable cells
         const cloned = table.cloneNode(true);
         cloned.querySelectorAll('td, th').forEach(c => {
           c.setAttribute('contenteditable', 'true');
@@ -420,7 +808,7 @@
     })();
 
     /*********************************
-     * Initialize Quill with table button in toolbar
+     * Initialize Quill with enhanced toolbar
      *********************************/
     var quill = new Quill('#editor', {
       theme: 'snow',
@@ -432,7 +820,7 @@
             [{ list: 'ordered' }, { list: 'bullet' }],
             ['link', 'image', 'code-block'],
             [{ color: [] }, { background: [] }],
-            ['table'], // Add table button to toolbar (we'll inject an icon below)
+            ['table'],
             ['clean']
           ],
           handlers: {
@@ -446,7 +834,54 @@
       }
     });
 
-    // Ensure the table toolbar button shows a Font Awesome icon (Quill doesn't ship a table icon by default)
+    // Add enhanced content buttons to toolbar
+    function addEnhancedContentToolbar() {
+      const toolbar = document.querySelector('.ql-toolbar');
+      if (!toolbar) return;
+
+      const enhancedContentHtml = `
+        <span class="ql-formats">
+          <button class="ql-plantuml" title="Insert PlantUML Diagram">
+            <i class="fas fa-project-diagram"></i>
+          </button>
+          <button class="ql-api" title="Insert API Endpoint">
+            <i class="fas fa-code"></i>
+          </button>
+          <button class="ql-config" title="Insert Configuration">
+            <i class="fas fa-cog"></i>
+          </button>
+        </span>
+      `;
+
+      toolbar.insertAdjacentHTML('beforeend', enhancedContentHtml);
+
+      // Add event listeners for enhanced content buttons
+      document.querySelector('.ql-plantuml').addEventListener('click', function() {
+        const plantumlCode = prompt('Enter PlantUML code:');
+        if (plantumlCode) {
+          insertPlantUMLDiagram(plantumlCode);
+        }
+      });
+
+      document.querySelector('.ql-api').addEventListener('click', function() {
+        const method = prompt('Enter HTTP method (GET, POST, PUT, DELETE):', 'GET');
+        const path = prompt('Enter API path:', '/api/v1/endpoint');
+        const description = prompt('Enter description (optional):', '');
+        if (method && path) {
+          insertAPIEndpoint(method, path, description);
+        }
+      });
+
+      document.querySelector('.ql-config').addEventListener('click', function() {
+        const language = prompt('Enter language (yaml, java, javascript, etc.):', 'yaml');
+        const code = prompt('Enter configuration code:');
+        if (code) {
+          insertConfigExample(code, language);
+        }
+      });
+    }
+
+    // Ensure the table toolbar button shows a Font Awesome icon
     (function decorateTableToolbarButton() {
       const btn = document.querySelector('.ql-toolbar .ql-table');
       if (btn) {
@@ -455,18 +890,40 @@
       }
     })();
 
-    // After initialization, re-attach behaviors to any table embeds that came from server
+    // Add enhanced content toolbar and initialize
     setTimeout(() => {
+      addEnhancedContentToolbar();
       attachCellBehaviorToAllTables();
-      // also a fallback conversion in case any raw <table> tags still exist in the Quill root
       convertExistingTablesToEmbeds();
+      processEnhancedContent();
     }, 50);
+
+    /*********************************
+     * Process enhanced content elements
+     *********************************/
+    function processEnhancedContent() {
+      // Add copy buttons to existing code blocks
+      document.querySelectorAll('.code-block').forEach(block => {
+        if (!block.querySelector('.copy-button')) {
+          const header = block.querySelector('.code-block-header');
+          if (header) {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-button';
+            copyBtn.textContent = 'Copy';
+            header.appendChild(copyBtn);
+          }
+        }
+      });
+
+      // Re-highlight code after content changes
+      hljs.highlightAll();
+    }
 
     // convenience refs
     const wrapper = document.querySelector('.editor-wrapper');
     const floatingToolbar = document.getElementById('floating-toolbar');
-    let currentCell = null;       // currently focused <td> or <th>
-    let currentEmbedNode = null;  // current .ql-table-embed container
+    let currentCell = null;
+    let currentEmbedNode = null;
 
     /*********************************
      * Table Utilities
@@ -477,9 +934,7 @@
       let html = '<table>';
       if (header) {
         html += '<thead><tr>';
-        for (let c = 0; c < cols; c++) {
-          html += '<th><br></th>';
-        }
+        for (let c = 0; c < cols; c++) html += '<th><br></th>';
         html += '</tr></thead>';
       }
       html += '<tbody>';
@@ -508,16 +963,12 @@
       const wrapperDom = document.createElement('div');
       wrapperDom.innerHTML = html;
       let nodes = Array.from(wrapperDom.childNodes);
-
-      // Insert sequentially
       let currentIndex = Math.max(0, index);
+
       nodes.forEach(node => {
         if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
           quill.insertEmbed(currentIndex, 'table-embed', node.outerHTML, Quill.sources.USER);
-          currentIndex += 1;
-          // insert a newline after embed so future content sits below
-          quill.insertText(currentIndex, '\n', Quill.sources.USER);
-          currentIndex += 1;
+          currentIndex += 2;
         } else {
           const fragHtml = node.outerHTML ?? node.textContent ?? '';
           quill.clipboard.dangerouslyPasteHTML(currentIndex, fragHtml);
@@ -525,8 +976,8 @@
         }
       });
 
-      // Reattach cell handlers
       attachCellBehaviorToAllTables();
+      processEnhancedContent();
     }
 
     function loadHtmlIntoEditor(html) {
@@ -541,7 +992,6 @@
           const table = node.querySelector('table');
           return table ? table.outerHTML : '';
         } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
-          // Handle raw tables that might not be converted yet
           return node.outerHTML;
         } else {
           return node.outerHTML ?? node.textContent ?? '';
@@ -942,356 +1392,404 @@
     });
 
     // On main form submit, copy HTML into hidden input (keeps your original behaviour)
-    const architectureForm = document.getElementById('architectureForm');
-    const submitBtn = document.getElementById('submitBtn');
-    architectureForm.addEventListener('submit', function (e) {
-      document.getElementById('editedDocument').value = quill.root.innerHTML;
+    document.addEventListener('DOMContentLoaded', function() {
+  const architectureForm = document.getElementById('architectureForm');
+  const submitBtn = document.getElementById('submitBtn');
+
+  if (architectureForm && submitBtn) {
+    architectureForm.addEventListener('submit', function(e) {
+      // Update the hidden input with current content
+      document.getElementById('editedDocument').value = getEditorHtmlPreservingTables();
+
+      // Disable the button and show loading state
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
-    });
 
+      // Allow the form to submit normally
+    });
+  }
+});
     // Enhanced PDF export with proper table rendering
     async function downloadAsPDF() {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        unit: 'pt',
-        format: 'a4',
-        compress: true
-      });
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    unit: 'pt',
+    format: 'a4',
+    compress: true
+  });
 
-      const margin = 40;
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const contentWidth = pageWidth - (2 * margin);
-      let y = margin;
+  const margin = 40;
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const contentWidth = pageWidth - (2 * margin);
+  let y = margin;
 
-      // Add logo to top right corner
-      const logo = document.getElementById('pdfLogo');
-      if (logo && logo.src) {
-        try {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
+  // ---------- Helper: Load image element ----------
+  function loadImageElement(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
 
-          img.onload = function() {
-            const logoWidth = 30;
-            const logoHeight = 50;
-            const logoX = pageWidth - margin - logoWidth;
-            const logoY = margin;
+  // ---------- Add Logo ----------
+  async function addLogo() {
+    const logo = document.getElementById('pdfLogo');
+    if (!logo || !logo.src) return;
+    try {
+      const img = await loadImageElement(logo.src);
+      const logoWidth = 30;
+      const logoHeight = 50;
+      const logoX = pageWidth - margin - logoWidth;
+      const logoY = margin;
+      pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
+    } catch (err) {
+      console.warn('Logo not added:', err);
+    }
+  }
 
-            pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
-            addDocumentContent();
-          };
+  // ---------- Add document header ----------
+  async function addDocumentHeader() {
+    await addLogo();
+    y += 40;
 
-          img.onerror = function() {
-            console.warn('Logo could not be loaded, proceeding without logo');
-            addDocumentContent();
-          };
+    const projectNameEl = document.querySelector('p.text-gray-600');
+    const projectName = projectNameEl ? projectNameEl.textContent.trim() : '';
 
-          img.src = logo.src;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor(30, 64, 175);
+    pdf.text("Architecture Document", margin, y);
 
-        } catch (error) {
-          console.warn('Error loading logo:', error);
-          addDocumentContent();
-        }
-      } else {
-        addDocumentContent();
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(projectName, margin, y + 20);
+
+    y += 50;
+  }
+
+  // ---------- Page break with logo ----------
+  async function checkPageBreak(heightNeeded = 0) {
+    if (y + heightNeeded > pageHeight - margin) {
+      pdf.addPage();
+      y = margin;
+      await addLogo();
+      return true;
+    }
+    return false;
+  }
+
+  // ---------- EXACT TEXT FORMATTING FROM FIRST CODE ----------
+  function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
+    if (!text || text.trim() === '') return;
+
+    pdf.setFont("helvetica", isBold ? "bold" : "normal");
+    pdf.setFontSize(fontSize);
+    pdf.setTextColor(...color);
+
+    const lines = pdf.splitTextToSize(text, contentWidth - indent);
+    const lineSpacing = fontSize * lineHeight;
+
+    // Check if we need a page break before adding this text
+    checkPageBreak(lines.length * lineSpacing);
+
+    lines.forEach((line, index) => {
+      // Check if we need a page break for each line
+      if (y + lineSpacing > pageHeight - margin) {
+        pdf.addPage();
+        y = margin;
+        addLogo();
       }
 
-      function addDocumentContent() {
-        // Add document header (moved down to accommodate logo)
-        y += 40; // Extra space for logo
+      pdf.text(line, margin + indent, y);
+      y += lineSpacing;
+    });
 
-        const projectName = document.querySelector('p.text-gray-600').textContent;
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(16);
-        pdf.setTextColor(30, 64, 175); // Blue color
-        pdf.text("Architecture Document", margin, y);
+    // Add a small gap after the text block
+    y += 5;
+  }
 
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(12);
-        pdf.setTextColor(100, 100, 100);
-        pdf.text(projectName, margin, y + 20);
+  // ---------- Process tables using jsPDF autotable ----------
+  function processTable(table) {
+    const data = [];
+    const headers = [];
 
-        y += 50;
-
-        // Get the HTML content from the editor
-        const htmlContent = getEditorHtmlPreservingTables();
-
-        // Create a temporary div to process the content
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = htmlContent;
-
-        // Function to check if we need a page break
-        function checkPageBreak(heightNeeded = 0) {
-          if (y + heightNeeded > pageHeight - margin) {
-            pdf.addPage();
-            y = margin;
-            // Add logo to new page
-            const logo = document.getElementById('pdfLogo');
-            if (logo && logo.src) {
-              try {
-                const img = new Image();
-                img.onload = function() {
-                  const logoWidth = 30;
-                  const logoHeight = 50;
-                  const logoX = pageWidth - margin - logoWidth;
-                  pdf.addImage(img, 'PNG', logoX, margin, logoWidth, logoHeight);
-                };
-                img.src = logo.src;
-              } catch (error) {
-                console.warn('Could not add logo to new page');
-              }
-            }
-            return true;
-          }
-          return false;
-        }
-
-        // Function to add text with proper formatting
-        function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
-          pdf.setFont("helvetica", isBold ? "bold" : "normal");
-          pdf.setFontSize(fontSize);
-          pdf.setTextColor(...color);
-
-          const lines = pdf.splitTextToSize(text, contentWidth - indent);
-          const lineSpacing = fontSize * lineHeight;
-
-          // Check if we need a page break before adding this text
-          checkPageBreak(lines.length * lineSpacing);
-
-          lines.forEach((line, index) => {
-            // Check if we need a page break for each line
-            if (y + lineSpacing > pageHeight - margin) {
-              pdf.addPage();
-              y = margin;
-            }
-
-            pdf.text(line, margin + indent, y);
-            y += lineSpacing;
-          });
-
-          // Add a small gap after the text block
-          y += 5;
-        }
-
-        // Process tables using jsPDF autotable for proper rendering
-        function processTable(table) {
-          const data = [];
-          const headers = [];
-
-          // Extract headers from thead if exists
-          const thead = table.querySelector('thead');
-          if (thead) {
-            const headerRow = thead.querySelector('tr');
-            if (headerRow) {
-              Array.from(headerRow.querySelectorAll('th')).forEach(th => {
-                headers.push(th.innerText.trim());
-              });
-              data.push(headers);
-            }
-          }
-
-          // Extract data from tbody
-          const tbody = table.querySelector('tbody') || table;
-          const rows = tbody.querySelectorAll('tr');
-
-          Array.from(rows).forEach(row => {
-            // Skip header row if we already processed thead
-            if (row.parentElement.tagName === 'THEAD') return;
-
-            const rowData = [];
-            Array.from(row.querySelectorAll('td, th')).forEach(cell => {
-              rowData.push(cell.innerText.trim());
-            });
-            if (rowData.length > 0) {
-              data.push(rowData);
-            }
-          });
-
-          if (data.length > 0) {
-            // Calculate table height
-            const estimatedTableHeight = (data.length * 20) + 30;
-            checkPageBreak(estimatedTableHeight);
-
-            const tableConfig = {
-              startY: y,
-              margin: { left: margin, right: margin },
-              styles: {
-                fontSize: 10,
-                cellPadding: 4,
-                lineColor: [200, 200, 200],
-                lineWidth: 0.5,
-              },
-              headStyles: {
-                fillColor: [243, 244, 246],
-                textColor: [55, 65, 81],
-                fontStyle: 'bold',
-              },
-              alternateRowStyles: {
-                fillColor: [250, 250, 250],
-              },
-              tableWidth: 'auto',
-              columnStyles: {},
-            };
-
-            // If we have headers from thead, use them as proper headers
-            if (thead && headers.length > 0) {
-              const bodyData = data.slice(1); // Remove header row from data
-              pdf.autoTable({
-                head: [headers],
-                body: bodyData,
-                ...tableConfig
-              });
-            } else {
-              // No explicit headers, treat first row as header
-              pdf.autoTable({
-                head: [data[0]],
-                body: data.slice(1),
-                ...tableConfig
-              });
-            }
-
-            // Update y position after table
-            const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
-            y = finalY + 20;
-          }
-        }
-
-        // Process each node in the content
-        function processNode(node) {
-          if (node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent.trim()) {
-              // Check if parent is bold
-              const parent = node.parentElement;
-              const isBold = parent && (
-                      parent.tagName === 'STRONG' ||
-                      parent.tagName === 'B' ||
-                      parent.style.fontWeight === 'bold'
-              );
-              addText(node.textContent.trim(), 12, isBold);
-            }
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const tag = node.tagName.toLowerCase();
-            const textContent = node.textContent.trim();
-
-            if (!textContent && tag !== 'table' && tag !== 'div') return;
-
-            switch(tag) {
-              case "h1":
-                addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
-                y += 10;
-                break;
-
-              case "h2":
-                addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
-                y += 8;
-                break;
-
-              case "h3":
-                addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
-                y += 8;
-                break;
-
-              case "h4":
-                addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
-                y += 6;
-                break;
-
-              case "p":
-                addText(textContent, 12, false);
-                break;
-
-              case "li":
-                const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
-                const prefix = isOrdered ?
-                        (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
-                addText(prefix + textContent, 12, false, 20);
-                break;
-
-              case "ul":
-              case "ol":
-                y += 8;
-                Array.from(node.children).forEach(child => processNode(child));
-                y += 8;
-                break;
-
-              case "strong":
-              case "b":
-                Array.from(node.childNodes).forEach(child => {
-                  if (child.nodeType === Node.TEXT_NODE) {
-                    addText(child.textContent.trim(), 12, true);
-                  } else {
-                    processNode(child);
-                  }
-                });
-                break;
-
-              case "table":
-                processTable(node);
-                break;
-
-              case "div":
-                if (node.classList.contains('component-box')) {
-                  processComponentBox(node);
-                } else if (node.classList.contains('architecture-diagram')) {
-                  processArchitectureDiagram(node);
-                } else if (node.classList.contains('ql-table-embed')) {
-                  // Handle table embed div by processing the table inside
-                  const table = node.querySelector('table');
-                  if (table) processTable(table);
-                } else {
-                  Array.from(node.childNodes).forEach(processNode);
-                }
-                break;
-
-              default:
-                Array.from(node.childNodes).forEach(processNode);
-            }
-          }
-        }
-
-        // Process component boxes
-        function processComponentBox(box) {
-          checkPageBreak(40);
-
-          pdf.setFont("helvetica", "bold");
-          pdf.setFontSize(11);
-          pdf.setTextColor(55, 65, 81);
-
-          const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
-          pdf.text(text, margin + 10, y + 18);
-
-          y += 40;
-        }
-
-        // Process architecture diagrams
-        function processArchitectureDiagram(diagram) {
-          checkPageBreak(100);
-
-          pdf.setFont("helvetica", "bold");
-          pdf.setFontSize(12);
-          pdf.setTextColor(100, 100, 100);
-          pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
-
-          y += 100;
-        }
-
-        // Process all content nodes
-        Array.from(tempDiv.childNodes).forEach(processNode);
-
-        // Save the PDF
-        pdf.save("architecture-document.pdf");
+    // Extract headers from thead if exists
+    const thead = table.querySelector('thead');
+    if (thead) {
+      const headerRow = thead.querySelector('tr');
+      if (headerRow) {
+        Array.from(headerRow.querySelectorAll('th')).forEach(th => {
+          headers.push(th.innerText.trim());
+        });
+        data.push(headers);
       }
     }
+
+    // Extract data from tbody
+    const tbody = table.querySelector('tbody') || table;
+    const rows = tbody.querySelectorAll('tr');
+
+    Array.from(rows).forEach(row => {
+      // Skip header row if we already processed thead
+      if (row.parentElement.tagName === 'THEAD') return;
+
+      const rowData = [];
+      Array.from(row.querySelectorAll('td, th')).forEach(cell => {
+        rowData.push(cell.innerText.trim());
+      });
+      if (rowData.length > 0) {
+        data.push(rowData);
+      }
+    });
+
+    if (data.length > 0) {
+      // Calculate table height
+      const estimatedTableHeight = (data.length * 20) + 30;
+      checkPageBreak(estimatedTableHeight);
+
+      const tableConfig = {
+        startY: y,
+        margin: { left: margin, right: margin },
+        styles: {
+          fontSize: 10,
+          cellPadding: 4,
+          lineColor: [200, 200, 200],
+          lineWidth: 0.5,
+        },
+        headStyles: {
+          fillColor: [243, 244, 246],
+          textColor: [55, 65, 81],
+          fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+          fillColor: [250, 250, 250],
+        },
+        tableWidth: 'auto',
+        columnStyles: {},
+      };
+
+      // If we have headers from thead, use them as proper headers
+      if (thead && headers.length > 0) {
+        const bodyData = data.slice(1); // Remove header row from data
+        pdf.autoTable({
+          head: [headers],
+          body: bodyData,
+          ...tableConfig
+        });
+      } else {
+        // No explicit headers, treat first row as header
+        pdf.autoTable({
+          head: [data[0]],
+          body: data.slice(1),
+          ...tableConfig
+        });
+      }
+
+      // Update y position after table
+      const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
+      y = finalY + 20;
+    }
+  }
+
+  // ---------- Process HTML content (PRIMARY METHOD) ----------
+  async function processHTML() {
+    const htmlContent = getEditorHtmlPreservingTables();
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+
+    // Process each node in the content - EXACTLY like first code
+    function processNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (node.textContent.trim()) {
+          // Check if parent is bold
+          const parent = node.parentElement;
+          const isBold = parent && (
+            parent.tagName === 'STRONG' ||
+            parent.tagName === 'B' ||
+            parent.style.fontWeight === 'bold'
+          );
+          addText(node.textContent.trim(), 12, isBold);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const tag = node.tagName.toLowerCase();
+        const textContent = node.textContent.trim();
+
+        if (!textContent && tag !== 'table' && tag !== 'div') return;
+
+        switch(tag) {
+          case "h1":
+            addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
+            y += 10;
+            break;
+
+          case "h2":
+            addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
+            y += 8;
+            break;
+
+          case "h3":
+            addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
+            y += 8;
+            break;
+
+          case "h4":
+            addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
+            y += 6;
+            break;
+
+          case "p":
+            addText(textContent, 12, false);
+            break;
+
+          case "li":
+            const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
+            const prefix = isOrdered ?
+              (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
+            addText(prefix + textContent, 12, false, 20);
+            break;
+
+          case "ul":
+          case "ol":
+            y += 8;
+            Array.from(node.children).forEach(child => processNode(child));
+            y += 8;
+            break;
+
+          case "strong":
+          case "b":
+            Array.from(node.childNodes).forEach(child => {
+              if (child.nodeType === Node.TEXT_NODE) {
+                addText(child.textContent.trim(), 12, true);
+              } else {
+                processNode(child);
+              }
+            });
+            break;
+
+          case "table":
+            processTable(node);
+            break;
+
+          case "div":
+            if (node.classList.contains('component-box')) {
+              processComponentBox(node);
+            } else if (node.classList.contains('architecture-diagram')) {
+              processArchitectureDiagram(node);
+            } else if (node.classList.contains('ql-table-embed')) {
+              // Handle table embed div by processing the table inside
+              const table = node.querySelector('table');
+              if (table) processTable(table);
+            } else {
+              Array.from(node.childNodes).forEach(processNode);
+            }
+            break;
+
+          default:
+            Array.from(node.childNodes).forEach(processNode);
+        }
+      }
+    }
+
+    // Process component boxes
+    function processComponentBox(box) {
+      checkPageBreak(40);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(11);
+      pdf.setTextColor(55, 65, 81);
+
+      const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
+      pdf.text(text, margin + 10, y + 18);
+
+      y += 40;
+    }
+
+    // Process architecture diagrams
+    function processArchitectureDiagram(diagram) {
+      checkPageBreak(100);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
+
+      y += 100;
+    }
+
+    // Process all content nodes
+    Array.from(tempDiv.childNodes).forEach(processNode);
+  }
+
+  // ---------- Process images from Delta ----------
+  async function processDeltaImages() {
+    if (!window.quill) return;
+
+    const delta = window.quill.getContents();
+
+    for (const op of delta.ops || []) {
+      if (typeof op.insert === 'object' && op.insert.image) {
+        await addImageFromDelta(op.insert.image);
+      }
+    }
+  }
+
+  // ---------- Add image from Delta ----------
+  async function addImageFromDelta(imageSrc) {
+    if (!imageSrc) return;
+    try {
+      const img = await loadImageElement(imageSrc);
+      const naturalW = img.naturalWidth;
+      const naturalH = img.naturalHeight;
+      const ratio = naturalW / naturalH;
+      let drawW = Math.min(contentWidth, naturalW);
+      let drawH = drawW / ratio;
+
+      if (y + drawH > pageHeight - margin) {
+        await checkPageBreak(drawH);
+      }
+
+      pdf.addImage(img, 'JPEG', margin, y, drawW, drawH);
+      y += drawH + 10;
+    } catch (err) {
+      console.warn('Image skipped:', imageSrc, err);
+      addText('[Image could not be loaded]', 12, false, 0, 1.4, [220, 38, 38]);
+    }
+  }
+
+  // ---------- MAIN EXECUTION ----------
+  try {
+    await addDocumentHeader();
+
+    // Use HTML processing for text formatting (like first code)
+    await processHTML();
+
+    // Process images from Delta to preserve them
+    await processDeltaImages();
+
+    // Save the PDF
+    pdf.save("architecture-document.pdf");
+
+  } catch (error) {
+    console.error('PDF generation failed:', error);
+    alert('Error generating PDF: ' + error.message);
+  }
+}
 
     /*********************************
      * Keep cell handlers attached after changes
      *********************************/
     quill.on('text-change', () => {
       // reattach behaviors (handles pasted tables or structural changes)
-      setTimeout(() => attachCellBehaviorToAllTables(), 0);
+      setTimeout(() => {
+        attachCellBehaviorToAllTables();
+        processEnhancedContent();
+      }, 0);
     });
 
     // If the editor loses focus and no table cell is focused, hide toolbar

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSRF Meta Tags -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title>PlantUML Diagram Generator</title>
+
+    <!-- HTMX with CSRF Extension -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/csrf.js"></script>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-6 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Service Health Header -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
+                    <h1 class="text-3xl font-bold text-center text-indigo-800">🌿 PlantUML Diagram Generator</h1>
+                    <div class="flex items-center justify-center">
+                        <span class="w-3 h-3 rounded-full bg-yellow-500 mr-2" id="health-indicator"></span>
+                        <span class="text-sm text-gray-600" id="health-status">Checking service health...</span>
+                        <button class="ml-2 p-1 rounded-full hover:bg-indigo-100 transition-colors"
+                                onclick="checkServiceHealth()"
+                                title="Check service health">
+                            <i class="fas fa-sync-alt text-indigo-600"></i>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-center text-gray-600">
+                    Create UML diagrams using PlantUML syntax. Powered by Spring Boot + HTMX
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left Column: Editor -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-white font-semibold text-lg">📝 PlantUML Editor</h2>
+                                <div class="flex gap-2">
+                                    <!-- File Upload -->
+                                    <div class="relative">
+                                        <button class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+                                            📁 Upload
+                                        </button>
+                                        <input type="file"
+                                               name="plantUmlFile"
+                                               accept=".puml,.txt,.plantuml"
+                                               hx-post="/diagrams/upload-plantuml-file"
+                                               hx-target="#upload-result"
+                                               hx-encoding="multipart/form-data"
+                                               hx-ext="csrf"
+                                               hx-on:change="this.form.requestSubmit()"
+                                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                    </div>
+
+                                    <!-- Syntax Validation -->
+                                    <button class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                                            hx-post="/diagrams/validate-syntax-htmx"
+                                            hx-target="#validation-result"
+                                            hx-include="#plantUmlSource"
+                                            hx-ext="csrf"
+                                            hx-indicator="#validation-indicator">
+                                        Validate
+                                    </button>
+
+                                    <!-- Auto-Correct -->
+                                    <button class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                                            hx-post="/diagrams/auto-correct-htmx"
+                                            hx-target="#plantUmlSource"
+                                            hx-include="#plantUmlSource"
+                                            hx-ext="csrf"
+                                            hx-indicator="#auto-correct-indicator"
+                                            title="Auto-correct common syntax issues">
+                                        🔄 Fix
+                                    </button>
+
+                                    <!-- Clear Editor -->
+                                    <button class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                                            onclick="document.getElementById('plantUmlSource').value = ''">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <form id="diagramForm">
+                                <!-- CSRF Token as hidden input -->
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                                <div class="mb-4">
+                                <textarea id="plantUmlSource"
+                                          name="plantUmlSource"
+                                          class="w-full h-64 font-mono text-sm border border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-vertical"
+                                          placeholder="@startuml&#10;Alice -> Bob: Hello&#10;Bob --> Alice: Hi!&#10;@enduml"
+                                          th:text="${defaultPlantUml}"></textarea>
+                                </div>
+
+                                <!-- Upload Result -->
+                                <div id="upload-result" class="mb-3"></div>
+
+                                <!-- Validation Result -->
+                                <div id="validation-result" class="mb-4"></div>
+
+                                <!-- Validation Indicator -->
+                                <div id="validation-indicator" class="htmx-indicator mb-3 flex items-center">
+                                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
+                                    <span class="text-gray-600 ml-2 text-sm">Validating syntax...</span>
+                                </div>
+
+                                <!-- Auto-Correct Indicator -->
+                                <div id="auto-correct-indicator" class="htmx-indicator mb-3 flex items-center">
+                                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600"></div>
+                                    <span class="text-gray-600 ml-2 text-sm">Auto-correcting syntax...</span>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex flex-wrap gap-3">
+                                    <!-- Generate Diagram -->
+                                    <button type="button"
+                                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2"
+                                            hx-post="/diagrams/generate-diagram-htmx"
+                                            hx-target="#diagram-result"
+                                            hx-include="#plantUmlSource"
+                                            hx-ext="csrf"
+                                            hx-indicator="#generate-indicator"
+                                            hx-on:htmx:before-request="document.body.classList.add('cursor-wait')"
+                                            hx-on:htmx:after-request="document.body.classList.remove('cursor-wait')">
+                                        <i class="fas fa-palette"></i>
+                                        Generate Diagram
+                                    </button>
+
+<!--
+                                    &lt;!&ndash; Direct Download &ndash;&gt;
+                                    <button type="button"
+                                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2"
+                                            hx-post="/diagrams/download-diagram-htmx"
+                                            hx-include="#plantUmlSource"
+                                            hx-ext="csrf"
+                                            hx-indicator="#download-indicator"
+                                            hx-on:click="setDownloadFilename()">
+                                        <i class="fas fa-download"></i>
+                                        Download PNG
+                                    </button>
+-->
+
+                                    <!-- Preview Download -->
+                                    <button type="button"
+                                            class="border border-green-600 text-green-600 hover:bg-green-50 px-6 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2"
+                                            hx-post="/diagrams/download-diagram-info"
+                                            hx-target="#download-result"
+                                            hx-include="#plantUmlSource"
+                                            hx-ext="csrf"
+                                            hx-indicator="#download-indicator">
+                                        <i class="fas fa-info-circle"></i>
+                                        Prepare Download
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Generate Indicator -->
+                            <div id="generate-indicator" class="htmx-indicator mt-4 flex items-center">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+                                <span class="text-gray-600 ml-3">Generating diagram (with auto-correction fallback)...</span>
+                            </div>
+
+                            <!-- Download Indicator -->
+                            <div id="download-indicator" class="htmx-indicator mt-4 flex items-center">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                                <span class="text-gray-600 ml-3">Preparing download...</span>
+                            </div>
+
+                            <!-- Download Result -->
+                            <div id="download-result" class="mt-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Diagram Output -->
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-white font-semibold text-lg">🖼️ Generated Diagram</h2>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-white/80 text-sm" id="diagram-info"></span>
+                                    <button class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition-colors"
+                                            onclick="clearDiagram()"
+                                            title="Clear diagram">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div id="diagram-result" class="min-h-96 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center">
+                                <div class="text-center text-gray-500 p-8">
+                                    <i class="fas fa-image text-4xl mb-4 opacity-50"></i>
+                                    <div class="font-medium mb-2">Your diagram will appear here</div>
+                                    <small>Write PlantUML code and click "Generate Diagram"</small>
+                                    <div class="mt-4">
+                                        <small class="text-indigo-600 font-medium">💡 Auto-correction will be applied if needed</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools & Status Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                        <h2 class="text-white font-semibold text-lg">🚀 Quick Examples</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                                    onclick="loadExample('sequence')">
+                                Sequence Diagram
+                            </button>
+                            <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                                    onclick="loadExample('class')">
+                                Class Diagram
+                            </button>
+                            <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                                    onclick="loadExample('activity')">
+                                Activity Diagram
+                            </button>
+                            <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                                    onclick="loadExample('component')">
+                                Component Diagram
+                            </button>
+                            <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                                    onclick="loadExample('usecase')">
+                                Use Case Diagram
+                            </button>
+                            <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm"
+                                    onclick="loadExample('state')">
+                                State Diagram
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                        <h2 class="text-white font-semibold text-lg">🔧 Service Tools</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <button class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm flex items-center justify-center gap-2"
+                                    hx-get="/diagrams/service-health"
+                                    hx-ext="csrf"
+                                    hx-target="#health-result">
+                                <i class="fas fa-heartbeat"></i>
+                                Check Service Health
+                            </button>
+                            <button class="w-full bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm flex items-center justify-center gap-2"
+                                    onclick="testAutoCorrection()">
+                                <i class="fas fa-magic"></i>
+                                Test Auto-Correction
+                            </button>
+                            <button class="w-full bg-red-50 hover:bg-red-100 text-red-700 px-4 py-3 rounded-lg font-medium transition-colors text-sm flex items-center justify-center gap-2"
+                                    onclick="loadProblematicExample()">
+                                <i class="fas fa-bug"></i>
+                                Load Problematic Example
+                            </button>
+                        </div>
+                        <div id="health-result" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript (minimal, only for functionality not available in HTMX) -->
+    <script>
+        // Initialize CSRF for HTMX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get CSRF token from meta tags for manual AJAX calls
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+            // Configure HTMX to include CSRF token in all requests
+            document.body.addEventListener('htmx:configRequest', function(evt) {
+                evt.detail.headers[csrfHeader] = csrfToken;
+            });
+
+            const textarea = document.getElementById('plantUmlSource');
+            textarea.addEventListener('input', autoResizeTextarea);
+
+            // Set initial height
+            setTimeout(autoResizeTextarea, 100);
+
+            // Auto-validate on content change (with debounce)
+            let validateTimeout;
+            textarea.addEventListener('input', function() {
+                clearTimeout(validateTimeout);
+                validateTimeout = setTimeout(() => {
+                    htmx.trigger('#plantUmlSource', 'change');
+                }, 1000);
+            });
+
+            // Update diagram info when generation succeeds
+            document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+                if (evt.detail.target.id === 'diagram-result' && evt.detail.xhr.status === 200) {
+                    const response = evt.detail.xhr.responseText;
+                    if (response.includes('bg-yellow-500')) {
+                        document.getElementById('diagram-info').textContent = '⚠ Diagram generated with auto-correction';
+                    } else {
+                        document.getElementById('diagram-info').textContent = '✓ Diagram generated successfully';
+                    }
+                    setTimeout(() => {
+                        document.getElementById('diagram-info').textContent = '';
+                    }, 5000);
+                }
+
+                // Handle auto-correction responses
+                if (evt.detail.target.id === 'plantUmlSource' && evt.detail.xhr.status === 200) {
+                    showTempMessage('Auto-correction applied successfully!', 'success');
+                }
+            });
+
+            // Handle HTMX errors
+            document.body.addEventListener('htmx:responseError', function(evt) {
+                console.error('HTMX Error:', evt.detail);
+                showTempMessage('Request failed: ' + (evt.detail.xhr.statusText || 'Unknown error'), 'danger');
+            });
+
+            // Enhance file upload to show filename
+            document.addEventListener('change', function(evt) {
+                if (evt.target.name === 'plantUmlFile' && evt.target.files.length > 0) {
+                    const fileName = evt.target.files[0].name;
+                    const uploadBtn = evt.target.previousElementSibling;
+                    if (uploadBtn) {
+                        uploadBtn.textContent = '📁 ' + fileName;
+                    }
+                }
+            });
+
+            // Initial health check
+            setTimeout(checkServiceHealth, 1000);
+        });
+
+        // Load example PlantUML code
+        function loadExample(type) {
+            const examples = {
+                sequence: `@startuml
+actor User
+participant "Web Server" as Server
+participant "Database" as DB
+
+User -> Server: Login Request
+Server -> DB: Validate Credentials
+DB --> Server: User Data
+Server --> User: Login Success
+
+User -> Server: Fetch Profile
+Server -> DB: Get Profile
+DB --> Server: Profile Data
+Server --> User: Profile Info
+@enduml`,
+
+                class: `@startuml
+class Car {
+  - make: String
+  - model: String
+  - year: int
+  ..
+  + start(): boolean
+  + stop(): void
+  + getInfo(): String
+}
+
+class Engine {
+  - horsepower: int
+  - fuelType: String
+  ..
+  + start(): boolean
+}
+
+Car *-- Engine
+@enduml`,
+
+                activity: `@startuml
+start
+:User visits site;
+if (User logged in?) then (yes)
+  :Show dashboard;
+else (no)
+  :Show login page;
+  :User enters credentials;
+  if (Valid credentials?) then (yes)
+    :Create session;
+    :Redirect to dashboard;
+  else (no)
+    :Show error message;
+    :Return to login;
+  endif
+endif
+stop
+@enduml`,
+
+                component: `@startuml
+component "API Gateway" as Gateway
+component "User Service" as User
+component "Product Service" as Product
+component "Database" as DB
+
+Gateway --> User
+Gateway --> Product
+User --> DB
+Product --> DB
+@enduml`,
+
+                usecase: `@startuml
+actor User
+actor Admin
+
+(Login) as login
+(View Products) as view
+(Manage Users) as manage
+
+User --> login
+User --> view
+Admin --> login
+Admin --> manage
+@enduml`,
+
+                state: `@startuml
+[*] --> Idle
+Idle --> Processing : start
+Processing --> Idle : complete
+Processing --> Error : failure
+Error --> Idle : reset
+@enduml`
+            };
+
+            if (examples[type]) {
+                document.getElementById('plantUmlSource').value = examples[type];
+                autoResizeTextarea();
+                showTempMessage('Example loaded successfully!', 'success');
+                // Trigger validation
+                htmx.trigger('#plantUmlSource', 'change');
+            }
+        }
+
+        // Load problematic example to test auto-correction
+        function loadProblematicExample() {
+            const problematicExample = `@startuml
+[API Gateway/WAF] --> [Identity & Access]
+[API Gateway/WAF] --> [Tenant & Catalogue]
+[API Gateway/WAF] --> [Request & Workflow]
+[All Services] ..> [Audit & Compliance] : emit events
+@enduml`;
+
+            document.getElementById('plantUmlSource').value = problematicExample;
+            autoResizeTextarea();
+            showTempMessage('Problematic example loaded. Try generating to see auto-correction in action!', 'warning');
+        }
+
+        // Test auto-correction functionality
+        function testAutoCorrection() {
+            const testCode = document.getElementById('plantUmlSource').value;
+            if (!testCode.trim()) {
+                loadProblematicExample();
+            }
+
+            htmx.ajax('POST', '/diagrams/auto-correct-htmx', {
+                values: { plantUmlSource: document.getElementById('plantUmlSource').value },
+                target: '#plantUmlSource',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                }
+            });
+        }
+
+        // Apply auto-corrected code to editor
+        function applyAutoCorrectedCode(correctedCode) {
+            document.getElementById('plantUmlSource').value = correctedCode;
+            htmx.trigger('#plantUmlSource', 'change');
+            showTempMessage('Auto-corrected code applied to editor!', 'success');
+        }
+
+        // Clear diagram display
+        function clearDiagram() {
+            document.getElementById('diagram-result').innerHTML =
+                '<div class="text-center text-gray-500 p-8">' +
+                '<i class="fas fa-image text-4xl mb-4 opacity-50"></i>' +
+                '<div class="font-medium mb-2">Your diagram will appear here</div>' +
+                '<small>Write PlantUML code and click "Generate Diagram"</small>' +
+                '</div>';
+            document.getElementById('diagram-info').textContent = '';
+            showTempMessage('Diagram cleared', 'info');
+        }
+
+        // Service health check
+        function checkServiceHealth() {
+            const indicator = document.getElementById('health-indicator');
+            const status = document.getElementById('health-status');
+
+            indicator.className = 'w-3 h-3 rounded-full bg-yellow-500 mr-2';
+            status.textContent = 'Checking service health...';
+
+            htmx.ajax('GET', '/diagrams/service-health', {
+                target: '#health-result',
+                swap: 'innerHTML',
+                handler: function(xhr) {
+                    if (xhr.status === 200) {
+                        if (xhr.responseText.includes('alert-success') || xhr.responseText.includes('bg-green-500')) {
+                            indicator.className = 'w-3 h-3 rounded-full bg-green-500 mr-2';
+                            status.textContent = 'Service healthy';
+                            showTempMessage('Service is running properly!', 'success');
+                        } else {
+                            indicator.className = 'w-3 h-3 rounded-full bg-red-500 mr-2';
+                            status.textContent = 'Service issues detected';
+                            showTempMessage('Service may have issues', 'warning');
+                        }
+                    }
+                }
+            });
+        }
+
+        // Set download filename before HTMX request
+        function setDownloadFilename() {
+            let filenameInput = document.getElementById('download-filename');
+            if (!filenameInput) {
+                filenameInput = document.createElement('input');
+                filenameInput.type = 'hidden';
+                filenameInput.name = 'filename';
+                filenameInput.id = 'download-filename';
+                document.getElementById('diagramForm').appendChild(filenameInput);
+            }
+            filenameInput.value = 'diagram-' + new Date().toISOString().slice(0, 10) + '.png';
+        }
+
+        // Function to trigger download from base64 data
+        function triggerDownload(base64Data) {
+            try {
+                const binaryString = atob(base64Data);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'image/png' });
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'diagram-' + new Date().toISOString().slice(0, 10) + '.png';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showTempMessage('Download started successfully!', 'success');
+            } catch (error) {
+                showTempMessage('Download failed: ' + error.message, 'danger');
+            }
+        }
+
+        // Show temporary message
+        function showTempMessage(message, type) {
+            const existingAlerts = document.querySelectorAll('.temp-alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alert = document.createElement('div');
+            const bgColor = {
+                success: 'bg-green-500',
+                warning: 'bg-yellow-500',
+                danger: 'bg-red-500',
+                info: 'bg-blue-500'
+            }[type] || 'bg-gray-500';
+
+            alert.className = `fixed top-4 right-4 z-50 ${bgColor} text-white px-6 py-4 rounded-lg shadow-lg max-w-sm temp-alert`;
+            alert.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span>${message}</span>
+                    <button type="button" class="ml-4 text-white/80 hover:text-white" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(alert);
+
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Auto-resize textarea
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('plantUmlSource');
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+    </script>
+</div>
+</body>
+</html>

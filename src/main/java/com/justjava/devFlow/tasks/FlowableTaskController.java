@@ -86,6 +86,9 @@ public class FlowableTaskController {
     // View task form
     @GetMapping("/view/{taskId}")
     public String viewTaskForm(@PathVariable String taskId, Model model) {
+
+        System.out.println("The task id here inside viewTaskForm ==="+taskId);
+        System.out.println();
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
         if (task == null) {
@@ -105,6 +108,9 @@ public class FlowableTaskController {
                 break;
             case "formtask_11":
                 currentTask = "tasks/reviewSolutionArchitecture";
+                break;
+            case "formtask_104":
+                currentTask = "tasks/reviewProjectPlan";
                 break;
             case "formtask_51":
                 currentTask = "tasks/reviewLayoutCode";
@@ -145,7 +151,6 @@ public class FlowableTaskController {
                 .taskId(taskId)
                 .singleResult();
 
-       // System.out.println(" The Task here in viewCompleted===="+task.getTaskDefinitionKey().toLowerCase());
         if (task == null) {
             throw new IllegalArgumentException("Task not found with id: " + taskId);
         }
@@ -167,6 +172,9 @@ public class FlowableTaskController {
             case "formtask_11":
                 currentTask = "tasks/reviewSolutionArchitecture";
                 break;
+            case "formtask_104":
+                currentTask = "tasks/reviewProjectPlan";
+                break;
             case "formtask_1":
                 currentTask = "tasks/codeReview";
                 break;
@@ -181,23 +189,28 @@ public class FlowableTaskController {
                 break;
         }
 
-        // Load task variables
-        //Map<String, Object> taskVariables = taskService.getVariables(taskId);
+        // Load process variables from HISTORY (not runtime)
+        Map<String, Object> processVariables = historyService
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(task.getProcessInstanceId())
+                .includeProcessVariables()
+                .singleResult()
+                .getProcessVariables();
 
-        // Load process variables
-        Map<String, Object> processVariables = runtimeService.getVariables(task.getExecutionId(),
-                List.of(task.getId()));
+        // Load task variables from HISTORY
+        Map<String, Object> taskVariables = historyService
+                .createHistoricTaskInstanceQuery()
+                .taskId(taskId)
+                .includeTaskLocalVariables()
+                .singleResult()
+                .getTaskLocalVariables();
 
-        Map<String, Object> taskVariables = (Map<String, Object>) runtimeService.getVariable(task.getExecutionId(),taskId);
-        //System.out.println(" The variable pulled out =====\n\n\n\n\n\n\n\n\n\n"+taskVariables);
-        //System.out.println(" The task id==="+taskId+"This is the process variable== " + processVariables);
-    //qweqweqweqwe
-        processVariables.putAll(runtimeService.getVariables(task.getExecutionId()));
         model.addAttribute("task", task);
-        model.addAttribute("taskId",taskId);
-        //model.addAttribute("taskVariables", taskVariables);
-        model.addAttribute("processVariables",taskVariables );
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("processVariables", processVariables);
+        model.addAttribute("taskVariables", taskVariables); // Add this if you need task variables
         model.addAttribute("isCompleted", true);
+
         return currentTask;
     }
     @GetMapping("/moveTaskTo/{taskId}")
@@ -283,6 +296,7 @@ public class FlowableTaskController {
         //System.out.println("This is what is submitted === " + formParams);
         try {
 
+
             Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
             if (task == null) {
@@ -292,8 +306,11 @@ public class FlowableTaskController {
 
             // Convert form parameters to proper types
             Map<String, Object> variables = convertFormParamsToVariables(formParams);
-            // Complete the task with form data
+            //variables.computeIfPresent("process", (key, value) -> "true");
+            //variables.putIfAbsent("process", "false");
 
+//            System.out.println("These are the variables" + variables);
+            // Complete the task with form data
 
             String storyDevelopmentDetail = (String) runtimeService.getVariable(task.getProcessInstanceId(),"storyDevelopmentDetail");
             String appPath = (String) runtimeService.getVariable(task.getProcessInstanceId(),"appPath");
@@ -337,9 +354,24 @@ public class FlowableTaskController {
             projectName=projectName.replaceAll("\\s+","").toLowerCase();
             runtimeService.setVariable(task.getProcessInstanceId(),
                     "architecture","Application Name: "+projectName +" " + architecture);
+            System.out.println(" The FormData ==="+formParams);
+            if(formParams.get("process")!=null && formParams.get("process").equalsIgnoreCase("on")){
+                System.out.println(" The process is true");
+//                runtimeService.setVariable(task.getProcessInstanceId(),
+//                        "process",Boolean.TRUE);
+                variables.put("process", Boolean.TRUE);
+            }else {
+                System.out.println(" The process is false");
+//                runtimeService.setVariable(task.getProcessInstanceId(),
+//                        "process",Boolean.FALSE);
+                variables.put("process", Boolean.FALSE);
+            }
             runtimeService.setVariable(task.getProcessInstanceId(),"progress",progress+1);
-            runtimeService.setVariable(task.getProcessInstanceId(),"process", "false");
-;            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
+            runtimeService.setVariable(task.getExecutionId(),task.getId(),runtimeService.getVariables(task.getExecutionId()));
+
+            System.out.println("1 These are the runtime full variables " + runtimeService.getVariables(task.getExecutionId()));
+
+            System.out.println("\n\n 2 These are the runtime full variables " + runtimeService.getVariables(task.getProcessInstanceId()));
             taskService.complete(taskId, variables);
 
 

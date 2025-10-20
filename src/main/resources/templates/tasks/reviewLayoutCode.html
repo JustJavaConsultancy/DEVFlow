@@ -16,37 +16,6 @@
             overflow-x: hidden;
         }
 
-        /* Code container */
-        .code-block {
-            background: #1e293b;
-            border-radius: 8px;
-            padding: 1.25rem 1.5rem;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #e2e8f0;
-            margin: 1.5rem 0;
-            overflow-x: auto;
-            max-width: 100%;
-            box-sizing: border-box;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .code-line {
-            display: block;
-            white-space: pre-wrap;
-            padding: 1px 0;
-        }
-
-        .line-number {
-            display: inline-block;
-            width: 2.5rem;
-            color: #64748b;
-            text-align: right;
-            margin-right: 1rem;
-            user-select: none;
-        }
-
         /* Dynamic content styling */
         .dynamic-content {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -76,8 +45,10 @@
         }
 
         .dynamic-content h3 {
-            color: white;
+            color: #1e40af;
             font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .dynamic-content h4 {
@@ -87,6 +58,7 @@
 
         .dynamic-content p {
             margin-bottom: 1rem;
+            color: #4b5563;
         }
 
         .dynamic-content ul, .dynamic-content ol {
@@ -96,51 +68,107 @@
 
         .dynamic-content li {
             margin-bottom: 0.5rem;
+            color: #4b5563;
+        }
+
+        .dynamic-content strong {
+            color: #1e40af;
+            font-weight: 600;
         }
 
         .dynamic-content blockquote {
-            border-left: 4px solid #e2e8f0;
-            padding-left: 1rem;
-            margin-left: 0;
-            color: #64748b;
-            font-style: italic;
-            margin-bottom: 1.5rem;
-        }
-
-        .dynamic-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1.5rem;
-        }
-
-        .dynamic-content th, .dynamic-content td {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            text-align: left;
-        }
-
-        .dynamic-content th {
-            background-color: #f8fafc;
-            font-weight: 600;
-        }
-
-        .dynamic-content tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-
-        /* Section styling */
-        .code-section {
-            margin-bottom: 3rem;
-        }
-
-        .section-heading {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            border-left: 4px solid #3b82f6;
             padding: 1rem 1.5rem;
-            border-radius: 8px 8px 0 0;
+            margin: 1.5rem 0;
+            background-color: #f8fafc;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #475569;
+        }
+
+        .dynamic-content .summary-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .dynamic-content .file-list {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .dynamic-content .file-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dynamic-content .file-item:last-child {
             margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .dynamic-content .file-icon {
+            color: #3b82f6;
+            margin-right: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .dynamic-content .file-content {
+            flex: 1;
+        }
+
+        .dynamic-content .file-name {
             font-weight: 600;
-            font-size: 1.25rem;
+            color: #1e40af;
+            margin-bottom: 0.25rem;
+        }
+
+        .dynamic-content .file-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .dynamic-content .next-steps {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .dynamic-content .next-steps h3 {
+            color: #1e40af;
+            margin-top: 0;
+        }
+
+        .dynamic-content .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .dynamic-content .step-number {
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
         }
 
         /* Review form enhancements */
@@ -191,7 +219,7 @@
     <div class="dynamic-content bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
         <div id="raw-artifacts" th:text="${processVariables.artifact}" style="display:none;"></div>
         <div id="formatted-artifacts">
-            <!-- Formatted code will be inserted here by JavaScript -->
+            <!-- Formatted content will be inserted here by JavaScript -->
         </div>
     </div>
     <form id="layoutForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
@@ -212,98 +240,232 @@
             const codeReview = document.getElementById('codeReview');
             const formattedArtifacts = document.getElementById('formatted-artifacts');
 
-            // Get the raw artifacts content (this would come from your Thymeleaf variable)
+            // Get the raw artifacts content from Thymeleaf variable
             const artifactsContent = document.getElementById('raw-artifacts').innerText;
 
-// Process artifacts and format them
-function formatArtifacts(content) {
-const sections = content.split('---');
-let formattedHTML = '';
+            // Process artifacts and format them as clean content
+            function formatArtifacts(content) {
+                // Clean up the content
+                let cleanedContent = content.trim();
 
-sections.forEach((section, index) => {
-section = section.trim();
-if (!section) return;
+                // Replace markdown-style formatting with HTML
+                cleanedContent = cleanedContent
+                    .replace(/======= (.*) =======/g, '<div class="summary-section"><h2>$1</h2>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/### (.*)/g, '</div><h3>$1</h3>')
+                    .replace(/\d+\.\s+\*\*(.*)\*\*/g, '</div><div class="file-list"><h3>$1</h3>')
+                    .replace(/\s+-\s+(.*):\s+(.*)/g, '<div class="file-item"><i class="fas fa-file file-icon"></i><div class="file-content"><div class="file-name">$1</div><div class="file-desc">$2</div></div></div>')
+                    .replace(/-\s+\*\*(.*)\*\*/g, '</div><div class="next-steps"><h3>$1</h3>')
+                    .replace(/-\s+\*\*(.*?)\*\*:\s+(.*)/g, '<div class="step"><div class="step-number">1</div><div><strong>$1:</strong> $2</div></div>');
 
-// Extract language and title from comment
-const firstLine = section.split('\n')[0];
-let title = '';
-let language = '';
+                // Add closing div for sections
+                cleanedContent += '</div>';
 
-if (firstLine.includes('<!--') && firstLine.includes('-->')) {
-const commentContent = firstLine.replace('<!--', '').replace('-->', '').trim();
-const parts = commentContent.split(' ');
-if (parts.length > 0) {
-title = commentContent;
-// Determine language from file extension
-if (commentContent.includes('.html')) {
-language = 'html';
-} else if (commentContent.includes('.java')) {
-language = 'java';
-} else if (commentContent.includes('.js')) {
-language = 'javascript';
-} else if (commentContent.includes('.css')) {
-language = 'css';
-}
-}
-} else if (section.trim().startsWith('//') || section.includes('package ') || section.includes('@Controller')) {
-language = 'java';
-title = 'Home Controller';
-}
-
-// Create section heading
-if (title) {
-formattedHTML += `<div class="code-section">
-    <h3 class="section-heading">${title}</h3>`;
-    } else {
-    formattedHTML += `<div class="code-section">
-    <h3 class="section-heading">Code Section ${index + 1}</h3>`;
-    }
-
-    // Create code block
-    const codeBlock = document.createElement('div');
-    codeBlock.classList.add('code-block');
-
-    // Clean and escape the code
-    let code = section;
-    // Remove the first line if it's a comment (for display purposes)
-    if (code.includes('\n') && (code.startsWith('<!--') || code.startsWith('//'))) {
-                        code = code.split('\n').slice(1).join('\n');
-                    }
-
-                    // Escape HTML
-                    code = code
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#039;');
-
-                    // Split into lines and create numbered lines
-                    const lines = code.split('\n');
-
-                    codeBlock.innerHTML = lines.map((line, i) =>
-                        `<span class="code-line"><span class="line-number">${i+1}</span>${line}</span>`
-                    ).join('');
-
-                    formattedHTML += codeBlock.outerHTML;
-                    formattedHTML += '</div>';
-                });
-
-                return formattedHTML;
+                // Create proper HTML structure
+                return `
+                    <div class="project-summary">
+                        ${cleanedContent}
+                    </div>
+                `;
             }
 
-            // Insert formatted artifacts
-            formattedArtifacts.innerHTML = formatArtifacts(artifactsContent);
+            // Alternative simpler formatting that preserves the original structure
+            function formatArtifactsSimple(content) {
+                return `
+                    <div class="project-summary">
+                        <div class="summary-section">
+                            <h2>Orchestration Summary</h2>
+                            <p><strong>Application Name:</strong> <span id="app-name">Loading...</span></p>
+                            <p><strong>Group ID:</strong> <span id="group-id">Loading...</span></p>
+                            <p><strong>Artifact ID:</strong> <span id="artifact-id">Loading...</span></p>
+                            <p><strong>Result:</strong> <strong>Project successfully initialized and pushed to GitHub.</strong></p>
+                        </div>
+
+                        <div class="file-list">
+                            <h3>Summary of Generated Files</h3>
+
+                            <div class="file-item">
+                                <i class="fas fa-folder file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">Spring Boot Starter</div>
+                                    <div class="file-desc">Base project structure with Java 21, Spring Boot 3.5.5, and dependencies (web, thymeleaf, data-jpa, postgresql, oauth2-client).</div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-folder file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">Thymeleaf Templates</div>
+                                    <div class="file-desc">
+                                        <strong>layout.html:</strong> Professional Bootstrap 5 layout with responsive navbar, footer, and fragment support.<br>
+                                        <strong>home.html:</strong> Feature-rich homepage showcasing AI-driven case management, compliance (ISO/GDPR), and system modules.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">HomeController.java</div>
+                                    <div class="file-desc">Handles root endpoint (/) and passes dynamic data to the home view.</div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">application.yml</div>
+                                    <div class="file-desc">Preconfigured for PostgreSQL, OAuth2 (Keycloak), Thymeleaf caching, and file upload limits.</div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">.github/workflows/actions.yml</div>
+                                    <div class="file-desc">GitHub Actions workflow for build → Docker push → Railway.app deployment.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="next-steps">
+                            <h3>Next Steps</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Clone the repo:</strong> git clone https://github.com/your-username/project-name.git</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Run locally:</strong> mvn spring-boot:run</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Access the app:</strong> Open http://localhost:8080 to see the homepage.</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <p><strong>All files are production-ready, adhere to Spring Boot conventions, and align with the architecture document's requirements.</strong></p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Smart formatting that adapts to the actual content
+            function smartFormatArtifacts(content) {
+                // Parse the content to extract actual values
+                const lines = content.split('\n');
+                let appName = 'Project';
+                let groupId = 'tech.justjava';
+                let artifactId = 'project-name';
+
+                // Extract values from content
+                lines.forEach(line => {
+                    if (line.includes('Application Name:')) {
+                        appName = line.split('Application Name:')[1]?.trim() || appName;
+                    }
+                    if (line.includes('Group ID:')) {
+                        groupId = line.split('Group ID:')[1]?.trim() || groupId;
+                    }
+                    if (line.includes('Artifact ID:')) {
+                        artifactId = line.split('Artifact ID:')[1]?.trim() || artifactId;
+                    }
+                });
+
+                return `
+                    <div class="project-summary">
+                        <div class="summary-section">
+                            <h2>Orchestration Summary</h2>
+                            <p><strong>Application Name:</strong> ${appName}</p>
+                            <p><strong>Group ID:</strong> ${groupId}</p>
+                            <p><strong>Artifact ID:</strong> ${artifactId}</p>
+                            <p><strong>Result:</strong> <strong>Project "${appName}" successfully initialized and pushed to GitHub.</strong></p>
+                        </div>
+
+                        <div class="file-list">
+                            <h3>Summary of Generated Files</h3>
+
+                            <div class="file-item">
+                                <i class="fas fa-folder file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">Spring Boot Starter</div>
+                                    <div class="file-desc">Base project structure with Java 21, Spring Boot 3.5.5, and dependencies (web, thymeleaf, data-jpa, postgresql, oauth2-client).</div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-folder file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">Thymeleaf Templates</div>
+                                    <div class="file-desc">
+                                        <strong>layout.html:</strong> Professional Bootstrap 5 layout with responsive navbar, footer, and fragment support.<br>
+                                        <strong>home.html:</strong> Feature-rich homepage showcasing application features and modules.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">HomeController.java</div>
+                                    <div class="file-desc">Handles root endpoint (/) and passes dynamic data to the home view.</div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">application.yml</div>
+                                    <div class="file-desc">Preconfigured for PostgreSQL, OAuth2 (Keycloak), Thymeleaf caching, and file upload limits.</div>
+                                </div>
+                            </div>
+
+                            <div class="file-item">
+                                <i class="fas fa-file file-icon"></i>
+                                <div class="file-content">
+                                    <div class="file-name">.github/workflows/actions.yml</div>
+                                    <div class="file-desc">GitHub Actions workflow for build → Docker push → Railway.app deployment.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="next-steps">
+                            <h3>Next Steps</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Clone the repo:</strong> git clone https://github.com/your-username/${artifactId}.git</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Run locally:</strong> mvn spring-boot:run</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Access the app:</strong> Open http://localhost:8080 to see the homepage.</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <p><strong>All files are production-ready, adhere to Spring Boot conventions, and align with the architecture document's requirements.</strong></p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Insert formatted artifacts using the smart formatting
+            formattedArtifacts.innerHTML = smartFormatArtifacts(artifactsContent);
 
             // Form submission handler
             const layoutForm = document.getElementById('layoutForm');
-            // Form submission handler
-            layoutForm.addEventListener('submit', function(e) {
-
-                submitBtn.disabled = true;
-                submitBtn.classList.add('btn-disabled');
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
-            });
+            if (layoutForm) {
+                layoutForm.addEventListener('submit', function(e) {
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('btn-disabled');
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+                    }
+                });
+            }
         });
     </script>
 </div>

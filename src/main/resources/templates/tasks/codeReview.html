@@ -16,37 +16,6 @@
         overflow-x: hidden;
     }
 
-    /* Code container */
-    .code-block {
-        background: #1e293b;
-        border-radius: 8px;
-        padding: 1.25rem 1.5rem;
-        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        color: #e2e8f0;
-        margin: 1.5rem 0;
-        overflow-x: auto;
-        max-width: 100%;
-        box-sizing: border-box;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .code-line {
-        display: block;
-        white-space: pre-wrap;
-        padding: 1px 0;
-    }
-
-    .line-number {
-        display: inline-block;
-        width: 2.5rem;
-        color: #64748b;
-        text-align: right;
-        margin-right: 1rem;
-        user-select: none;
-    }
-
     /* Dynamic content styling */
     .dynamic-content {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -76,7 +45,10 @@
     }
 
     .dynamic-content h3 {
+        color: #1e40af;
         font-size: 1.25rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
     }
 
     .dynamic-content h4 {
@@ -86,6 +58,7 @@
 
     .dynamic-content p {
         margin-bottom: 1rem;
+        color: #4b5563;
     }
 
     .dynamic-content ul, .dynamic-content ol {
@@ -95,36 +68,133 @@
 
     .dynamic-content li {
         margin-bottom: 0.5rem;
+        color: #4b5563;
     }
 
-    .dynamic-content blockquote {
-        border-left: 4px solid #e2e8f0;
-        padding-left: 1rem;
-        margin-left: 0;
-        color: #64748b;
-        font-style: italic;
-        margin-bottom: 1.5rem;
-    }
-
-    .dynamic-content table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 1.5rem;
-    }
-
-    .dynamic-content th, .dynamic-content td {
-        padding: 0.75rem;
-        border: 1px solid #e2e8f0;
-        text-align: left;
-    }
-
-    .dynamic-content th {
-        background-color: #f8fafc;
+    .dynamic-content strong {
+        color: #1e40af;
         font-weight: 600;
     }
 
-    .dynamic-content tr:nth-child(even) {
-        background-color: #f8fafc;
+    .dynamic-content .summary-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .dynamic-content .file-list {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .dynamic-content .file-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .dynamic-content .file-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .dynamic-content .file-icon {
+        color: #3b82f6;
+        margin-right: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .dynamic-content .file-content {
+        flex: 1;
+    }
+
+    .dynamic-content .file-name {
+        font-weight: 600;
+        color: #1e40af;
+        margin-bottom: 0.25rem;
+    }
+
+    .dynamic-content .file-desc {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .dynamic-content .features-list {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .dynamic-content .feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .dynamic-content .feature-icon {
+        color: #16a34a;
+        margin-right: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .dynamic-content .next-steps {
+        background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+        border: 1px solid #c7d2fe;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .dynamic-content .next-steps h3 {
+        color: #1e40af;
+        margin-top: 0;
+    }
+
+    .dynamic-content .step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .dynamic-content .step-number {
+        background: #3b82f6;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    .dynamic-content .success-badge {
+        background: #dcfce7;
+        color: #166534;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        margin: 0.5rem 0;
+    }
+
+    .dynamic-content .success-badge i {
+        margin-right: 0.5rem;
     }
 
     /* Review form enhancements */
@@ -173,8 +243,9 @@
 
   <!-- Dynamic Content Section -->
   <div class="dynamic-content bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
-    <div th:utext="${#strings.replace(#strings.replace(processVariables.storyDevelopmentDetail, '```html', ''), '```', '')}">
-      <!-- Dynamic HTML injected here -->
+    <div id="raw-content" th:text="${processVariables.storyDevelopmentDetail}" style="display: none;"></div>
+    <div id="formatted-content">
+      <!-- Formatted content will be inserted here by JavaScript -->
     </div>
   </div>
 
@@ -184,7 +255,7 @@
       <i class="fas fa-comments mr-2 text-blue-600"></i>
       Submit Code Review
     </h3>
-    <form  id="codeReview" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post" class="space-y-4">
+    <form id="codeReview" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post" class="space-y-4">
       <div>
         <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
         <input id="email" type="email" name="reviewerEmail" required
@@ -210,38 +281,174 @@
   <!-- Script kept inside content fragment -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const submitBtn = document.getElementById('submitBtn');
-    const codeReview = document.getElementById('codeReview');
-        // Process all <code> blocks into styled .code-blocks
-        document.querySelectorAll('.dynamic-content code').forEach(block => {
-            // Replace encoded angle brackets with actual characters
-            let code = block.innerHTML.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-            // Escape HTML so it doesn't render
-            code = code
-                .replace(/&/g, '&amp;')   // escape ampersand first
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
+      const submitBtn = document.getElementById('submitBtn');
+      const codeReview = document.getElementById('codeReview');
+      const formattedContent = document.getElementById('formatted-content');
+      const rawContent = document.getElementById('raw-content').textContent;
 
-            // Create code block container
-            const codeBlock = document.createElement('div');
-            codeBlock.classList.add('code-block');
+      // Format the dynamic content with clean styling
+      function formatContent(content) {
+        const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+        let html = '<div class="project-summary">';
 
-            // Split into lines and create numbered lines
-            const lines = code.split('\n');
+        let currentSection = '';
+        let fileItems = [];
+        let featureItems = [];
+        let nextSteps = [];
+        let summaryData = {};
 
-            codeBlock.innerHTML = lines.map((line, i) =>
-                `<span class="code-line"><span class="line-number">${i+1}</span>${line}</span>`
-            ).join('');
-
-            // Replace <code> with formatted block
-            block.replaceWith(codeBlock);
+        // Parse the content
+        lines.forEach(line => {
+          if (line.startsWith('=======') && line.endsWith('=======')) {
+            // Summary section
+            currentSection = 'summary';
+          } else if (line.startsWith('###')) {
+            // Section headers
+            const header = line.replace('###', '').trim();
+            if (header.includes('Generated and Committed Files')) {
+              currentSection = 'files';
+            } else if (header.includes('Key Features')) {
+              currentSection = 'features';
+            } else if (header.includes('Next Steps')) {
+              currentSection = 'nextSteps';
+            }
+          } else if (line.startsWith('**') && line.endsWith('**')) {
+            // Bold text - could be result or feature
+            const boldText = line.replace(/\*\*/g, '').trim();
+            if (currentSection === 'summary' && line.includes('Result:')) {
+              summaryData.result = boldText;
+            }
+          } else if (line.match(/^\d+\.\s+\*\*/)) {
+            // File items
+            const fileText = line.replace(/^\d+\.\s+\*\*/, '').replace(/\*\*/, '');
+            const parts = fileText.split(':');
+            if (parts.length >= 2) {
+              fileItems.push({
+                name: parts[0].trim(),
+                description: parts.slice(1).join(':').trim()
+              });
+            }
+          } else if (line.startsWith('✅') || line.startsWith('**✅')) {
+            // Feature items
+            const featureText = line.replace(/^✅\s*\**/, '').replace(/\**$/, '').trim();
+            const parts = featureText.split(':');
+            if (parts.length >= 2) {
+              featureItems.push({
+                name: parts[0].trim(),
+                description: parts.slice(1).join(':').trim()
+              });
+            }
+          } else if (line.startsWith('-') || line.startsWith('**-')) {
+            // Next steps or other list items
+            const stepText = line.replace(/^-\s*\**/, '').replace(/\**$/, '').trim();
+            if (currentSection === 'nextSteps') {
+              nextSteps.push(stepText);
+            }
+          } else if (line.includes(':')) {
+            // Key-value pairs for summary
+            const parts = line.split(':');
+            if (parts.length >= 2) {
+              const key = parts[0].trim();
+              const value = parts.slice(1).join(':').trim();
+              if (key && value) {
+                summaryData[key.toLowerCase().replace(/\s+/g, '')] = value;
+              }
+            }
+          } else if (line.includes('🚀') || line.includes('ready to run')) {
+            // Success message
+            summaryData.success = line.trim();
+          }
         });
-        // Form submission handler
-    codeReview.addEventListener('submit', function(e) {
-      submitBtn.disabled = true;
-      submitBtn.classList.add('btn-disabled');
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
-    });
+
+        // Build summary section
+        html += `
+          <div class="summary-section">
+            <h2>Orchestration Summary</h2>
+            ${summaryData.applicationname ? `<p><strong>Application Name:</strong> ${summaryData.applicationname}</p>` : ''}
+            ${summaryData.groupid ? `<p><strong>Group ID:</strong> ${summaryData.groupid}</p>` : ''}
+            ${summaryData.artifactid ? `<p><strong>Artifact ID:</strong> ${summaryData.artifactid}</p>` : ''}
+            ${summaryData.result ? `<p><strong>Result:</strong> ${summaryData.result}</p>` : ''}
+          </div>
+        `;
+
+        // Build files section
+        if (fileItems.length > 0) {
+          html += `
+            <div class="file-list">
+              <h3>Generated and Committed Files</h3>
+              ${fileItems.map(file => `
+                <div class="file-item">
+                  <i class="fas fa-file-code file-icon"></i>
+                  <div class="file-content">
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-desc">${file.description}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        // Build features section
+        if (featureItems.length > 0) {
+          html += `
+            <div class="features-list">
+              <h3>Key Features</h3>
+              ${featureItems.map(feature => `
+                <div class="feature-item">
+                  <i class="fas fa-check-circle feature-icon"></i>
+                  <div class="file-content">
+                    <div class="file-name">${feature.name}</div>
+                    <div class="file-desc">${feature.description}</div>
+                  </div>
+                </div>
+              `).join('')}
+              ${summaryData.success ? `
+                <div class="success-badge">
+                  <i class="fas fa-rocket"></i>
+                  ${summaryData.success}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        // Build next steps section
+        if (nextSteps.length > 0) {
+          html += `
+            <div class="next-steps">
+              <h3>Next Steps</h3>
+              ${nextSteps.map((step, index) => `
+                <div class="step">
+                  <div class="step-number">${index + 1}</div>
+                  <div>${step}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        html += '</div>';
+        return html;
+      }
+
+      // Insert formatted content
+      if (rawContent && rawContent.trim()) {
+        formattedContent.innerHTML = formatContent(rawContent);
+      } else {
+        formattedContent.innerHTML = '<p class="text-gray-500">No content available for review.</p>';
+      }
+
+      // Form submission handler
+      if (codeReview) {
+        codeReview.addEventListener('submit', function(e) {
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('btn-disabled');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+          }
+        });
+      }
     });
   </script>
 </div>
