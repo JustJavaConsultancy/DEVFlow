@@ -6,6 +6,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSRF Meta Tags -->
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
   <title>Review Solution Architecture</title>
 
   <!-- Provide CSRF tokens when Spring Security is active -->
@@ -16,13 +21,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Quill CSS -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
-  <!-- PlantUML rendering -->
-  <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
-
-  <!-- Code syntax highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <style>
     /* Editor container */
@@ -103,11 +101,6 @@
       color: #4b5563;
     }
 
-    /* Enhanced content styling */
-    .enhanced-content {
-      margin: 1rem 0;
-    }
-
     /* Component box for architecture diagrams */
     .component-box {
       display: inline-block;
@@ -132,277 +125,177 @@
     .gradient-bg {
       background: linear-gradient(135deg, #780aff 0%, #4b7bec 100%);
     }
+    /* Add to your existing CSS */
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 8px 0;
+}
 
-    /* Code block styling */
-    .code-block {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      padding: 1rem;
-      margin: 1rem 0;
-      font-family: 'Courier New', monospace;
-      font-size: 0.875rem;
-      overflow-x: auto;
-      position: relative;
-    }
-
-    .code-block-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #e9ecef;
-    }
-
-    .code-block-title {
-      font-weight: 600;
-      color: #495057;
-    }
-
-    .copy-button {
-      background: #780aff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .copy-button:hover {
-      background: #6a00e6;
-    }
-
-    .copy-button.copied {
-      background: #10b981;
-    }
-
-    /* PlantUML diagram container */
-    .plantuml-diagram {
-      background-color: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 1rem;
-      margin: 1rem 0;
-      text-align: center;
-      overflow-x: auto;
-    }
-
-    .plantuml-diagram img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    /* API endpoint styling */
-    .api-endpoint {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      padding: 1rem;
-      margin: 1rem 0;
-      font-family: 'Courier New', monospace;
-      font-size: 0.875rem;
-    }
-
-    .api-method {
-      display: inline-block;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-weight: 600;
-      margin-right: 0.5rem;
-    }
-
-    .api-method.get {
-      background-color: #d1ecf1;
-      color: #0c5460;
-    }
-
-    .api-method.post {
-      background-color: #d4edda;
-      color: #155724;
-    }
-
-    .api-method.put {
-      background-color: #fff3cd;
-      color: #856404;
-    }
-
-    .api-method.delete {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-
-    .api-path {
-      color: #495057;
-    }
-
-    .api-description {
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      color: #6b7280;
-    }
-
-    /* Configuration example styling */
-    .config-example {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      padding: 1rem;
-      margin: 1rem 0;
-      font-family: 'Courier New', monospace;
-      font-size: 0.875rem;
-      overflow-x: auto;
-    }
+/* Ensure images in tables are properly sized */
+.ql-table-embed img {
+  max-width: 100px;
+  max-height: 80px;
+  object-fit: contain;
+}
 
     /* Table embed visuals - Added from the original code */
     .ql-table-embed {
-      margin:10px 0;
-      padding:6px;
-      background:transparent;
+      margin: 10px 0;
+      padding: 6px;
+      background: transparent;
+      position: relative;
     }
+
+    /* Table toolbar styling */
+    .table-toolbar {
+      position: absolute;
+      z-index: 50;
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(180deg, #fff, #fbfbff);
+      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+      transition: opacity .12s ease, transform .12s ease;
+      opacity: 0;
+      pointer-events: none;
+      top: -40px;
+      left: 0;
+    }
+
+    .table-toolbar.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(-2px);
+    }
+
+    .table-toolbar .btn-sm {
+      padding: 6px 8px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+    }
+
+    .table-toolbar .btn-sm:hover {
+      background: #f9fafb;
+    }
+
     .ql-table-embed table {
-      width:100%;
+      width: 100%;
       border-collapse: collapse;
-      table-layout:auto;
-      background:white;
-      font-size:14px;
+      table-layout: auto;
+      background: white;
+      font-size: 14px;
     }
+
     .ql-table-embed th, .ql-table-embed td {
       border: 1px solid #d6dbe6;
       padding: 8px 10px;
-      min-width:50px;
+      min-width: 50px;
       vertical-align: top;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
     }
+
     .ql-table-embed thead th {
       background: #f3f4f6;
-      font-weight:600;
+      font-weight: 600;
     }
+
     .ql-table-embed td[contenteditable="true"], .ql-table-embed th[contenteditable="true"] {
       outline: none;
-      cursor:text;
+      cursor: text;
       tabindex: 0;
     }
+
     .ql-table-embed td:focus, .ql-table-embed th:focus {
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
-    }
-
-    /* Floating table toolbar - Updated to match your theme */
-    .floating-toolbar {
-      position: absolute;
-      z-index: 50;
-      display:flex;
-      gap:6px;
-      padding:6px;
-      border-radius:8px;
-      border:1px solid #e5e7eb;
-      background: linear-gradient(180deg, #fff, #fbfbff);
-      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
-      transition: opacity .12s ease, transform .12s ease;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .floating-toolbar.show {
-      opacity:1;
-      pointer-events:auto;
-      transform: translateY(-2px);
-    }
-
-    .floating-toolbar .btn-sm {
-      padding:6px 8px;
-      font-size:13px;
-      border-radius:6px;
-      background: white;
-      border: 1px solid #e5e7eb;
-      cursor: pointer;
-    }
-    .floating-toolbar .btn-sm:hover {
-      background: #f9fafb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
     /* Modal (Insert Table) - Updated to match your theme */
     .modal-backdrop {
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:60;
-      background: rgba(3,7,18,0.45);
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      background: rgba(3, 7, 18, 0.45);
     }
+
     .modal {
-      width:360px;
-      border-radius:10px;
-      background:white;
-      padding:14px;
-      box-shadow: 0 20px 60px rgba(2,6,23,0.2);
-      border:1px solid #e5e7eb;
+      width: 360px;
+      border-radius: 10px;
+      background: white;
+      padding: 14px;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.2);
+      border: 1px solid #e5e7eb;
     }
+
     .modal h3 {
-      margin:0 0 8px 0;
-      font-size:16px;
+      margin: 0 0 8px 0;
+      font-size: 16px;
       font-weight: 600;
     }
+
     .modal .row {
-      display:flex;
-      gap:8px;
-      margin-top:8px;
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
     }
+
     .modal label {
-      font-size:13px;
-      color:#6b7280;
-      display:block;
-      margin-bottom:6px;
+      font-size: 13px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 6px;
     }
+
     .modal input[type="number"] {
-      width:100%;
-      padding:8px;
-      border-radius:8px;
-      border:1px solid #e5e7eb;
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
+
     .modal .actions {
-      display:flex;
-      gap:8px;
-      justify-content:flex-end;
-      margin-top:12px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 12px;
     }
+
     .modal .help {
-      font-size:13px;
-      color:#6b7280;
-      margin-top:8px;
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
     }
 
     /* Custom button styles */
     .btn {
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:8px 12px;
-      border-radius:8px;
-      border:1px solid #e5e7eb;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
       background: white;
-      cursor:pointer;
-      font-size:14px;
+      cursor: pointer;
+      font-size: 14px;
       color: #374151;
     }
+
     .btn:hover {
-      box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+      box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
     }
 
-    /* make sure the table toolbar shows the font-awesome icon */
+    /* make sure the table toolbar button shows the font-awesome icon */
     .ql-toolbar .ql-table i { font-size: 14px; }
-
-    /* Enhanced content toolbar styling */
-    .ql-toolbar .ql-enhanced {
-      border: none;
-      background: none;
-    }
-    .ql-toolbar .ql-enhanced:hover {
-      background: #f3f4f6;
-    }
   </style>
 </head>
 <body>
@@ -418,9 +311,10 @@
 
   <!-- Thymeleaf Form (kept so Complete Review still works server-side) -->
   <form id="architectureForm" th:action="@{/tasks/complete/{taskId}(taskId=${taskId})}" method="post">
-    <div th:if="${_csrf != null}">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    </div>
+
+    <!-- CSRF Token -->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
 
     <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center">
       <div class="flex items-center">
@@ -445,15 +339,6 @@
     <div class="editor-wrapper relative bg-white rounded-lg shadow-sm border border-gray-200">
       <!-- Quill Editor (editable) -->
       <div id="editor" th:utext="${processVariables.architecture}"></div>
-
-      <!-- Floating table toolbar (hidden until a cell is focused) -->
-      <div id="floating-toolbar" class="floating-toolbar" aria-hidden="true">
-        <button id="ft-add-row" class="btn-sm">+ Row</button>
-        <button id="ft-add-col" class="btn-sm">+ Col</button>
-        <button id="ft-del-row" class="btn-sm">Del Row</button>
-        <button id="ft-del-col" class="btn-sm">Del Col</button>
-        <button id="ft-del-table" class="btn-sm" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
-      </div>
     </div>
 
     <!-- Complete Button -->
@@ -492,7 +377,7 @@
   </div>
 
   <!-- Hidden logo for PDF generation -->
-  <img id="pdfLogo" th:src="@{/images/JJ LOGOMARK COLORED.png}" alt="Company Logo" style="display: none;">
+  <img id="pdfLogo" src="/images/JJ LOGOMARK COLORED.png" alt="Company Logo" style="display: none;">
 
   <!-- Scripts: htmx (for AJAX), Quill, jsPDF (kept) -->
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
@@ -502,254 +387,10 @@
 
   <script>
     /*********************************
-     * Enhanced Content Blots for Quill
-     *********************************/
-    const BlockEmbed = Quill.import('blots/block/embed');
-    const Block = Quill.import('blots/block');
-
-    // PlantUML Diagram Blot
-    class PlantUMLBlot extends BlockEmbed {
-      static blotName = 'plantuml-diagram';
-      static tagName = 'div';
-      static className = 'plantuml-diagram enhanced-content';
-
-      static create(value) {
-        const node = super.create();
-        node.setAttribute('data-plantuml', value);
-        node.innerHTML = `
-          <div class="flex justify-center items-center h-64">
-            <div class="text-center">
-              <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-2"></i>
-              <p>Loading diagram...</p>
-            </div>
-          </div>
-        `;
-        return node;
-      }
-
-      static value(node) {
-        return node.getAttribute('data-plantuml');
-      }
-    }
-
-    // Code Block Blot
-    class CodeBlockBlot extends Block {
-      static blotName = 'code-block';
-      static tagName = 'div';
-      static className = 'code-block enhanced-content';
-
-      static create(value) {
-        const node = super.create();
-        const { code, language, title } = value;
-        node.innerHTML = `
-          <div class="code-block-header">
-            <span class="code-block-title">${title || 'Code'}</span>
-            <button class="copy-button">Copy</button>
-          </div>
-          <pre><code class="language-${language}">${code}</code></pre>
-        `;
-        return node;
-      }
-
-      static value(node) {
-        const codeElement = node.querySelector('code');
-        const titleElement = node.querySelector('.code-block-title');
-        return {
-          code: codeElement ? codeElement.textContent : '',
-          language: codeElement ? codeElement.className.replace('language-', '') : '',
-          title: titleElement ? titleElement.textContent : ''
-        };
-      }
-    }
-
-    // API Endpoint Blot
-    class APIEndpointBlot extends BlockEmbed {
-      static blotName = 'api-endpoint';
-      static tagName = 'div';
-      static className = 'api-endpoint enhanced-content';
-
-      static create(value) {
-        const node = super.create();
-        const { method, path, description } = value;
-        const methodClass = `api-method ${method.toLowerCase()}`;
-        node.innerHTML = `
-          <div>
-            <span class="${methodClass}">${method.toUpperCase()}</span>
-            <span class="api-path">${path}</span>
-            ${description ? `<p class="api-description">${description}</p>` : ''}
-          </div>
-        `;
-        return node;
-      }
-
-      static value(node) {
-        const methodElement = node.querySelector('.api-method');
-        const pathElement = node.querySelector('.api-path');
-        const descriptionElement = node.querySelector('.api-description');
-        return {
-          method: methodElement ? methodElement.textContent.toLowerCase() : '',
-          path: pathElement ? pathElement.textContent : '',
-          description: descriptionElement ? descriptionElement.textContent : ''
-        };
-      }
-    }
-
-    // Configuration Example Blot
-    class ConfigExampleBlot extends Block {
-      static blotName = 'config-example';
-      static tagName = 'div';
-      static className = 'config-example enhanced-content';
-
-      static create(value) {
-        const node = super.create();
-        const { code, language } = value;
-        node.innerHTML = `
-          <pre><code class="language-${language}">${code}</code></pre>
-        `;
-        return node;
-      }
-
-      static value(node) {
-        const codeElement = node.querySelector('code');
-        return {
-          code: codeElement ? codeElement.textContent : '',
-          language: codeElement ? codeElement.className.replace('language-', '') : ''
-        };
-      }
-    }
-
-    // Register all custom blots
-    Quill.register(PlantUMLBlot);
-    Quill.register(CodeBlockBlot);
-    Quill.register(APIEndpointBlot);
-    Quill.register(ConfigExampleBlot);
-
-    /*********************************
-     * Initialize syntax highlighting and PlantUML rendering
-     *********************************/
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize syntax highlighting
-      hljs.highlightAll();
-
-      // Render PlantUML diagrams
-      renderPlantUMLDiagrams();
-
-      // Add copy functionality to code blocks
-      setupCopyButtons();
-    });
-
-    /*********************************
-     * PlantUML Diagram Rendering
-     *********************************/
-    function renderPlantUMLDiagrams() {
-      const diagramContainers = document.querySelectorAll('.plantuml-diagram[data-plantuml]');
-
-      diagramContainers.forEach(container => {
-        const plantumlCode = container.getAttribute('data-plantuml');
-        if (plantumlCode) {
-          // Encode the PlantUML code
-          const encoded = plantumlEncoder.encode(plantumlCode);
-          // Generate the URL for the PlantUML server
-          const url = `https://www.plantuml.com/plantuml/svg/${encoded}`;
-
-          // Create and append the image
-          const img = document.createElement('img');
-          img.src = url;
-          img.alt = 'PlantUML Diagram';
-          img.className = 'max-w-full h-auto';
-          img.onload = function() {
-            // Replace loading indicator with the image
-            container.innerHTML = '';
-            container.appendChild(img);
-          };
-          img.onerror = function() {
-            // If image fails to load, show error message
-            container.innerHTML = `
-              <div class="text-center p-4 text-red-600">
-                <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
-                <p>Failed to load diagram</p>
-                <button class="mt-2 text-sm text-blue-500 underline" onclick="renderPlantUMLDiagrams()">Retry</button>
-              </div>
-            `;
-          };
-        }
-      });
-    }
-
-    /*********************************
-     * Copy Button Setup
-     *********************************/
-    function setupCopyButtons() {
-      document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('copy-button')) {
-          copyCode(e.target);
-        }
-      });
-    }
-
-    /*********************************
-     * Code Copy Functionality
-     *********************************/
-    function copyCode(button) {
-      const codeBlock = button.closest('.code-block, .config-example');
-      const codeElement = codeBlock.querySelector('code');
-      const codeText = codeElement.textContent;
-
-      navigator.clipboard.writeText(codeText).then(() => {
-        // Visual feedback for successful copy
-        const originalText = button.textContent;
-        button.textContent = 'Copied!';
-        button.classList.add('copied');
-
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.classList.remove('copied');
-        }, 2000);
-      }).catch(err => {
-        console.error('Failed to copy code: ', err);
-        alert('Failed to copy code to clipboard');
-      });
-    }
-
-    /*********************************
-     * Enhanced Content Insertion Functions
-     *********************************/
-    function insertPlantUMLDiagram(plantumlCode) {
-      const range = quill.getSelection(true);
-      quill.insertEmbed(range.index, 'plantuml-diagram', plantumlCode, Quill.sources.USER);
-      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
-      setTimeout(renderPlantUMLDiagrams, 100);
-    }
-
-    function insertCodeBlock(code, language = 'plaintext', title = 'Code') {
-      const range = quill.getSelection(true);
-      quill.insertEmbed(range.index, 'code-block', { code, language, title }, Quill.sources.USER);
-      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
-      setTimeout(() => {
-        hljs.highlightAll();
-        setupCopyButtons();
-      }, 100);
-    }
-
-    function insertAPIEndpoint(method, path, description = '') {
-      const range = quill.getSelection(true);
-      quill.insertEmbed(range.index, 'api-endpoint', { method, path, description }, Quill.sources.USER);
-      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
-    }
-
-    function insertConfigExample(code, language = 'yaml') {
-      const range = quill.getSelection(true);
-      quill.insertEmbed(range.index, 'config-example', { code, language }, Quill.sources.USER);
-      quill.insertText(range.index + 1, '\n', Quill.sources.USER);
-      setTimeout(() => {
-        hljs.highlightAll();
-        setupCopyButtons();
-      }, 100);
-    }
-
-    /*********************************
      * Table embed blot (editable cells)
      *********************************/
+    const BlockEmbed = Quill.import('blots/block/embed');
+
     class TableBlot extends BlockEmbed {
       static blotName = 'table-embed';
       static tagName = 'div';
@@ -757,10 +398,22 @@
 
       static create(value) {
         const node = super.create();
-        node.setAttribute('contenteditable', 'false');
+        node.setAttribute('contenteditable', 'false'); // embed container not editable (cells are)
         node.innerHTML = value;
 
-        // Make cells editable
+        // Add table toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'table-toolbar';
+        toolbar.innerHTML = `
+          <button class="btn-sm add-row">+ Row</button>
+          <button class="btn-sm add-col">+ Col</button>
+          <button class="btn-sm del-row">Del Row</button>
+          <button class="btn-sm del-col">Del Col</button>
+          <button class="btn-sm del-table" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+        `;
+        node.appendChild(toolbar);
+
+        // Make cells editable (defensive: ensure attributes present)
         const cells = node.querySelectorAll('td, th');
         cells.forEach(c => {
           c.setAttribute('contenteditable', 'true');
@@ -781,6 +434,8 @@
 
     /*********************************
      * Preprocess existing server-side tables BEFORE Quill initializes.
+     * This converts <table> markup into <div class="ql-table-embed"> wrappers
+     * so Quill recognizes them as the custom TableBlot on initialization.
      *********************************/
     (function preprocessInitialTables() {
       const editorEl = document.getElementById('editor');
@@ -789,8 +444,10 @@
       if (tables.length === 0) return;
 
       tables.forEach(table => {
+        // skip if already wrapped
         if (table.closest('.ql-table-embed')) return;
 
+        // clone and ensure editable cells
         const cloned = table.cloneNode(true);
         cloned.querySelectorAll('td, th').forEach(c => {
           c.setAttribute('contenteditable', 'true');
@@ -803,12 +460,24 @@
         wrapper.setAttribute('contenteditable', 'false');
         wrapper.innerHTML = cloned.outerHTML;
 
+        // Add table toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'table-toolbar';
+        toolbar.innerHTML = `
+          <button class="btn-sm add-row">+ Row</button>
+          <button class="btn-sm add-col">+ Col</button>
+          <button class="btn-sm del-row">Del Row</button>
+          <button class="btn-sm del-col">Del Col</button>
+          <button class="btn-sm del-table" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+        `;
+        wrapper.appendChild(toolbar);
+
         table.parentNode.replaceChild(wrapper, table);
       });
     })();
 
     /*********************************
-     * Initialize Quill with enhanced toolbar
+     * Initialize Quill with table button in toolbar
      *********************************/
     var quill = new Quill('#editor', {
       theme: 'snow',
@@ -820,7 +489,7 @@
             [{ list: 'ordered' }, { list: 'bullet' }],
             ['link', 'image', 'code-block'],
             [{ color: [] }, { background: [] }],
-            ['table'],
+            ['table'], // Add table button to toolbar (we'll inject an icon below)
             ['clean']
           ],
           handlers: {
@@ -834,54 +503,7 @@
       }
     });
 
-    // Add enhanced content buttons to toolbar
-    function addEnhancedContentToolbar() {
-      const toolbar = document.querySelector('.ql-toolbar');
-      if (!toolbar) return;
-
-      const enhancedContentHtml = `
-        <span class="ql-formats">
-          <button class="ql-plantuml" title="Insert PlantUML Diagram">
-            <i class="fas fa-project-diagram"></i>
-          </button>
-          <button class="ql-api" title="Insert API Endpoint">
-            <i class="fas fa-code"></i>
-          </button>
-          <button class="ql-config" title="Insert Configuration">
-            <i class="fas fa-cog"></i>
-          </button>
-        </span>
-      `;
-
-      toolbar.insertAdjacentHTML('beforeend', enhancedContentHtml);
-
-      // Add event listeners for enhanced content buttons
-      document.querySelector('.ql-plantuml').addEventListener('click', function() {
-        const plantumlCode = prompt('Enter PlantUML code:');
-        if (plantumlCode) {
-          insertPlantUMLDiagram(plantumlCode);
-        }
-      });
-
-      document.querySelector('.ql-api').addEventListener('click', function() {
-        const method = prompt('Enter HTTP method (GET, POST, PUT, DELETE):', 'GET');
-        const path = prompt('Enter API path:', '/api/v1/endpoint');
-        const description = prompt('Enter description (optional):', '');
-        if (method && path) {
-          insertAPIEndpoint(method, path, description);
-        }
-      });
-
-      document.querySelector('.ql-config').addEventListener('click', function() {
-        const language = prompt('Enter language (yaml, java, javascript, etc.):', 'yaml');
-        const code = prompt('Enter configuration code:');
-        if (code) {
-          insertConfigExample(code, language);
-        }
-      });
-    }
-
-    // Ensure the table toolbar button shows a Font Awesome icon
+    // Ensure the table toolbar button shows a Font Awesome icon (Quill doesn't ship a table icon by default)
     (function decorateTableToolbarButton() {
       const btn = document.querySelector('.ql-toolbar .ql-table');
       if (btn) {
@@ -890,40 +512,12 @@
       }
     })();
 
-    // Add enhanced content toolbar and initialize
+    // After initialization, re-attach behaviors to any table embeds that came from server
     setTimeout(() => {
-      addEnhancedContentToolbar();
       attachCellBehaviorToAllTables();
+      // also a fallback conversion in case any raw <table> tags still exist in the Quill root
       convertExistingTablesToEmbeds();
-      processEnhancedContent();
     }, 50);
-
-    /*********************************
-     * Process enhanced content elements
-     *********************************/
-    function processEnhancedContent() {
-      // Add copy buttons to existing code blocks
-      document.querySelectorAll('.code-block').forEach(block => {
-        if (!block.querySelector('.copy-button')) {
-          const header = block.querySelector('.code-block-header');
-          if (header) {
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-button';
-            copyBtn.textContent = 'Copy';
-            header.appendChild(copyBtn);
-          }
-        }
-      });
-
-      // Re-highlight code after content changes
-      hljs.highlightAll();
-    }
-
-    // convenience refs
-    const wrapper = document.querySelector('.editor-wrapper');
-    const floatingToolbar = document.getElementById('floating-toolbar');
-    let currentCell = null;
-    let currentEmbedNode = null;
 
     /*********************************
      * Table Utilities
@@ -934,7 +528,9 @@
       let html = '<table>';
       if (header) {
         html += '<thead><tr>';
-        for (let c = 0; c < cols; c++) html += '<th><br></th>';
+        for (let c = 0; c < cols; c++) {
+          html += '<th><br></th>';
+        }
         html += '</tr></thead>';
       }
       html += '<tbody>';
@@ -963,12 +559,16 @@
       const wrapperDom = document.createElement('div');
       wrapperDom.innerHTML = html;
       let nodes = Array.from(wrapperDom.childNodes);
-      let currentIndex = Math.max(0, index);
 
+      // Insert sequentially
+      let currentIndex = Math.max(0, index);
       nodes.forEach(node => {
         if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
           quill.insertEmbed(currentIndex, 'table-embed', node.outerHTML, Quill.sources.USER);
-          currentIndex += 2;
+          currentIndex += 1;
+          // insert a newline after embed so future content sits below
+          quill.insertText(currentIndex, '\n', Quill.sources.USER);
+          currentIndex += 1;
         } else {
           const fragHtml = node.outerHTML ?? node.textContent ?? '';
           quill.clipboard.dangerouslyPasteHTML(currentIndex, fragHtml);
@@ -976,8 +576,8 @@
         }
       });
 
+      // Reattach cell handlers
       attachCellBehaviorToAllTables();
-      processEnhancedContent();
     }
 
     function loadHtmlIntoEditor(html) {
@@ -992,6 +592,7 @@
           const table = node.querySelector('table');
           return table ? table.outerHTML : '';
         } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'TABLE') {
+          // Handle raw tables that might not be converted yet
           return node.outerHTML;
         } else {
           return node.outerHTML ?? node.textContent ?? '';
@@ -1017,118 +618,6 @@
     });
 
     /*********************************
-     * Cell behaviors: tab navigation, enter handling, focus tracking
-     *********************************/
-    function attachCellBehaviorToAllTables() {
-      const embeds = quill.root.querySelectorAll('.ql-table-embed');
-      embeds.forEach(embed => {
-        const table = embed.querySelector('table');
-        if (!table) return;
-        const cells = Array.from(table.querySelectorAll('td, th'));
-        cells.forEach(cell => {
-          if (cell.dataset._tblHandlers === '1') return;
-          cell.dataset._tblHandlers = '1';
-
-          // Focus tracking: show floating toolbar
-          cell.addEventListener('focus', (ev) => {
-            currentCell = cell;
-            currentEmbedNode = embed;
-            showFloatingToolbarNearCell(cell);
-          });
-
-          // Key handling
-          cell.addEventListener('keydown', ev => {
-            // Tab navigation
-            if (ev.key === 'Tab') {
-              ev.preventDefault();
-              const allCells = Array.from(table.querySelectorAll('td, th'));
-              const idx = allCells.indexOf(cell);
-              if (idx === -1) return;
-              const forward = !ev.shiftKey;
-              let nextIdx = forward ? idx + 1 : idx - 1;
-              if (nextIdx < 0) nextIdx = allCells.length - 1;
-              if (nextIdx >= allCells.length) nextIdx = 0;
-              const nextCell = allCells[nextIdx];
-              if (nextCell) {
-                nextCell.focus();
-                placeCaretAtEnd(nextCell);
-              }
-            }
-
-            // Enter should insert a line break inside cell instead of making a new Quill block
-            if (ev.key === 'Enter') {
-              ev.preventDefault();
-              // insert a <br> at caret position
-              // use execCommand as a small fallback for contenteditable cells
-              document.execCommand('insertHTML', false, '<br>');
-            }
-
-            // Escape: move focus to Quill editor root
-            if (ev.key === 'Escape') {
-              ev.stopPropagation();
-              quill.focus();
-            }
-          });
-
-          // Keep an empty placeholder so caret can go into empty cell
-          cell.addEventListener('blur', () => {
-            if (cell.textContent.trim() === '') cell.innerHTML = '<br>';
-          });
-        });
-      });
-    }
-
-    // initial attach in case content pre-exists
-    attachCellBehaviorToAllTables();
-
-    /*********************************
-     * Floating toolbar (Add/Delete row/col, Delete table)
-     *********************************/
-    function showFloatingToolbarNearCell(cell) {
-      // compute position relative to editor wrapper
-      const editorRect = quill.root.getBoundingClientRect();
-      const wrapperRect = wrapper.getBoundingClientRect();
-      const cellRect = cell.getBoundingClientRect();
-
-      // account for editor scroll
-      const top = (cellRect.top - editorRect.top) + quill.root.scrollTop - floatingToolbar.offsetHeight - 6;
-      // position left aligned with cell (but ensure it stays within wrapper)
-      let left = (cellRect.left - wrapperRect.left) + quill.root.scrollLeft;
-      // clamp left
-      const maxLeft = wrapper.clientWidth - floatingToolbar.offsetWidth - 8;
-      if (left < 8) left = 8;
-      if (left > maxLeft) left = maxLeft;
-
-      floatingToolbar.style.top = `${top}px`;
-      floatingToolbar.style.left = `${left}px`;
-      floatingToolbar.classList.add('show');
-      floatingToolbar.setAttribute('aria-hidden', 'false');
-    }
-
-    function hideFloatingToolbar() {
-      floatingToolbar.classList.remove('show');
-      floatingToolbar.setAttribute('aria-hidden', 'true');
-      currentCell = null;
-      currentEmbedNode = null;
-    }
-
-    // hide toolbar when clicking outside any table cell
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.ql-table-embed') && !e.target.closest('#floating-toolbar') && !e.target.closest('.modal')) {
-        // if click is outside table embed and outside toolbar and not modal, hide toolbar
-        hideFloatingToolbar();
-      }
-    });
-
-    // Keep toolbar visible while interacting with it
-    floatingToolbar.addEventListener('mouseenter', () => {
-      floatingToolbar.dataset.hover = '1';
-    });
-    floatingToolbar.addEventListener('mouseleave', () => {
-      floatingToolbar.dataset.hover = '0';
-    });
-
-    /*********************************
      * Table structure operations
      *********************************/
     function addRowBelow(cell) {
@@ -1143,6 +632,8 @@
       for (let c = 0; c < cols; c++) {
         const td = document.createElement('td');
         td.innerHTML = '<br>';
+        td.setAttribute('contenteditable', 'true');
+        td.setAttribute('tabindex', '0');
         createdTr.appendChild(td);
       }
       // insert createdTr after current tr
@@ -1185,6 +676,8 @@
         const isTheadRow = row.parentElement && row.parentElement.tagName === 'THEAD';
         const newCell = isTheadRow ? document.createElement('th') : document.createElement('td');
         newCell.innerHTML = '<br>';
+        newCell.setAttribute('contenteditable', 'true');
+        newCell.setAttribute('tabindex', '0');
         // if row has fewer cells than index+1, append; else insert before existing cell at colIndex+1
         if (row.cells.length <= colIndex) {
           row.appendChild(newCell);
@@ -1240,28 +733,156 @@
       p.innerHTML = '<br>';
       if (idx >= nodes.length || nodes.length === 0) parent.appendChild(p); else parent.insertBefore(p, parent.childNodes[idx]);
       attachCellBehaviorToAllTables();
-      hideFloatingToolbar();
       quill.focus();
     }
 
     /*********************************
-     * Floating toolbar button wiring
+     * Cell behaviors: tab navigation, enter handling, focus tracking
      *********************************/
-    document.getElementById('ft-add-row').addEventListener('click', () => {
-      addRowBelow(currentCell);
-    });
-    document.getElementById('ft-del-row').addEventListener('click', () => {
-      deleteRow(currentCell);
-    });
-    document.getElementById('ft-add-col').addEventListener('click', () => {
-      addColumnAfter(currentCell);
-    });
-    document.getElementById('ft-del-col').addEventListener('click', () => {
-      deleteColumn(currentCell);
-    });
-    document.getElementById('ft-del-table').addEventListener('click', () => {
-      const table = currentCell ? currentCell.closest('table') : null;
-      if (table && confirm('Delete the entire table?')) removeEntireTable(table);
+    function attachCellBehaviorToAllTables() {
+      const embeds = quill.root.querySelectorAll('.ql-table-embed');
+      embeds.forEach(embed => {
+        const table = embed.querySelector('table');
+        if (!table) return;
+        const cells = Array.from(table.querySelectorAll('td, th'));
+        const toolbar = embed.querySelector('.table-toolbar');
+
+        cells.forEach(cell => {
+          if (cell.dataset._tblHandlers === '1') return;
+          cell.dataset._tblHandlers = '1';
+
+          // Focus tracking: show table toolbar
+          cell.addEventListener('focus', (ev) => {
+            showTableToolbar(embed);
+          });
+
+          // Key handling
+          cell.addEventListener('keydown', ev => {
+            // Tab navigation
+            if (ev.key === 'Tab') {
+              ev.preventDefault();
+              const allCells = Array.from(table.querySelectorAll('td, th'));
+              const idx = allCells.indexOf(cell);
+              if (idx === -1) return;
+              const forward = !ev.shiftKey;
+              let nextIdx = forward ? idx + 1 : idx - 1;
+              if (nextIdx < 0) nextIdx = allCells.length - 1;
+              if (nextIdx >= allCells.length) nextIdx = 0;
+              const nextCell = allCells[nextIdx];
+              if (nextCell) {
+                nextCell.focus();
+                placeCaretAtEnd(nextCell);
+              }
+            }
+
+            // Enter should insert a line break inside cell instead of making a new Quill block
+            if (ev.key === 'Enter') {
+              ev.preventDefault();
+              // insert a <br> at caret position
+              // use execCommand as a small fallback for contenteditable cells
+              document.execCommand('insertHTML', false, '<br>');
+            }
+
+            // Escape: move focus to Quill editor root
+            if (ev.key === 'Escape') {
+              ev.stopPropagation();
+              quill.focus();
+              hideTableToolbar(embed);
+            }
+          });
+
+          // Keep an empty placeholder so caret can go into empty cell
+          cell.addEventListener('blur', () => {
+            if (cell.textContent.trim() === '') cell.innerHTML = '<br>';
+          });
+        });
+
+        // Attach toolbar event handlers
+        if (toolbar && !toolbar.dataset._tblHandlers) {
+          toolbar.dataset._tblHandlers = '1';
+
+          // Store reference to the embed for use in event handlers
+          const tableEmbed = embed;
+
+          toolbar.querySelector('.add-row').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              addRowBelow(focusedCell);
+              // Re-show toolbar after operation
+              showTableToolbar(tableEmbed);
+            }
+          });
+
+          toolbar.querySelector('.del-row').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              deleteRow(focusedCell);
+              // Re-show toolbar if table still exists
+              if (tableEmbed.parentNode) {
+                showTableToolbar(tableEmbed);
+              }
+            }
+          });
+
+          toolbar.querySelector('.add-col').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              addColumnAfter(focusedCell);
+              // Re-show toolbar after operation
+              showTableToolbar(tableEmbed);
+            }
+          });
+
+          toolbar.querySelector('.del-col').addEventListener('click', () => {
+            const focusedCell = tableEmbed.querySelector('td:focus, th:focus');
+            if (focusedCell) {
+              deleteColumn(focusedCell);
+              // Re-show toolbar if table still exists
+              if (tableEmbed.parentNode) {
+                showTableToolbar(tableEmbed);
+              }
+            }
+          });
+
+          toolbar.querySelector('.del-table').addEventListener('click', () => {
+            const table = tableEmbed.querySelector('table');
+            if (table && confirm('Delete the entire table?')) {
+              removeEntireTable(table);
+            }
+          });
+        }
+      });
+    }
+
+    // initial attach in case content pre-exists
+    attachCellBehaviorToAllTables();
+
+    /*********************************
+     * Table toolbar functions
+     *********************************/
+    function showTableToolbar(embed) {
+      const toolbar = embed.querySelector('.table-toolbar');
+      if (!toolbar) return;
+
+      // Position toolbar above the table
+      toolbar.style.top = '-40px';
+      toolbar.style.left = '0';
+      toolbar.classList.add('show');
+    }
+
+    function hideTableToolbar(embed) {
+      const toolbar = embed.querySelector('.table-toolbar');
+      if (toolbar) {
+        toolbar.classList.remove('show');
+      }
+    }
+
+    // Hide all table toolbars when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.ql-table-embed') && !e.target.closest('.modal')) {
+        const embeds = quill.root.querySelectorAll('.ql-table-embed');
+        embeds.forEach(embed => hideTableToolbar(embed));
+      }
     });
 
     /*********************************
@@ -1281,9 +902,11 @@
       const rows = parseInt(document.getElementById('input-rows').value, 10) || 1;
       const cols = parseInt(document.getElementById('input-cols').value, 10) || 1;
       const header = document.getElementById('input-header').checked;
-      const html = '<p></p>' + createTableHtml(rows, cols, header) + '<p><br></p>';
+      const html = createTableHtml(rows, cols, header);
       const sel = quill.getSelection(true);
       const index = sel ? sel.index : quill.getLength() - 1;
+
+      // Insert at cursor position
       insertHtmlAtIndex(html, index);
       modal.style.display = 'none';
       modal.setAttribute('aria-hidden', 'true');
@@ -1325,6 +948,18 @@
         wrapper.className = 'ql-table-embed';
         wrapper.setAttribute('contenteditable', 'false');
         wrapper.innerHTML = cloned.outerHTML;
+
+        // Add table toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'table-toolbar';
+        toolbar.innerHTML = `
+          <button class="btn-sm add-row">+ Row</button>
+          <button class="btn-sm add-col">+ Col</button>
+          <button class="btn-sm del-row">Del Row</button>
+          <button class="btn-sm del-col">Del Col</button>
+          <button class="btn-sm del-table" style="color:#b91c1c;border-color:#f1d4d4">Delete Table</button>
+        `;
+        wrapper.appendChild(toolbar);
 
         table.parentNode.replaceChild(wrapper, table);
       });
@@ -1392,26 +1027,17 @@
     });
 
     // On main form submit, copy HTML into hidden input (keeps your original behaviour)
-    document.addEventListener('DOMContentLoaded', function() {
-  const architectureForm = document.getElementById('architectureForm');
-  const submitBtn = document.getElementById('submitBtn');
-
-  if (architectureForm && submitBtn) {
-    architectureForm.addEventListener('submit', function(e) {
-      // Update the hidden input with current content
+    const architectureForm = document.getElementById('architectureForm');
+    const submitBtn = document.getElementById('submitBtn');
+    architectureForm.addEventListener('submit', function (e) {
       document.getElementById('editedDocument').value = getEditorHtmlPreservingTables();
-
-      // Disable the button and show loading state
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
-
-      // Allow the form to submit normally
     });
-  }
-});
+
     // Enhanced PDF export with proper table rendering
-    async function downloadAsPDF() {
+ async function downloadAsPDF() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({
     unit: 'pt',
@@ -1425,66 +1051,56 @@
   const contentWidth = pageWidth - (2 * margin);
   let y = margin;
 
-  // ---------- Helper: Load image element ----------
-  function loadImageElement(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
-
-  // ---------- Add Logo ----------
-  async function addLogo() {
-    const logo = document.getElementById('pdfLogo');
-    if (!logo || !logo.src) return;
+  // Add logo to top right corner
+  const logo = document.getElementById('pdfLogo');
+  if (logo && logo.src) {
     try {
-      const img = await loadImageElement(logo.src);
-      const logoWidth = 30;
-      const logoHeight = 50;
-      const logoX = pageWidth - margin - logoWidth;
-      const logoY = margin;
-      pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
-    } catch (err) {
-      console.warn('Logo not added:', err);
+      const logoImg = await loadImageForPDF(logo.src);
+      if (logoImg) {
+        const logoWidth = 30;
+        const logoHeight = 50;
+        const logoX = pageWidth - margin - logoWidth;
+        pdf.addImage(logoImg, 'PNG', logoX, margin, logoWidth, logoHeight);
+      }
+    } catch (error) {
+      console.warn('Could not load logo:', error);
     }
   }
 
-  // ---------- Add document header ----------
-  async function addDocumentHeader() {
-    await addLogo();
-    y += 40;
+  // Add document header
+  y += 40;
 
-    const projectNameEl = document.querySelector('p.text-gray-600');
-    const projectName = projectNameEl ? projectNameEl.textContent.trim() : '';
+  const projectName = document.querySelector('p.text-gray-600').textContent;
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(16);
+  pdf.setTextColor(30, 64, 175);
+  pdf.text("Architecture Document", margin, y);
 
-    pdf.setFont("helvetica", "bold");
-    pdf.setFontSize(16);
-    pdf.setTextColor(30, 64, 175);
-    pdf.text("Architecture Document", margin, y);
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(12);
+  pdf.setTextColor(100, 100, 100);
+  pdf.text(projectName, margin, y + 20);
 
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(12);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text(projectName, margin, y + 20);
+  y += 50;
 
-    y += 50;
-  }
+  // Get the HTML content from the editor
+  const htmlContent = getEditorHtmlPreservingTables();
 
-  // ---------- Page break with logo ----------
-  async function checkPageBreak(heightNeeded = 0) {
+  // Create a temporary div to process the content
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = htmlContent;
+
+  // Function to check if we need a page break
+  function checkPageBreak(heightNeeded = 0) {
     if (y + heightNeeded > pageHeight - margin) {
       pdf.addPage();
       y = margin;
-      await addLogo();
       return true;
     }
     return false;
   }
 
-  // ---------- EXACT TEXT FORMATTING FROM FIRST CODE ----------
+  // Function to add text with proper formatting
   function addText(text, fontSize = 12, isBold = false, indent = 0, lineHeight = 1.4, color = [55, 65, 81]) {
     if (!text || text.trim() === '') return;
 
@@ -1498,12 +1114,11 @@
     // Check if we need a page break before adding this text
     checkPageBreak(lines.length * lineSpacing);
 
-    lines.forEach((line, index) => {
+    lines.forEach((line) => {
       // Check if we need a page break for each line
       if (y + lineSpacing > pageHeight - margin) {
         pdf.addPage();
         y = margin;
-        addLogo();
       }
 
       pdf.text(line, margin + indent, y);
@@ -1514,7 +1129,84 @@
     y += 5;
   }
 
-  // ---------- Process tables using jsPDF autotable ----------
+  // Function to load images with better error handling
+  function loadImageForPDF(src) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+
+      img.onload = function() {
+        resolve(img);
+      };
+
+      img.onerror = function() {
+        console.warn('Could not load image:', src);
+        // Create a canvas with placeholder
+        const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 150;
+        const ctx = canvas.getContext('2d');
+
+        // Draw placeholder
+        ctx.fillStyle = '#f3f4f6';
+        ctx.fillRect(0, 0, 200, 150);
+        ctx.strokeStyle = '#d1d5db';
+        ctx.strokeRect(0, 0, 200, 150);
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Image not available', 100, 80);
+
+        const placeholderImg = new Image();
+        placeholderImg.src = canvas.toDataURL();
+        placeholderImg.onload = () => resolve(placeholderImg);
+      };
+
+      // Add timeout for image loading
+      setTimeout(() => {
+        if (!img.complete) {
+          img.onerror();
+        }
+      }, 3000);
+
+      img.src = src;
+    });
+  }
+
+  // Function to add image to PDF
+  async function addImageToPDF(imgSrc, altText = 'Image') {
+    try {
+      const img = await loadImageForPDF(imgSrc);
+      if (!img) return false;
+
+      // Calculate dimensions to fit within content width
+      let imgWidth = img.width;
+      let imgHeight = img.height;
+      const maxWidth = contentWidth - 20;
+
+      if (imgWidth > maxWidth) {
+        const ratio = maxWidth / imgWidth;
+        imgWidth = maxWidth;
+        imgHeight = imgHeight * ratio;
+      }
+
+      // Check if we need a page break for the image
+      checkPageBreak(imgHeight + 30);
+
+      // Add image to PDF
+      pdf.addImage(img, 'JPEG', margin + 10, y, imgWidth, imgHeight);
+      y += imgHeight + 10;
+
+      return true;
+    } catch (error) {
+      console.warn('Error adding image to PDF:', error);
+      // Add placeholder text
+      addText(`[${altText}]`, 10, false);
+      return false;
+    }
+  }
+
+  // Process tables
   function processTable(table) {
     const data = [];
     const headers = [];
@@ -1525,7 +1217,7 @@
       const headerRow = thead.querySelector('tr');
       if (headerRow) {
         Array.from(headerRow.querySelectorAll('th')).forEach(th => {
-          headers.push(th.innerText.trim());
+          headers.push(th.textContent.trim());
         });
         data.push(headers);
       }
@@ -1536,12 +1228,11 @@
     const rows = tbody.querySelectorAll('tr');
 
     Array.from(rows).forEach(row => {
-      // Skip header row if we already processed thead
       if (row.parentElement.tagName === 'THEAD') return;
 
       const rowData = [];
       Array.from(row.querySelectorAll('td, th')).forEach(cell => {
-        rowData.push(cell.innerText.trim());
+        rowData.push(cell.textContent.trim());
       });
       if (rowData.length > 0) {
         data.push(rowData);
@@ -1549,7 +1240,6 @@
     });
 
     if (data.length > 0) {
-      // Calculate table height
       const estimatedTableHeight = (data.length * 20) + 30;
       checkPageBreak(estimatedTableHeight);
 
@@ -1570,20 +1260,16 @@
         alternateRowStyles: {
           fillColor: [250, 250, 250],
         },
-        tableWidth: 'auto',
-        columnStyles: {},
       };
 
-      // If we have headers from thead, use them as proper headers
       if (thead && headers.length > 0) {
-        const bodyData = data.slice(1); // Remove header row from data
+        const bodyData = data.slice(1);
         pdf.autoTable({
           head: [headers],
           body: bodyData,
           ...tableConfig
         });
       } else {
-        // No explicit headers, treat first row as header
         pdf.autoTable({
           head: [data[0]],
           body: data.slice(1),
@@ -1591,213 +1277,178 @@
         });
       }
 
-      // Update y position after table
-      const finalY = pdf.lastAutoTable.finalY || y + estimatedTableHeight;
-      y = finalY + 20;
+      y = pdf.lastAutoTable.finalY + 20;
     }
   }
 
-  // ---------- Process HTML content (PRIMARY METHOD) ----------
-  async function processHTML() {
-    const htmlContent = getEditorHtmlPreservingTables();
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
+  // Process component boxes
+  function processComponentBox(box) {
+    checkPageBreak(30);
+    addText(box.textContent, 11, true, 10);
+  }
 
-    // Process each node in the content - EXACTLY like first code
-    function processNode(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        if (node.textContent.trim()) {
-          // Check if parent is bold
-          const parent = node.parentElement;
-          const isBold = parent && (
-            parent.tagName === 'STRONG' ||
-            parent.tagName === 'B' ||
-            parent.style.fontWeight === 'bold'
-          );
-          addText(node.textContent.trim(), 12, isBold);
-        }
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const tag = node.tagName.toLowerCase();
-        const textContent = node.textContent.trim();
+  // Process architecture diagrams
+  function processArchitectureDiagram(diagram) {
+    checkPageBreak(60);
+    addText("Architecture Diagram", 12, true, 0, 1.4, [100, 100, 100]);
+    y += 20;
+  }
 
-        if (!textContent && tag !== 'table' && tag !== 'div') return;
+  // Helper function to process individual elements
+  async function processElement(element) {
+    const tag = element.tagName.toLowerCase();
 
-        switch(tag) {
-          case "h1":
-            addText(textContent, 18, true, 0, 1.4, [30, 64, 175]);
-            y += 10;
-            break;
+    switch(tag) {
+      case "h1":
+        addText(element.textContent, 18, true, 0, 1.4, [30, 64, 175]);
+        y += 10;
+        break;
 
-          case "h2":
-            addText(textContent, 16, true, 0, 1.4, [120, 10, 255]);
-            y += 8;
-            break;
+      case "h2":
+        addText(element.textContent, 16, true, 0, 1.4, [120, 10, 255]);
+        y += 8;
+        break;
 
-          case "h3":
-            addText(textContent, 14, true, 0, 1.4, [75, 123, 236]);
-            y += 8;
-            break;
+      case "h3":
+        addText(element.textContent, 14, true, 0, 1.4, [75, 123, 236]);
+        y += 8;
+        break;
 
-          case "h4":
-            addText(textContent, 13, true, 0, 1.4, [75, 85, 99]);
-            y += 6;
-            break;
+      case "h4":
+        addText(element.textContent, 13, true, 0, 1.4, [75, 85, 99]);
+        y += 6;
+        break;
 
-          case "p":
+      case "p":
+        // Check for images in paragraph
+        const images = element.getElementsByTagName('img');
+        if (images.length > 0) {
+          for (let img of images) {
+            await addImageToPDF(img.src, img.alt || 'Image');
+          }
+          // Also add text content if any
+          const textContent = element.textContent.trim();
+          if (textContent && textContent !== element.innerText.trim()) {
             addText(textContent, 12, false);
-            break;
+          }
+        } else {
+          addText(element.textContent, 12, false);
+        }
+        break;
 
-          case "li":
-            const isOrdered = node.parentElement && node.parentElement.tagName === 'OL';
-            const prefix = isOrdered ?
-              (Array.from(node.parentElement.children).indexOf(node) + 1) + '. ' : '• ';
-            addText(prefix + textContent, 12, false, 20);
-            break;
+      case "ul":
+      case "ol":
+        y += 8;
+        const listItems = element.getElementsByTagName('li');
+        for (let li of listItems) {
+          const isOrdered = tag === 'ol';
+          const prefix = isOrdered ?
+            (Array.from(listItems).indexOf(li) + 1) + '. ' : '• ';
+          addText(prefix + li.textContent, 12, false, 20);
+        }
+        y += 8;
+        break;
 
-          case "ul":
-          case "ol":
-            y += 8;
-            Array.from(node.children).forEach(child => processNode(child));
-            y += 8;
-            break;
+      case "table":
+        processTable(element);
+        break;
 
-          case "strong":
-          case "b":
-            Array.from(node.childNodes).forEach(child => {
-              if (child.nodeType === Node.TEXT_NODE) {
-                addText(child.textContent.trim(), 12, true);
-              } else {
-                processNode(child);
-              }
-            });
-            break;
+      case "div":
+        if (element.classList.contains('component-box')) {
+          processComponentBox(element);
+        } else if (element.classList.contains('architecture-diagram')) {
+          processArchitectureDiagram(element);
+        } else if (element.classList.contains('ql-table-embed')) {
+          const table = element.querySelector('table');
+          if (table) processTable(table);
+        } else {
+          // Process content of generic divs
+          const children = element.children;
+          for (let i = 0; i < children.length; i++) {
+            await processElement(children[i]);
+          }
+        }
+        break;
 
-          case "table":
-            processTable(node);
-            break;
+      default:
+        // For other elements, just add their text content
+        if (element.textContent && element.textContent.trim()) {
+          addText(element.textContent, 12, false);
+        }
+    }
+  }
 
-          case "div":
-            if (node.classList.contains('component-box')) {
-              processComponentBox(node);
-            } else if (node.classList.contains('architecture-diagram')) {
-              processArchitectureDiagram(node);
-            } else if (node.classList.contains('ql-table-embed')) {
-              // Handle table embed div by processing the table inside
-              const table = node.querySelector('table');
-              if (table) processTable(table);
-            } else {
-              Array.from(node.childNodes).forEach(processNode);
-            }
-            break;
+  // Main processing function - SIMPLIFIED VERSION
+  async function processContent() {
+    const elements = tempDiv.children;
 
-          default:
-            Array.from(node.childNodes).forEach(processNode);
+    // Process direct children first
+    for (let i = 0; i < elements.length; i++) {
+      await processElement(elements[i]);
+    }
+
+    // Process standalone images that might not be in any container
+    const allImages = tempDiv.getElementsByTagName('img');
+    const processedImages = new Set();
+
+    // Find images that aren't inside already processed containers
+    for (let img of allImages) {
+      if (!processedImages.has(img)) {
+        let isInProcessedContainer = false;
+        let parent = img.parentElement;
+
+        // Check if this image is inside an element we already processed
+        while (parent && parent !== tempDiv) {
+          if (['p', 'div', 'li', 'td', 'th'].includes(parent.tagName.toLowerCase())) {
+            isInProcessedContainer = true;
+            break;
+          }
+          parent = parent.parentElement;
+        }
+
+        if (!isInProcessedContainer) {
+          await addImageToPDF(img.src, img.alt || 'Image');
+          processedImages.add(img);
         }
       }
     }
-
-    // Process component boxes
-    function processComponentBox(box) {
-      checkPageBreak(40);
-
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(11);
-      pdf.setTextColor(55, 65, 81);
-
-      const text = pdf.splitTextToSize(box.textContent, contentWidth - 20);
-      pdf.text(text, margin + 10, y + 18);
-
-      y += 40;
-    }
-
-    // Process architecture diagrams
-    function processArchitectureDiagram(diagram) {
-      checkPageBreak(100);
-
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(12);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text("Architecture Diagram", pageWidth / 2, y + 45, { align: 'center' });
-
-      y += 100;
-    }
-
-    // Process all content nodes
-    Array.from(tempDiv.childNodes).forEach(processNode);
   }
 
-  // ---------- Process images from Delta ----------
-  async function processDeltaImages() {
-    if (!window.quill) return;
+  // Disable download button during processing
+  const downloadBtn = document.getElementById('downloadBtn');
+  const originalText = downloadBtn.innerHTML;
+  downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating PDF...';
+  downloadBtn.disabled = true;
 
-    const delta = window.quill.getContents();
-
-    for (const op of delta.ops || []) {
-      if (typeof op.insert === 'object' && op.insert.image) {
-        await addImageFromDelta(op.insert.image);
-      }
-    }
-  }
-
-  // ---------- Add image from Delta ----------
-  async function addImageFromDelta(imageSrc) {
-    if (!imageSrc) return;
-    try {
-      const img = await loadImageElement(imageSrc);
-      const naturalW = img.naturalWidth;
-      const naturalH = img.naturalHeight;
-      const ratio = naturalW / naturalH;
-      let drawW = Math.min(contentWidth, naturalW);
-      let drawH = drawW / ratio;
-
-      if (y + drawH > pageHeight - margin) {
-        await checkPageBreak(drawH);
-      }
-
-      pdf.addImage(img, 'JPEG', margin, y, drawW, drawH);
-      y += drawH + 10;
-    } catch (err) {
-      console.warn('Image skipped:', imageSrc, err);
-      addText('[Image could not be loaded]', 12, false, 0, 1.4, [220, 38, 38]);
-    }
-  }
-
-  // ---------- MAIN EXECUTION ----------
   try {
-    await addDocumentHeader();
-
-    // Use HTML processing for text formatting (like first code)
-    await processHTML();
-
-    // Process images from Delta to preserve them
-    await processDeltaImages();
+    await processContent();
 
     // Save the PDF
     pdf.save("architecture-document.pdf");
-
   } catch (error) {
-    console.error('PDF generation failed:', error);
-    alert('Error generating PDF: ' + error.message);
+    console.error('Error generating PDF:', error);
+    alert('Error generating PDF. Please try again.');
+  } finally {
+    // Re-enable download button
+    downloadBtn.innerHTML = originalText;
+    downloadBtn.disabled = false;
   }
 }
-
     /*********************************
      * Keep cell handlers attached after changes
      *********************************/
     quill.on('text-change', () => {
       // reattach behaviors (handles pasted tables or structural changes)
-      setTimeout(() => {
-        attachCellBehaviorToAllTables();
-        processEnhancedContent();
-      }, 0);
+      setTimeout(() => attachCellBehaviorToAllTables(), 0);
     });
 
-    // If the editor loses focus and no table cell is focused, hide toolbar
+    // If the editor loses focus and no table cell is focused, hide all toolbars
     quill.root.addEventListener('focusout', (ev) => {
       // small timeout to allow focus to transfer to toolbar or other cell
       setTimeout(() => {
         if (!document.activeElement || !document.activeElement.closest || !document.activeElement.closest('.ql-table-embed')) {
-          hideFloatingToolbar();
+          const embeds = quill.root.querySelectorAll('.ql-table-embed');
+          embeds.forEach(embed => hideTableToolbar(embed));
         }
       }, 120);
     });
@@ -1811,13 +1462,9 @@
         if (firstCell) {
           firstCell.focus();
           placeCaretAtEnd(firstCell);
+          showTableToolbar(embed);
         }
       }
-    });
-
-    // Make sure floating toolbar stays positioned if editor scrolls
-    quill.root.addEventListener('scroll', () => {
-      if (currentCell) showFloatingToolbarNearCell(currentCell);
     });
   </script>
 </div>
