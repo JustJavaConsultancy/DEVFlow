@@ -101,7 +101,8 @@ public class ProjectsController {
                     " Here=ID=="+project.getProcessInstanceId()
                     //+" the start time ==="+project.getStartTime()
                     //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
-                    + "\n\n\n\n\n\n\n\n\n\n\n\n\n the artifact===" +project.getProcessVariables().get("artifact")
+                    + "\n\n\n\n\n\n\n\n\n\n\n\n\n the architecture===" +
+                    project.getProcessVariables().get("architecture")
             +"\n\n\n\n\n\n\n\n\n\n\n\n\n");
         });
         List<HistoricProcessInstance> completedProcess =historyService
