@@ -16,7 +16,7 @@
             <label>
                 <pair>
                 <key>service_name</key>
-                <value>springboot-app</value>
+                <value>springboot</value>
               </pair>
               <pair>
                 <key>job</key>
@@ -33,5 +33,6 @@
         <appender-ref ref="LOKI" />
     </root>
 </configuration>
+
 
 
