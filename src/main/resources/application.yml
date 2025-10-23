@@ -121,3 +121,18 @@ management:
     export:
       prometheus:
         enabled: true
+
+
+loki:  
+  url: https://logs-prod-021.grafana.net/loki/api/v1/push  
+  auth:  
+    username: 1348666 
+    password: glc_eyJvIjoiMTU0NzQyOSIsIm4iOiJkZXZmbG93LWxvZ3MtdG9rZW4iLCJrIjoidUYycWU5ZTVPNm1TUTFLYTZNVzY4MjBDIiwibSI6eyJyIjoicHJvZC11cy13ZXN0LTAifX0= 
+  batchSize: 100  
+  batchTimeout: 10s  
+  format:  
+    label:  
+      pattern: "app=springboot,job=devflow,environment=production"  
+      readMarkers: false  
+    message:  
+      pattern: "[%thread] %level %logger{36} - %msg %ex"  
