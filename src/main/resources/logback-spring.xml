@@ -14,7 +14,14 @@
 
         <format>
             <label>
-                <pattern>job=devflow,app=springboot,host=${HOSTNAME},level=%level</pattern>
+                <pair>
+                <key>service_name</key>
+                <value>springboot-app</value>
+              </pair>
+              <pair>
+                <key>job</key>
+                <value>devflow</value>
+              </pair>
             </label>
             <message>
                 <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -26,4 +33,5 @@
         <appender-ref ref="LOKI" />
     </root>
 </configuration>
+
 
