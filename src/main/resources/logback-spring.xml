@@ -1,24 +1,16 @@
 <configuration>
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-       
-        <https>
-            <url>https://logs-prod-021.grafana.net/loki/api/v1/push</url>
-            <basicAuth>
-                <user>1348666</user>  
+        <url>https://logs-prod-021.grafana.net/loki/api/v1/push</url>
+        <http>
+            <auth>
+                <username>1348666</username>  
                 <password>glc_eyJvIjoiMTU0NzQyOSIsIm4iOiJkZXZmbG93LWxvZ3MtdG9rZW4iLCJrIjoidUYycWU5ZTVPNm1TUTFLYTZNVzY4MjBDIiwibSI6eyJyIjoicHJvZC11cy13ZXN0LTAifX0=</password> 
-            </basicAuth>
-        </https>
+            </auth>
+        </http>
 
         <format>
             <label>
-                <pair>
-                <key>app</key>
-                <value>springboot</value>
-              </pair>
-              <pair>
-                <key>job</key>
-                <value>devflow</value>
-              </pair>
+                <pattern>job=devflow,app=springboot,host=${HOSTNAME},level=%level</pattern>
             </label>
             <message>
                 <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -30,7 +22,3 @@
         <appender-ref ref="LOKI" />
     </root>
 </configuration>
-
-
-
-
