@@ -1,4 +1,4 @@
-<configuration>  
+<configuration debug="true">  
     
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">  
         <url>https://logs-prod-021.grafana.net/loki/api/v1/push</url>  
