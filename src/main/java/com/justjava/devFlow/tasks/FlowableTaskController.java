@@ -121,6 +121,9 @@ public class FlowableTaskController {
             case "formtask_4":
                 currentTask = "tasks/UAT";
                 break;
+            case "formtask_105":
+                currentTask = "tasks/viewBPMNDiagram";
+                break;
             default:
                 currentTask = "tasks/default";
                 break;
