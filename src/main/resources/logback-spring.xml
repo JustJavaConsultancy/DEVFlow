@@ -1,6 +1,3 @@
-
-
-<?xml version="1.0" encoding="UTF-8"?>  
 <configuration>  
     
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">  
@@ -33,4 +30,5 @@
     </root>  
     
 </configuration>  
+
 
