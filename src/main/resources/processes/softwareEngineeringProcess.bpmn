@@ -48,7 +48,7 @@ inputCss: form-input w-full px-4 py-3 rounded-lg border pr-12</documentation>
       <flowable:processInstanceBusinessKey><![CDATA[${projectId}]]></flowable:processInstanceBusinessKey>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
       <design:creationdate><![CDATA[2025-10-22T14:24:10.353Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2025-10-23T04:58:32.574Z]]></design:modificationdate>
+      <design:modificationdate><![CDATA[2025-10-24T16:44:40.478Z]]></design:modificationdate>
     </extensionElements>
     <userTask id="FormTask_43" name="Review User Stories List" flowable:assignee="${initiator}" flowable:formFieldValidation="false">
       <extensionElements>
@@ -450,19 +450,19 @@ try {
     throw error;
 }]]></script>
     </scriptTask>
-    <serviceTask id="HttpTask_83" name="Generate BPMN for the Project" flowable:parallelInSameTransaction="false" flowable:type="http">
+    <serviceTask id="HttpTask_83" name="Generate Project Layout with Thymeleaf" flowable:parallelInSameTransaction="false" flowable:type="http">
       <extensionElements>
         <flowable:field name="requestMethod">
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestUrl">
-          <flowable:expression><![CDATA[${env.get('app.ai.url')}/generateBPMN/${projectName}]]></flowable:expression>
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/generateProject/${projectName}]]></flowable:expression>
         </flowable:field>
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
         </flowable:field>
         <flowable:field name="requestBody">
-          <flowable:expression><![CDATA[${requirement}]]></flowable:expression>
+          <flowable:expression><![CDATA[${bpmnDefinition}]]></flowable:expression>
         </flowable:field>
         <flowable:field name="requestTimeout">
           <flowable:string><![CDATA[5000000]]></flowable:string>
@@ -618,6 +618,54 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </userTask>
+    <serviceTask id="ServiceTask_105" name="Generate BPMN Diagram" flowable:delegateExpression="${generateBPMNDiagram}">
+      <extensionElements>
+        <design:stencilid><![CDATA[ServiceTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="HttpTask_105" name="Generate BPMN Definition for the Project" flowable:parallelInSameTransaction="false" flowable:type="http">
+      <extensionElements>
+        <flowable:field name="requestMethod">
+          <flowable:string><![CDATA[POST]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestUrl">
+          <flowable:expression><![CDATA[${env.get('app.ai.url')}/generateBPMNDefinition/${projectName}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestHeaders">
+          <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="requestBody">
+          <flowable:expression><![CDATA[${requirement}]]></flowable:expression>
+        </flowable:field>
+        <flowable:field name="requestTimeout">
+          <flowable:string><![CDATA[5000000]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="disallowRedirects">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="responseVariableName">
+          <flowable:string><![CDATA[bpmnDefinition]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="ignoreException">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveRequestVariables">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParameters">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseParametersTransient">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <flowable:field name="saveResponseVariableAsJson">
+          <flowable:string><![CDATA[false]]></flowable:string>
+        </flowable:field>
+        <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
     <serviceTask id="HttpTask_11" name="Analyze the Requirement" flowable:parallelInSameTransaction="false" flowable:type="http">
       <extensionElements>
         <flowable:field name="requestMethod">
@@ -657,12 +705,6 @@ execution.setVariable("storiesOnly", stories);]]></script>
           <flowable:string><![CDATA[false]]></flowable:string>
         </flowable:field>
         <design:stencilid><![CDATA[HttpTask]]></design:stencilid>
-        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
-      </extensionElements>
-    </serviceTask>
-    <serviceTask id="ServiceTask_105" name="Service task" flowable:delegateExpression="${generateBPMNDiagram}">
-      <extensionElements>
-        <design:stencilid><![CDATA[ServiceTask]]></design:stencilid>
         <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
       </extensionElements>
     </serviceTask>
@@ -807,7 +849,7 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_109" sourceRef="HttpTask_83" targetRef="ServiceTask_105">
+    <sequenceFlow id="SequenceFlow_111" sourceRef="HttpTask_83" targetRef="EndNoneEvent_86">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
@@ -840,7 +882,7 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_102" sourceRef="ScriptTask_99" targetRef="HttpTask_83">
+    <sequenceFlow id="SequenceFlow_102" sourceRef="ScriptTask_99" targetRef="HttpTask_105">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
@@ -860,17 +902,22 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_108" sourceRef="FormTask_105" targetRef="EndNoneEvent_86">
-      <extensionElements>
-        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
-      </extensionElements>
-    </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_49" sourceRef="HttpTask_11" targetRef="Exclusive_Databased_Gateway_44">
+    <sequenceFlow id="SequenceFlow_108" sourceRef="FormTask_105" targetRef="HttpTask_83">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_98" sourceRef="ServiceTask_105" targetRef="FormTask_105">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_110" sourceRef="HttpTask_105" targetRef="ServiceTask_105">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_49" sourceRef="HttpTask_11" targetRef="Exclusive_Databased_Gateway_44">
       <extensionElements>
         <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
       </extensionElements>
@@ -1030,7 +1077,7 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <omgdc:Bounds height="80.0" width="100.0" x="7261.99787033768" y="43.939171810699634"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="HttpTask_83" id="BPMNShape_HttpTask_83">
-        <omgdc:Bounds height="80.0" width="100.0" x="2156.945893497943" y="43.939171810699634"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="2687.945893497943" y="43.939171810699634"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ScriptTask_86" id="BPMNShape_ScriptTask_86">
         <omgdc:Bounds height="80.0" width="100.0" x="2192.341563786008" y="349.93917181069963"></omgdc:Bounds>
@@ -1048,7 +1095,7 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <omgdc:Bounds height="80.0" width="100.0" x="6477.727709190672" y="441.9391718106997"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ScriptTask_99" id="BPMNShape_ScriptTask_99">
-        <omgdc:Bounds height="80.0" width="100.0" x="1868.097222222221" y="43.939171810699634"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="1730.9161522633733" y="43.939171810699634"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="ScriptTask_103" id="BPMNShape_ScriptTask_103">
         <omgdc:Bounds height="80.0" width="100.0" x="1730.9161522633733" y="236.0"></omgdc:Bounds>
@@ -1060,18 +1107,21 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <omgdc:Bounds height="80.0" width="100.0" x="4376.4909979423865" y="236.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="FormTask_105" id="BPMNShape_FormTask_105">
-        <omgdc:Bounds height="80.0" width="100.0" x="2663.421563786009" y="43.939171810699634"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="2444.421563786009" y="43.939171810699634"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ServiceTask_105" id="BPMNShape_ServiceTask_105">
+        <omgdc:Bounds height="80.0" width="100.0" x="2177.0" y="43.939171810699634"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="HttpTask_105" id="BPMNShape_HttpTask_105">
+        <omgdc:Bounds height="80.0" width="100.0" x="1931.945893497943" y="43.939171810699634"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="HttpTask_11" id="BPMNShape_HttpTask_11">
         <omgdc:Bounds height="80.0" width="99.99999999999977" x="1984.3415637860082" y="236.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="ServiceTask_105" id="BPMNShape_ServiceTask_105">
-        <omgdc:Bounds height="80.0" width="100.0" x="2388.0" y="43.939171810699634"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="Exclusive_Databased_Gateway_3" id="BPMNShape_Exclusive_Databased_Gateway_3">
         <omgdc:Bounds height="40.0" width="40.0" x="7782.08471833768" y="256.0"></omgdc:Bounds>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="18.0" width="108.0" x="7747.0" y="300.0"></omgdc:Bounds>
+          <omgdc:Bounds height="18.0" width="108.0" x="7748.08471833768" y="300.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="Exclusive_Databased_Gateway_4" id="BPMNShape_Exclusive_Databased_Gateway_4">
@@ -1174,13 +1224,11 @@ execution.setVariable("storiesOnly", stories);]]></script>
           <omgdc:Bounds height="18.0" width="80.0" x="8368.0" y="255.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_109" id="BPMNEdge_SequenceFlow_109" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="2256.945893497943" y="83.93917181069963"></omgdi:waypoint>
-        <omgdi:waypoint x="2388.0" y="83.93917181069963"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_108" id="BPMNEdge_SequenceFlow_108" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
-        <omgdi:waypoint x="2763.421563786009" y="83.93917181069963"></omgdi:waypoint>
-        <omgdi:waypoint x="2916.341563786008" y="83.93917181069963"></omgdi:waypoint>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_108" id="BPMNEdge_SequenceFlow_108" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="2544.421563786009" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2616.183728641976" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2616.183728641976" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2687.945893497943" y="83.93917181069963"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_107" id="BPMNEdge_SequenceFlow_107" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="4931.0" y="276.0"></omgdi:waypoint>
@@ -1191,13 +1239,13 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <omgdi:waypoint x="5598.0" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_102" id="BPMNEdge_SequenceFlow_102" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="1968.0" y="83.0"></omgdi:waypoint>
-        <omgdi:waypoint x="2156.0" y="83.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1830.9161522633733" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="1931.945893497943" y="83.93917181069963"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_101" id="BPMNEdge_SequenceFlow_101" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="1566.0" y="256.0"></omgdi:waypoint>
         <omgdi:waypoint x="1566.0" y="83.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1868.0" y="83.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1730.8189300411523" y="83.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_20" id="BPMNEdge_SequenceFlow_20" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="20.0" flowable:targetDockerY="20.0">
         <omgdi:waypoint x="3743.0" y="276.0"></omgdi:waypoint>
@@ -1289,14 +1337,22 @@ execution.setVariable("storiesOnly", stories);]]></script>
         <omgdi:waypoint x="6161.0" y="276.0"></omgdi:waypoint>
         <omgdi:waypoint x="6406.0" y="276.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_111" id="BPMNEdge_SequenceFlow_111" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="2787.945893497943" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2916.341563786008" y="83.93917181069963"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_97" id="BPMNEdge_SequenceFlow_97" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="5045.0" y="131.0"></omgdi:waypoint>
         <omgdi:waypoint x="4236.0" y="131.0"></omgdi:waypoint>
         <omgdi:waypoint x="4236.0" y="236.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_98" id="BPMNEdge_SequenceFlow_98" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="2488.0" y="83.93917181069963"></omgdi:waypoint>
-        <omgdi:waypoint x="2663.421563786009" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2277.0" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2444.421563786009" y="83.93917181069963"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_110" id="BPMNEdge_SequenceFlow_110" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="2031.945893497943" y="83.93917181069963"></omgdi:waypoint>
+        <omgdi:waypoint x="2177.0" y="83.93917181069963"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_92" id="BPMNEdge_SequenceFlow_92" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="2242.0" y="429.0"></omgdi:waypoint>
