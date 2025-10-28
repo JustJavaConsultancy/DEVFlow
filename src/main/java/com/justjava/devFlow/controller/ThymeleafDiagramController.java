@@ -48,7 +48,7 @@ public class ThymeleafDiagramController {
     @ResponseBody
     public String generateDiagramHtmx(@RequestParam("plantUmlSource") String plantUmlSource) {
         try {
-            System.out.println("The plantUmlSource==" + plantUmlSource);
+            //System.out.println("The plantUmlSource==" + plantUmlSource);
 
             // Use the enhanced fallback method that auto-corrects if needed
             byte[] pngData = plantUmlService.generatePngWithFallback(plantUmlSource);

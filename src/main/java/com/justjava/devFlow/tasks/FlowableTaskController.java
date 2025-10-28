@@ -62,9 +62,9 @@ public class FlowableTaskController {
                 .orderByTaskCreateTime().desc()
                 .list();
 
-        tasks.forEach(task -> {
+/*        tasks.forEach(task -> {
             //System.out.println(" The task process variables here==="+task.getProcessVariables());
-        });
+        });*/
         model.addAttribute("tasks", tasks);
         //model.addAttribute("userId", userId);
         return "task/task-list";

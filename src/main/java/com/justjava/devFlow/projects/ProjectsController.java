@@ -96,7 +96,7 @@ public class ProjectsController {
                 .includeProcessVariables()
                 .active()
                 .list();
-        projects.forEach(project -> {
+/*        projects.forEach(project -> {
             System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
                     //+" the start time ==="+project.getStartTime()
@@ -104,14 +104,15 @@ public class ProjectsController {
                     + "\n\n\n\n\n\n\n\n\n\n\n\n\n the architecture===" +
                     project.getProcessVariables().get("architecture")
             +"\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        });
+        });*/
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
                 .finished()
                 .orderByProcessInstanceEndTime()
                 .desc()
                 .list();
-        List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+        List<HistoricTaskInstance> historicTasks = historyService
+                .createHistoricTaskInstanceQuery()
                 .finished()
                 .orderByTaskCreateTime().desc()
                 .list();
