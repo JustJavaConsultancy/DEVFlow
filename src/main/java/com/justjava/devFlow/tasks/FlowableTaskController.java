@@ -87,8 +87,8 @@ public class FlowableTaskController {
     @GetMapping("/view/{taskId}")
     public String viewTaskForm(@PathVariable String taskId, Model model) {
 
-        System.out.println("The task id here inside viewTaskForm ==="+taskId);
-        System.out.println();
+        //System.out.println("The task id here inside viewTaskForm ==="+taskId);
+        //System.out.println();
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 
         if (task == null) {

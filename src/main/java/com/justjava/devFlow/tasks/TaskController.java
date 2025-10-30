@@ -35,42 +35,53 @@ public class TaskController {
     @Autowired
     private HistoryService historyService;
     @GetMapping("/tasks/{projectId}")
-    public String getTasks(@PathVariable  String projectId, Model model){
+    public String getTasks(@PathVariable String projectId, Model model) {
 
-        ProcessInstance project=runtimeService
+        System.out.println(" The project id in getTasks is " + projectId);
+        // 1. First verify the process instance exists without loading variables
+        boolean processInstanceExists = runtimeService
                 .createProcessInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
-                .singleResult();
+                .count() > 0;
 
+        if (!processInstanceExists) {
+            // Handle case where process instance doesn't exist
+            model.addAttribute("error", "Project not found");
+            return "tasks/projectTasks";
+        }
+
+        // 2. Fetch only necessary task data without process variables initially
         List<Task> tasks = taskService
                 .createTaskQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
                 .active()
-                .orderByTaskCreateTime().desc()
-                .list();
-        List<HistoricTaskInstance> historicTasks = new ArrayList<>();
-/*        List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
+                .orderByTaskCreateTime()
+                .desc()
+                .listPage(0, 100); // Limit results
+
+        // 3. For historic tasks, fetch only what you need for display
+        List<HistoricTaskInstance> historicTasks = historyService
+                .createHistoricTaskInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
                 .finished()
-                .orderByTaskCreateTime().desc()
-                .list();*/
-/*        historicTasks.forEach(task -> {
-           *//* System.out.println(" The task process variables here=== "+task.getProcessVariables() +
-                    " The Task State ==== "+task.getState()+
-                    " task ID==="+  task.getId()+
-                    " the task kept variable==="+runtimeService.getVariables(task.getExecutionId(),List.of(task.getId())).get(task.getId())+
-                    " This is the task name === "+task.getName()+ " project descriptiontask creation date" +
-                            " == " + task.getCreateTime()
-                    );*//*
-        });*/
+                .orderByTaskCreateTime()
+                .desc()
+                .listPage(0, 100); // Limit results
+
+        // 4. Lazy load process variables only for the current process instance if needed
+        // and only for specific tasks that require them
+        Map<String, Object> processVariables = Collections.emptyMap();
+        if (!tasks.isEmpty() || !historicTasks.isEmpty()) {
+            processVariables = runtimeService.getVariables(projectId);
+        }
+
         model.addAttribute("tasks", tasks);
-        model.addAttribute("completedTasks",historicTasks);
-        //model.addAttribute("userId", userId);
+        model.addAttribute("completedTasks", historicTasks);
+        model.addAttribute("processVariables", processVariables);
+
         return "tasks/projectTasks";
     }
+
     @GetMapping("/tasks/skip-confirm/{taskId}")
     public String getSkipConfirmation(@PathVariable String taskId, Model model) {
         try {
