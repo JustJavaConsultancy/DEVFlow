@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/DEVFlow}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/DEVFlow}
     username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
+    password: ${JDBC_DATABASE_PASSWORD:1234}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -36,13 +36,13 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI:https://ngcloak.onrender.com/realms/softwareEngineer}
+            issuer-uri: ${ISSUER_URI:https://ngcloak-production.up.railway.app/realms/softwareEngineer}
 
         registration:
           keycloak:
             provider: keycloak
             client_id: ${KEYCLOAK_CLIENT_ID:softwareEngineer}
-            client_secret: ${KEYCLOAK_CLIENT_SECRET:rJuSSQDWuFvATo2pNlAlj0pTVJAbBNPo}
+            client_secret: ${KEYCLOAK_CLIENT_SECRET:A6OJDqKisKUOfFI1FDVAa4KeqnjCOzcb}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
   application:
@@ -76,9 +76,9 @@ flowable:
 springdoc:
   pathsToMatch: /api/**
 keycloak:
-  base-url: ${KEYCLOAK_BASE_URI:https://ngcloak.onrender.com}
+  base-url: ${KEYCLOAK_BASE_URI:https://ngcloak-production.up.railway.app}
   client-id: ${KEYCLOAK_CLIENT_ID:softwareEngineer}
-  client-secret: ${KEYCLOAK_CLIENT_SECRET:rJuSSQDWuFvATo2pNlAlj0pTVJAbBNPo}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:A6OJDqKisKUOfFI1FDVAa4KeqnjCOzcb}
   grant_type: ${KEYCLOAK_GRANT_TYPE:client_credentials}
 
 sendgrid:
@@ -89,13 +89,13 @@ sendgrid:
 app:
   processKey: "softwareEngineeringProcess"
   github:
-    username: ${APP_GITHUB_USERNAME:akinrindejsj}
+    username: ${APP_GITHUB_USERNAME:JustJavaConsultancy}
     token: ${APP_GITHUB_TOKEN}
   ai:
     url: ${APP_AI_URL:http://localhost:9012}
   base-url: ${APP_BASE_URL:http://localhost:9022}
 message:
-  paymentGateway-routing-key: ${PAYMENT_GATEWAY_ROUTING_KEY:}
+  paymentGateway-routing-key: ${PAYMENT_GATEWAY_ROUTING_KEY}
 logging:
   level:
     feign: DEBUG
