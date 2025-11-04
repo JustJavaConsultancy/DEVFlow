@@ -298,7 +298,6 @@ public class ProjectsController {
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
 
-//        System.out.println("This is the invite Details" + inviteDetails);
         String businessKey = String.valueOf(authenticationManager.get("sub"));
         String email = (String) inviteDetails.get("email");
         String password = "1234";
@@ -315,6 +314,7 @@ public class ProjectsController {
 
         try {
             List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
+
             if (userByEmail.isEmpty()){
                 keycloakService.createUser(params);
                 subject = "Invite Message from JustJava";
@@ -358,6 +358,7 @@ public class ProjectsController {
                 return "redirect:/project-details/" + projectId;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 //            return "<div class='error-message'>" +
 //                    "<i class='fas fa-exclamation-circle mr-2'></i>" +
