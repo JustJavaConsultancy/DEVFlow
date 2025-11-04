@@ -446,13 +446,8 @@
 
       <!-- Updated form with HTMX -->
       <div class="w-full md:w-2/3">
-        <form id="inviteForm"
-              class="flex flex-col sm:flex-row w-full"
-              hx-post="/project/invite"
-              hx-target="#invite-result"
-              hx-swap="innerHTML"
-              hx-trigger="submit"
-              hx-indicator="#invite-spinner">
+        <form id="inviteForm" th:action="@{~/project/invite}" method="post"
+              class="flex flex-col sm:flex-row w-full">
           <div class="flex-1 mb-2 sm:mb-0 sm:mr-2 relative">
             <div class="input-wrapper">
               <input
@@ -467,7 +462,7 @@
             </div>
             <input type="hidden" name="projectId" th:value="${projectId}" />
             <!-- CSRF Token -->
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
           </div>
           <button id="sendInviteBtn"
                   class="invite-btn font-medium py-2 px-6 rounded-lg flex

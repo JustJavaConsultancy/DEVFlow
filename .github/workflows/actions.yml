@@ -78,7 +78,7 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
-          RAILWAY_SERVICE_ID: Devflow-Prod
+          RAILWAY_SERVICE_ID: Devflow-master
         run: |
           echo "Deploying Dev with image: $IMAGE_REF"
           railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
@@ -90,7 +90,7 @@ jobs:
     if: github.ref == 'refs/heads/prod'
     environment:
       name: production # requires manual approval in GitHub settings
-      url: https://devflow-prod-production.up.railway.app
+      url: https://devflow-2-production.up.railway.app
     steps:
       - name: Install Railway CLI
         run: npm install -g @railway/cli@latest
@@ -99,7 +99,7 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
-          RAILWAY_SERVICE_ID: Devflow-2
+          RAILWAY_SERVICE_ID: Devflow-prod
         run: |
           echo "Deploying Prod with image: $IMAGE_REF"
           railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID

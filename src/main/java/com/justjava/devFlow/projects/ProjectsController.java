@@ -293,7 +293,7 @@ public class ProjectsController {
     }
 
     @PostMapping("/project/invite")
-    @ResponseBody
+//    @ResponseBody
     public String inviteTeamMember(@RequestParam Map<String,Object> inviteDetails,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
@@ -314,6 +314,7 @@ public class ProjectsController {
 
         try {
             List<Map<String, Object>> userByEmail = keycloakService.getUsersByEmail(email);
+
             if (userByEmail.isEmpty()){
                 keycloakService.createUser(params);
                 subject = "Invite Message from JustJava";
@@ -337,10 +338,11 @@ public class ProjectsController {
             // Check if email has already been invited
             if (invitedEmails.contains(email)) {
                 sendGridService.sendTemplateEmail(email, subject, password, webUrl);
-                return "<div class='success-message'>" +
-                        "<i class='fas fa-check-circle mr-2'></i>" +
-                        "Invitation sent successfully to " + email + " (already invited)" +
-                        "</div>";
+//                return "<div class='success-message'>" +
+//                        "<i class='fas fa-check-circle mr-2'></i>" +
+//                        "Invitation sent successfully to " + email + " (already invited)" +
+//                        "</div>";
+                return "redirect:/project-details/" + projectId;
             } else {
                 // Add the new email to the list
                 invitedEmails.add(email);
@@ -349,17 +351,20 @@ public class ProjectsController {
                 runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
                 sendGridService.sendTemplateEmail(email, subject, password, webUrl);
 
-                return "<div class='success-message'>" +
-                        "<i class='fas fa-check-circle mr-2'></i>" +
-                        "Invitation sent successfully to " + email +
-                        "</div>";
+//                return "<div class='success-message'>" +
+//                        "<i class='fas fa-check-circle mr-2'></i>" +
+//                        "Invitation sent successfully to " + email +
+//                        "</div>";
+                return "redirect:/project-details/" + projectId;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return "<div class='error-message'>" +
-                    "<i class='fas fa-exclamation-circle mr-2'></i>" +
-                    "Failed to send invitation: " + e.getMessage() +
-                    "</div>";
+//            return "<div class='error-message'>" +
+//                    "<i class='fas fa-exclamation-circle mr-2'></i>" +
+//                    "Failed to send invitation: " + e.getMessage() +
+//                    "</div>";
+            return "redirect:/project-details/" + projectId;
         }
     }
     @PostMapping("/client/project/invite")
