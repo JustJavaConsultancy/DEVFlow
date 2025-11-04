@@ -51,27 +51,30 @@
       width: 100%;
       height: 100%;
       border: 1px solid #ccc;
-      overflow: hidden;
+      overflow: auto;
       margin: 40px auto;
       background-color: #f8f8f8;
     }
 
-    /* Image wrapper */
-    .zoom-container img {
+    .zoom-wrapper {
+      width: 100%;
+      height: 400px;
+      display: block;
+      transform-origin: top left;
+    }
+
+    .zoom-wrapper img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      transition: transform 0.3s ease;
-      transform-origin: center center;
     }
 
     /* Control buttons container */
     .zoom-controls {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
       display: flex;
       gap: 6px;
+      margin: 10px 0px;
+      justify-content: flex-end;
     }
 
     /* Buttons */
@@ -117,11 +120,14 @@
       <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
       <div class="zoom-container">
-        <img id="zoomImage" style="height:450px;" th:src="'data:image/png;base64,' + ${processVariables.processDiagramBase64}">
-        <div class="zoom-controls">
-          <button id="zoomIn">+</button>
-          <button id="zoomOut">−</button>
+        <div class="zoom-wrapper" id="zoomWrapper">
+          <img id="zoomImage" th:src="'data:image/png;base64,' + ${processVariables.processDiagramBase64}"
+          alt="Flowable Image">
         </div>
+      </div>
+      <div class="zoom-controls">
+        <button type="button" id="zoomIn">+</button>
+        <button type="button" id="zoomOut">−</button>
       </div>
 
       <div class="flex justify-end space-x-3 pt-4">
@@ -132,7 +138,7 @@
     </form>
   </div>
   <script>
-    const image = document.getElementById('zoomImage');
+    const zoomWrapper = document.getElementById('zoomWrapper');
     const zoomInBtn = document.getElementById('zoomIn');
     const zoomOutBtn = document.getElementById('zoomOut');
 
@@ -144,14 +150,14 @@
     zoomInBtn.addEventListener('click', () => {
       if (scale < MAX_SCALE) {
         scale += ZOOM_STEP;
-        image.style.transform = `scale(${scale})`;
+        zoomWrapper.style.transform = `scale(${scale})`;
       }
     });
 
     zoomOutBtn.addEventListener('click', () => {
       if (scale > MIN_SCALE) {
         scale -= ZOOM_STEP;
-        image.style.transform = `scale(${scale})`;
+        zoomWrapper.style.transform = `scale(${scale})`;
       }
     });
   </script>
