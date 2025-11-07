@@ -84,7 +84,7 @@ keycloak:
 sendgrid:
   api-key: ${SENDGRID_API_KEY}
   from-email: ${SENDGRID_FROM_EMAIL:ooreoluwaibitowa@gmail.com}
-  template-id: ${SENDGRID_TEMPLATE_ID:d-c0d9e670f2eb404b9a0f0f804fb8eff7}
+  template-id: ${SENDGRID_TEMPLATE_ID:d-94160df1d3224c95b032a4f187c6aa30}
 
 app:
   processKey: "softwareEngineeringProcess"
