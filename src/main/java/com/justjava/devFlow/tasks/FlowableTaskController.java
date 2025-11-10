@@ -121,6 +121,9 @@ public class FlowableTaskController {
             case "formtask_4":
                 currentTask = "tasks/UAT";
                 break;
+            case "formtask_110":
+                currentTask = "tasks/editBPMNDiagram";
+                break;
             case "formtask_105":
                 currentTask = "tasks/viewBPMNDiagram";
                 break;
@@ -135,9 +138,9 @@ public class FlowableTaskController {
         // Load process variables
         Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId(),List.of(taskId));
 
-/*        System.out.println(" The Task Id==="+task.getId()+"\n\n\n\n\n\n\n\n " + " The whole process variables===="+
+        System.out.println(" The Task Id==="+task.getId()+"\n\n\n\n\n\n\n\n " + " The whole process variables===="+
                 runtimeService.getVariables(task.getExecutionId()));
-        System.out.println("This is the process variable== " + processVariables);*/
+        System.out.println("This is the process variable== " + processVariables);
 
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
