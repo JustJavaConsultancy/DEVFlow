@@ -41,8 +41,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Unit Tests
-        run: mvn -B test -DskipTests
+      # - name: Run Unit Tests
+      #   run: mvn -B test -DskipTests
 
       - name: Run Integration Tests
         # Failsafe plugin runs integration tests, Surefire runs unit tests
