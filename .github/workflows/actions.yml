@@ -87,7 +87,7 @@ jobs:
 
       - name: Push Docker image
         run: |
-          IMAGE_REF="kazeemakinrinde/devflow:${{ github.sha }}"
+          IMAGE_REF="kazeemakinrinde/devflow:latest"
           echo "IMAGE_REF=$IMAGE_REF" >> $GITHUB_ENV
           echo "Updating service image to: $IMAGE_REF"
 
