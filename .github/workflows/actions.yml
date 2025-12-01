@@ -87,7 +87,7 @@ jobs:
 
       - name: Push Docker image
         run: |
-          IMAGE_REF="kazeemakinrinde/devflow:${{ github.sha }}"
+          IMAGE_REF="kazeemakinrinde/devflow:latest"
           echo "IMAGE_REF=$IMAGE_REF" >> $GITHUB_ENV
           echo "Updating service image to: $IMAGE_REF"
 
@@ -147,6 +147,7 @@ jobs:
         run: |
           echo "Deploying Prod with image: $IMAGE_REF"
           railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
+
 
 
 
