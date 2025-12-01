@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/DEVFlow}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/railway_devFlow}
     username: ${JDBC_DATABASE_USERNAME:postgres}
     password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
     hikari:

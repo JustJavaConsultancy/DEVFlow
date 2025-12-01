@@ -1,14 +1,11 @@
 package com.justjava.devFlow.tasks;
 
-import com.justjava.devFlow.delegate.WriteGeneratedArtifactsDelegate;
 import com.justjava.devFlow.util.ArtifactFileExtractor;
 import com.justjava.devFlow.util.CodeDetailsExtractor;
 import com.justjava.devFlow.util.SpringBootProjectGitHubService;
-import ognl.ObjectElementsAccessor;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.HistoryService;
-import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,36 +93,76 @@ public class FlowableTaskController {
         }
 
         String currentTask;
+        Map<String, Object> processVariables = new HashMap<>();
         switch (task.getTaskDefinitionKey().toLowerCase()) {
             case "requirement_elicitation":
                 currentTask = "tasks/requirement";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("requirement","projectName","projectDescription","clientName","dueDate"));
                 break;
             case "formtask_12":
                 currentTask = "tasks/reviewSrs";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("aiRequirementAnalysis","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             case "formtask_43":
                 currentTask = "tasks/reviewUserStories";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("stories","projectName","projectDescription","clientName","dueDate"));
                 break;
             case "formtask_11":
                 currentTask = "tasks/reviewSolutionArchitecture";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("architecture","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             case "formtask_104":
                 currentTask = "tasks/reviewProjectPlan";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("plans","projectName","projectDescription","clientName","dueDate"));
                 break;
             case "formtask_51":
                 currentTask = "tasks/reviewLayoutCode";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("artifact","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             case "formtask_1":
                 currentTask = "tasks/codeReview";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("storyDevelopmentDetail","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             case "formtask_4":
                 currentTask = "tasks/UAT";
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("stories","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             case "formtask_110":
                 currentTask = "tasks/editBPMNDiagram";
+
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("bpmnDefinition","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             case "formtask_105":
                 currentTask = "tasks/viewBPMNDiagram";
+
+                processVariables= runtimeService
+                        .getVariables(task.getProcessInstanceId(),
+                                List.of("processDiagramBase64","projectName","projectDescription","clientName","dueDate"));
+
                 break;
             default:
                 currentTask = "tasks/default";
@@ -133,19 +170,19 @@ public class FlowableTaskController {
         }
 
         // Load task variables
-        Map<String, Object> taskVariables = taskService.getVariables(taskId);
+        //Map<String, Object> taskVariables = taskService.getVariables(taskId);
 
         // Load process variables
-        Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId(),List.of(taskId));
+        //Map<String, Object> processVariables = runtimeService.getVariables(task.getProcessInstanceId(),List.of(taskId));
 
-        System.out.println(" The Task Id==="+task.getId()+"\n\n\n\n\n\n\n\n " + " The whole process variables===="+
-                runtimeService.getVariables(task.getExecutionId()));
-        System.out.println("This is the process variable== " + processVariables);
+/*        System.out.println(" The Task Id==="+task.getId()+"\n\n\n\n\n\n\n\n " + " The whole process variables===="+
+                runtimeService.getVariables(task.getExecutionId()));*/
+        //System.out.println("This is the process variable== " + processVariables);
 
         model.addAttribute("task", task);
         model.addAttribute("taskId",taskId);
-        model.addAttribute("taskVariables", taskVariables);
-        model.addAttribute("processVariables", runtimeService.getVariables(task.getExecutionId()));
+        //model.addAttribute("taskVariables", taskVariables);
+        model.addAttribute("processVariables", processVariables);
         model.addAttribute("isCompleted", false);
         return currentTask;
     }
@@ -204,17 +241,17 @@ public class FlowableTaskController {
                 .getProcessVariables();
 
         // Load task variables from HISTORY
-        Map<String, Object> taskVariables = historyService
+/*        Map<String, Object> taskVariables = historyService
                 .createHistoricTaskInstanceQuery()
                 .taskId(taskId)
                 .includeTaskLocalVariables()
                 .singleResult()
-                .getTaskLocalVariables();
+                .getTaskLocalVariables();*/
 
         model.addAttribute("task", task);
         model.addAttribute("taskId", taskId);
         model.addAttribute("processVariables", processVariables);
-        model.addAttribute("taskVariables", taskVariables); // Add this if you need task variables
+        //model.addAttribute("taskVariables", taskVariables); // Add this if you need task variables
         model.addAttribute("isCompleted", true);
 
         return currentTask;

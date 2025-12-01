@@ -38,7 +38,8 @@ public class SecurityConfig {
         log.debug("Configuring security with CSRF enabled");
 
         // Use CookieCsrfTokenRepository for better HTMX compatibility
-        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository
+                .withHttpOnlyFalse();
 
         // Modern CSRF handler that works with HTMX
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
@@ -64,7 +65,8 @@ public class SecurityConfig {
                                 new MvcRequestMatcher(introspector, "/static/**"),
                                 new MvcRequestMatcher(introspector, "/css/**"),
                                 new MvcRequestMatcher(introspector, "/js/**"),
-                                new MvcRequestMatcher(introspector, "/webjars/**")
+                                new MvcRequestMatcher(introspector, "/webjars/**"),
+                                new MvcRequestMatcher(introspector,"/project/remove/**")
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

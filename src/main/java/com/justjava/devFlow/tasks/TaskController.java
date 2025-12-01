@@ -37,7 +37,7 @@ public class TaskController {
     @GetMapping("/tasks/{projectId}")
     public String getTasks(@PathVariable String projectId, Model model) {
 
-        System.out.println(" The project id in getTasks is " + projectId);
+        //System.out.println(" The project id in getTasks is " + projectId);
         // 1. First verify the process instance exists without loading variables
         boolean processInstanceExists = runtimeService
                 .createProcessInstanceQuery()
@@ -72,12 +72,12 @@ public class TaskController {
         // and only for specific tasks that require them
         Map<String, Object> processVariables = Collections.emptyMap();
         if (!tasks.isEmpty() || !historicTasks.isEmpty()) {
-            processVariables = runtimeService.getVariables(projectId);
+            //processVariables = runtimeService.getVariables(projectId);
         }
 
         model.addAttribute("tasks", tasks);
         model.addAttribute("completedTasks", historicTasks);
-        model.addAttribute("processVariables", processVariables);
+        //model.addAttribute("processVariables", processVariables);
 
         return "tasks/projectTasks";
     }
