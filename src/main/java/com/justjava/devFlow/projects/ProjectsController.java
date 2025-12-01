@@ -136,15 +136,35 @@ public class ProjectsController {
 
     @GetMapping("/project-details/{projectId}")
     public String getProjectDetails(@PathVariable String projectId,  Model model){
-        ProcessInstance project=runtimeService
+        ProcessInstance processInstance =runtimeService
                 .createProcessInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
                 .singleResult();
+
+        List<String> requiredVariableNames = List.of("projectName",
+                "projectDescription",
+                "clientName",
+                "clientEmail",
+                "clientPhonenumber",
+                "clientAddress",
+                "projectType",
+                "progress",
+                "requirement",
+                "dueDate");
+        Map<String, Object> variables = new HashMap<>();
+        for (String variableName : requiredVariableNames) {
+            Object variableValue = runtimeService.getVariable(processInstance.getId(), variableName);
+            if (variableValue != null) {
+                variables.put(variableName, variableValue);
+            }
+        }
+
+        ProcessInstance project = new ProcessInstanceWithVariables(processInstance, variables);
+
         List<Task> tasks = taskService
                 .createTaskQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
 
@@ -155,21 +175,43 @@ public class ProjectsController {
     }
     @GetMapping("/project-progress/{projectId}")
     public String getProjectProgress(@PathVariable String projectId,  Model model){
-        ProcessInstance project=runtimeService
+        ProcessInstance processInstance =runtimeService
                 .createProcessInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
                 .singleResult();
+
+        List<String> requiredVariableNames = List.of("projectName",
+                "projectDescription",
+                "clientName",
+                "clientEmail",
+                "clientPhonenumber",
+                "clientAddress",
+                "projectType",
+                "progress",
+                "requirement",
+                "dueDate");
+        Map<String, Object> variables = new HashMap<>();
+        for (String variableName : requiredVariableNames) {
+            Object variableValue = runtimeService.getVariable(processInstance.getId(), variableName);
+            if (variableValue != null) {
+                variables.put(variableName, variableValue);
+            }
+        }
+
+        ProcessInstance project = new ProcessInstanceWithVariables(processInstance, variables);
+
+
         List<Task> tasks = taskService
                 .createTaskQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
+
         List <HistoricTaskInstance> completedTasks= historyService
                 .createHistoricTaskInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .finished()
                 .orderByTaskCreateTime().desc()
                 .list();
