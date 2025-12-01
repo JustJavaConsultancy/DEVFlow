@@ -145,6 +145,7 @@ jobs:
           RAILWAY_PROJECT_ID: 7edc707c-73e3-4b8b-915b-019e9d0b6114
           RAILWAY_SERVICE_ID: Devflow-prod
         run: |
+          IMAGE_REF="kazeemakinrinde/devflow:latest"
           echo "Deploying Prod with image: $IMAGE_REF"
           railway variables --set "RAILWAY_SERVICE_IMAGE=$IMAGE_REF" --service $RAILWAY_SERVICE_ID
 
