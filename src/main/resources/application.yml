@@ -88,7 +88,7 @@ sendgrid:
 
 resend:
   api-key: ${RESEND_API_KEY}
-  default-from: ${RESEND_FROM:JustJava <onboarding@resend.dev>}
+  default-from: ${RESEND_FROM:JustJava <noreply@justjava.tech>}
   template-id-devFlow: ${RESEND_TEMPLATE_ID_DEVFLOW:45f79c50-8919-425d-8889-a3108c565fd6}
 app:
   processKey: "softwareEngineeringProcess"
