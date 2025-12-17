@@ -2,6 +2,7 @@ package com.justjava.devFlow.projects;
 
 import com.justjava.devFlow.aau.AuthenticationManager;
 import com.justjava.devFlow.keycloak.KeycloakService;
+import com.justjava.devFlow.model.ProcessInstanceWithVariables;
 import com.justjava.devFlow.util.EmailUtil;
 import com.justjava.devFlow.util.ResendService;
 import com.justjava.devFlow.util.SendGridService;
@@ -70,13 +71,13 @@ public class ProjectsController {
                 .includeProcessVariables()
                 .active()
                 .list();
-        projects.forEach(project -> {
+/*        projects.forEach(project -> {
             System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
                     //+" the start time ==="+project.getStartTime()
                     //+" the springInitializrResponse==="+project.getProcessVariables().get("springInitializrResponse")
                     + " the artifact===" +project.getProcessVariables().get("artifact"));
-        });
+        });*/
         List<HistoricProcessInstance> completedProcess =historyService
                 .createHistoricProcessInstanceQuery()
                 .processInstanceBusinessKey(String.valueOf(authenticationManager.get("sub")))
@@ -94,12 +95,29 @@ public class ProjectsController {
 
     @GetMapping("/admin/projects")
     public String getAllProjects(Model model){
-        List<ProcessInstance> projects = runtimeService
+        List<ProcessInstance> processInstances = runtimeService
                 .createProcessInstanceQuery()
                 .processDefinitionKey("softwareEngineeringProcess")
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .active()
                 .list();
+
+
+        // List of required variable names
+        List<String> requiredVariableNames = List.of("projectName", "projectDescription", "clientName", "progress", "dueDate");
+
+        // Create a list to hold the process instances with their variables
+        List<ProcessInstanceWithVariables> projects = new ArrayList<>();
+        for (ProcessInstance processInstance : processInstances) {
+            Map<String, Object> variables = new HashMap<>();
+            for (String variableName : requiredVariableNames) {
+                Object variableValue = runtimeService.getVariable(processInstance.getId(), variableName);
+                if (variableValue != null) {
+                    variables.put(variableName, variableValue);
+                }
+            }
+            projects.add(new ProcessInstanceWithVariables(processInstance, variables));
+        }
 /*        projects.forEach(project -> {
             System.out.println(" The Process Instance" +
                     " Here=ID=="+project.getProcessInstanceId()
@@ -109,39 +127,48 @@ public class ProjectsController {
                     project.getProcessVariables().get("architecture")
             +"\n\n\n\n\n\n\n\n\n\n\n\n\n");
         });*/
-        List<HistoricProcessInstance> completedProcess =historyService
+        long completedProcessCount =historyService
                 .createHistoricProcessInstanceQuery()
                 .finished()
-                .orderByProcessInstanceEndTime()
-                .desc()
-                .list();
-        List<HistoricTaskInstance> historicTasks = historyService
-                .createHistoricTaskInstanceQuery()
-                .finished()
-                .orderByTaskCreateTime().desc()
-                .list();
-        List<Task> tasks = taskService
-                .createTaskQuery()
-                .includeProcessVariables()
-                .orderByTaskCreateTime().desc()
-                .list();
+                .count();
+
         model.addAttribute("projects",projects);
-        model.addAttribute("completedProject",completedProcess.size());
+        model.addAttribute("completedProject",completedProcessCount);
         model.addAttribute("activeProject",projects.size());
         return "projects/adminAllProjects";
     }
 
     @GetMapping("/project-details/{projectId}")
     public String getProjectDetails(@PathVariable String projectId,  Model model){
-        ProcessInstance project=runtimeService
+        ProcessInstance processInstance =runtimeService
                 .createProcessInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
                 .singleResult();
+
+        List<String> requiredVariableNames = List.of("projectName",
+                "projectDescription",
+                "clientName",
+                "clientEmail",
+                "clientPhonenumber",
+                "clientAddress",
+                "projectType",
+                "progress",
+                "requirement",
+                "dueDate");
+        Map<String, Object> variables = new HashMap<>();
+        for (String variableName : requiredVariableNames) {
+            Object variableValue = runtimeService.getVariable(processInstance.getId(), variableName);
+            if (variableValue != null) {
+                variables.put(variableName, variableValue);
+            }
+        }
+
+        ProcessInstance project = new ProcessInstanceWithVariables(processInstance, variables);
+
         List<Task> tasks = taskService
                 .createTaskQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
 
@@ -152,21 +179,43 @@ public class ProjectsController {
     }
     @GetMapping("/project-progress/{projectId}")
     public String getProjectProgress(@PathVariable String projectId,  Model model){
-        ProcessInstance project=runtimeService
+        ProcessInstance processInstance =runtimeService
                 .createProcessInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
                 .singleResult();
+
+        List<String> requiredVariableNames = List.of("projectName",
+                "projectDescription",
+                "clientName",
+                "clientEmail",
+                "clientPhonenumber",
+                "clientAddress",
+                "projectType",
+                "progress",
+                "requirement",
+                "dueDate");
+        Map<String, Object> variables = new HashMap<>();
+        for (String variableName : requiredVariableNames) {
+            Object variableValue = runtimeService.getVariable(processInstance.getId(), variableName);
+            if (variableValue != null) {
+                variables.put(variableName, variableValue);
+            }
+        }
+
+        ProcessInstance project = new ProcessInstanceWithVariables(processInstance, variables);
+
+
         List<Task> tasks = taskService
                 .createTaskQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .orderByTaskCreateTime().desc()
                 .list();
+
         List <HistoricTaskInstance> completedTasks= historyService
                 .createHistoricTaskInstanceQuery()
                 .processInstanceId(projectId)
-                .includeProcessVariables()
+                //.includeProcessVariables()
                 .finished()
                 .orderByTaskCreateTime().desc()
                 .list();
@@ -426,6 +475,17 @@ public class ProjectsController {
             resendService.sendMailWithTemplate(email, subject, password, webUrl);
         }
         return "redirect:" + (referer != null ? referer : "/");
+    }
+    @ResponseBody
+    @GetMapping("/project/delete/{processInstanceId}")
+    public String deleteProject(@PathVariable String  processInstanceId){
+        System.out.println(" The Sent Parameter Here==="+processInstanceId);
+        runtimeService.deleteProcessInstance(
+                processInstanceId,
+                "Business reason: No Longer Wanted "   // can be null if you don't care
+        );
+        System.out.println("Deleted Successfully!!!");
+        return "Deleted Successfully!!!";
     }
 
 }
