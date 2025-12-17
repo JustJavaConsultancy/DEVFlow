@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5433/DEVFlow}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/DEVFlow}
     username: ${JDBC_DATABASE_USERNAME:postgres}
-    password: ${JDBC_DATABASE_PASSWORD:020775Rashy!}
+    password: ${JDBC_DATABASE_PASSWORD:1234}
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
@@ -86,6 +86,10 @@ sendgrid:
   from-email: ${SENDGRID_FROM_EMAIL:ooreoluwaibitowa@gmail.com}
   template-id: ${SENDGRID_TEMPLATE_ID:d-94160df1d3224c95b032a4f187c6aa30}
 
+resend:
+  api-key: ${RESEND_API_KEY}
+  default-from: ${RESEND_FROM:JustJava <noreply@justjava.tech>}
+  template-id-devFlow: ${RESEND_TEMPLATE_ID_DEVFLOW:45f79c50-8919-425d-8889-a3108c565fd6}
 app:
   processKey: "softwareEngineeringProcess"
   github:
