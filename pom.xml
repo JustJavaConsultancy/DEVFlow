@@ -113,7 +113,12 @@
 			<artifactId>sendgrid-java</artifactId>
 			<version>5.0.0-rc.1</version>
 		</dependency>
-
+		<!--	Resend for Spring	-->
+		<dependency>
+			<groupId>com.resend</groupId>
+			<artifactId>resend-java</artifactId>
+			<version>LATEST</version>
+		</dependency>
 		<!-- Nashorn JavaScript Engine (JDK 8-14) -->
 		<dependency>
 			<groupId>org.openjdk.nashorn</groupId>

@@ -3,6 +3,7 @@ package com.justjava.devFlow.projects;
 import com.justjava.devFlow.aau.AuthenticationManager;
 import com.justjava.devFlow.keycloak.KeycloakService;
 import com.justjava.devFlow.util.EmailUtil;
+import com.justjava.devFlow.util.ResendService;
 import com.justjava.devFlow.util.SendGridService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,6 +47,9 @@ public class ProjectsController {
 
     @Autowired
     SendGridService sendGridService;
+
+    @Autowired
+    ResendService resendService;
 
     @Value("${app.base-url}")
     String baseUrl;
@@ -337,7 +341,8 @@ public class ProjectsController {
 
             // Check if email has already been invited
             if (invitedEmails.contains(email)) {
-                sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+//                sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+                resendService.sendMailWithTemplate(email, subject, password, webUrl);
 //                return "<div class='success-message'>" +
 //                        "<i class='fas fa-check-circle mr-2'></i>" +
 //                        "Invitation sent successfully to " + email + " (already invited)" +
@@ -349,7 +354,8 @@ public class ProjectsController {
 
                 // Store the updated list in process variable
                 runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
-                sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+//                sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+                resendService.sendMailWithTemplate(email, subject, password, webUrl);
 
 //                return "<div class='success-message'>" +
 //                        "<i class='fas fa-check-circle mr-2'></i>" +
@@ -406,7 +412,8 @@ public class ProjectsController {
 
         // Check if email has already been invited
         if (invitedEmails.contains(email)) {
-            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+//            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+            resendService.sendMailWithTemplate(email, subject, password, webUrl);
         }else {
 
 
@@ -415,7 +422,8 @@ public class ProjectsController {
 
             // Store the updated list in process variable
             runtimeService.setVariable(projectId, "invitedEmails", invitedEmails);
-            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+//            sendGridService.sendTemplateEmail(email, subject, password, webUrl);
+            resendService.sendMailWithTemplate(email, subject, password, webUrl);
         }
         return "redirect:" + (referer != null ? referer : "/");
     }
