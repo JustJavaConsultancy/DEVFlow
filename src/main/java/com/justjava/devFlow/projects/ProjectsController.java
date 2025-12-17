@@ -184,6 +184,8 @@ public class ProjectsController {
                 .processInstanceId(projectId)
                 .singleResult();
 
+//        System.out.println(" The Process Instance Here === "+runtimeService.getVariable(processInstance.getId(),
+//                "projectURL"));
         List<String> requiredVariableNames = List.of("projectName",
                 "projectDescription",
                 "clientName",
@@ -193,6 +195,7 @@ public class ProjectsController {
                 "projectType",
                 "progress",
                 "requirement",
+                "projectURL",
                 "dueDate");
         Map<String, Object> variables = new HashMap<>();
         for (String variableName : requiredVariableNames) {
@@ -337,7 +340,8 @@ public class ProjectsController {
     public String saveProjectURL(@RequestParam Map<String,Object> urlDetails, HttpServletRequest request){
         String processInstanceId = (String) urlDetails.get("projectId");
         String repoUrl = (String) urlDetails.get("projectUrl");
-     //   System.out.println(" The URL Details Here === " + urlDetails);
+//        System.out.println(" The URL Details Here === " + urlDetails);
+
         runtimeService.setVariable(processInstanceId, "projectURL", repoUrl);
 
         // Get the page the request came from
